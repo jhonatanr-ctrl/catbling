@@ -1,0 +1,749 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&family=Sixtyfour&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: 'Pixelify Sans', sans-serif;
+}
+
+.video-bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.4) blur(2px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.menu-buttons-container {
+  position: fixed;
+  bottom: -4px;
+  left: 21px;
+  z-index: 600;
+}
+
+.menu-button {
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.menu-button:hover {
+  transform: scale(1.1);
+}
+
+#menu-img {
+  width: 75px;
+  height: auto;
+}
+
+.menu-box {
+    width: min(90vw, 616px);
+    max-width: min(95vw, 613px);
+    padding: clamp(16px, 4vw, 32px);
+    padding-bottom: clamp(60px, 15vw, 127px);
+    margin-top: clamp(16px, 4vh, 42px);
+    max-height: 91vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    background: url('../../resources/assets/optionsmenu.png') center/cover;
+    color: white;
+}
+
+.menu-scroll {
+    margin: 41% 8% 0 8.3%;
+    margin-bottom: clamp(40px, 10vh, 105px);
+    padding: clamp(12px, 4vh, 41px) clamp(8px, 2vw, 16px);
+    padding-top: clamp(12px, 4vh, 42px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ffd700 rgba(0, 0, 0, 0.3);
+}
+
+#cerrar-menu {
+    display: block;
+    align-self: center;
+    margin-top: 56px;
+    margin-bottom: -31px;
+    padding-left: 0;
+    flex-shrink: 0;
+}
+
+#mainContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px clamp(10px, 5vw, 180px) 120px clamp(10px, 5vw, 220px);
+    min-height: 100vh;
+    min-width: 0;
+    background: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#mainContent.hidden {
+  display: none !important;
+}
+
+.overlay-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+}
+
+.overlay-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.titulo-principal {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.h1 {
+  font-family: 'Sixtyfour', sans-serif;
+  font-size: 2.9rem;
+  text-transform: uppercase;
+  color: #ffdd1c;
+  text-shadow: 
+    0 0 5px #ffdd1c,
+    0 0 10px #ffdd1c,
+    0 0 20px #ffdd1c,
+    0 0 40px #ffdd1c,
+    0 0 80px #ffdd1c;
+  margin: 0;
+  padding-top: 0px;
+  animation: neon-flicker 1.5s infinite alternate;
+}
+
+.instruccion {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 21px;
+  color: #ffffff;
+  margin: 34px 0 0 0;
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.8;
+  }
+}
+
+.top-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+#infomovimientos {
+  font-size: 1.5rem;
+  color: #ddd;
+}
+
+#infomovimientos span {
+  font-family: 'Press Start 2P', cursive;
+}
+
+#moves {
+  color: #ffd700;
+  font-size: 1.2rem;
+}
+
+#restart-button {
+    background: url("./assets/botonnegro.png") center / contain no-repeat;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    width: 209px;
+    height: 121px;
+    margin-bottom: -37px;
+    margin-top: -34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}op-bar fade-el item1 show {
+    margin-top: -6px;
+}
+
+#restart-button:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+}
+
+.restart-text {
+  color: #ffffff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  text-shadow: 2px 2px 4px white, 0 0 10px white;
+  margin-top: -5px;
+}
+
+#game-board {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+    max-width: 100%;
+}
+
+.card {
+  width: 110px;
+  height: 160px;
+  perspective: 1000px;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: url("./assets/atras.png") no-repeat center center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-front img {
+  width: 60%;
+  height: auto;
+}
+
+.card-back {
+  background: url("./assets/frentenoseve.png") no-repeat center center;
+  background-size: cover;
+}
+
+.fade-el {
+  opacity: 1;
+  transform: none;
+}
+
+.fade-el.show {
+  opacity: 1;
+  transform: none;
+}
+
+/* Barra de apuesta */
+.apuesta-container {
+  text-align: center;
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  z-index: 50;
+}
+
+.apuesta-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+}
+
+#apuesta-actual {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+  animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { 
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+  }
+  50% { 
+    text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 30px rgba(255, 68, 68, 0.6);
+  }
+}
+
+.apuesta-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.apuesta-min,
+.apuesta-max {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.custom-slider {
+  position: relative;
+  width: 300px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.slider-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 12px;
+  background: #333;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+}
+
+.slider-progress {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 12px;
+  background: linear-gradient(to right, #ffd700, #ffaa00);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 35px;
+  height: 35px;
+  background: #ffd700;
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.slider-thumb:active {
+  cursor: grabbing;
+}
+
+/* Monedas UI - igual que página principal */
+.monedas-ui {
+  position: fixed;
+  top: 20px;
+  right: 35px;
+  text-align: center;
+  z-index: 100;
+}
+
+.monedas-ui img {
+  width: 130px;
+  display: block;
+  margin: 0 auto;
+}
+
+.monedas-ui p {
+  font-family: 'Pixelify Sans', sans-serif;
+  color: white;
+  margin-top: 15px;
+  font-size: 45px;
+}
+
+#cantidad-monedasm {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 30px;
+  animation: pulse 1.2s infinite;
+  background: linear-gradient(
+    180deg,
+    #fff8c6 0%,
+    #ffd700 40%,
+    #ffb300 60%,
+    #b8860b 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 5px rgba(255, 215, 0, 0.7),
+    0 0 10px rgba(255, 200, 0, 0.5),
+    2px 2px 0 #5a3d00;
+  letter-spacing: 3px;
+}
+
+/* WIN OVERLAY */
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: background 0.5s ease, opacity 0.5s ease;
+}
+
+.win-overlay.active {
+  display: flex;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.win-lights {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 20% 20%, rgba(255, 165, 0, 0.3) 0%, transparent 40%),
+              radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.3) 0%, transparent 40%),
+              radial-gradient(circle at 20% 80%, rgba(255, 255, 0, 0.3) 0%, transparent 40%),
+              radial-gradient(circle at 80% 80%, rgba(255, 69, 0, 0.3) 0%, transparent 40%);
+  animation: lights-flash 0.5s ease-in-out infinite alternate;
+  opacity: 0;
+}
+
+.win-overlay.active .win-lights {
+  opacity: 1;
+}
+
+@keyframes lights-flash {
+  0% {
+    background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 20% 20%, rgba(255, 165, 0, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 0, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(255, 69, 0, 0.4) 0%, transparent 40%);
+    filter: blur(20px);
+  }
+  50% {
+    background: radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(255, 69, 0, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 10% 50%, rgba(255, 165, 0, 0.5) 0%, transparent 40%),
+                radial-gradient(circle at 90% 50%, rgba(255, 255, 0, 0.5) 0%, transparent 40%);
+    filter: blur(30px);
+  }
+  100% {
+    background: radial-gradient(circle at 60% 40%, rgba(255, 255, 0, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 0, 0, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(255, 69, 0, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 50% 10%, rgba(255, 215, 0, 0.4) 0%, transparent 50%);
+    filter: blur(25px);
+  }
+}
+
+.win-content {
+  text-align: center;
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+.win-overlay.active .win-content {
+  animation: win-text-up 0.8s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes win-text-up {
+  0% { transform: translateY(100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.win-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 52px;
+  color: #ffd700;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8), 0 0 90px rgba(255, 215, 0, 0.5);
+  animation: win-glow 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes win-glow {
+  from { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8); }
+  to { text-shadow: 0 0 50px rgba(255, 215, 0, 1), 0 0 100px rgba(255, 215, 0, 1), 0 0 150px rgba(255, 165, 0, 0.8); }
+}
+
+.win-amount {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 36px;
+  color: #00ff00;
+  margin: 30px 0 0 0;
+  text-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 40px rgba(0, 255, 0, 0.8);
+}
+
+/* LOSE OVERLAY */
+.lose-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: background 0.5s ease, opacity 0.5s ease;
+}
+
+.lose-overlay.active {
+  display: flex;
+  opacity: 1;
+  background: rgba(80, 0, 0, 0.7);
+}
+
+.lose-lights {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 0%, rgba(255, 50, 50, 0.4) 0%, transparent 30%),
+              radial-gradient(circle at 100% 0%, rgba(255, 50, 50, 0.4) 0%, transparent 30%),
+              radial-gradient(circle at 0% 100%, rgba(255, 50, 50, 0.4) 0%, transparent 30%),
+              radial-gradient(circle at 100% 100%, rgba(255, 50, 50, 0.4) 0%, transparent 30%);
+  animation: lose-blink 0.3s ease-in-out infinite alternate;
+  opacity: 0;
+}
+
+.lose-overlay.active .lose-lights {
+  opacity: 1;
+}
+
+@keyframes lose-blink {
+  0% {
+    opacity: 0.6;
+    background: radial-gradient(circle at 0% 0%, rgba(200, 0, 0, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 100% 0%, rgba(200, 0, 0, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 0% 100%, rgba(200, 0, 0, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 100% 100%, rgba(200, 0, 0, 0.3) 0%, transparent 30%);
+  }
+  100% {
+    opacity: 1;
+    background: radial-gradient(circle at 0% 0%, rgba(255, 50, 50, 0.5) 0%, transparent 35%),
+                radial-gradient(circle at 100% 0%, rgba(255, 50, 50, 0.5) 0%, transparent 35%),
+                radial-gradient(circle at 0% 100%, rgba(255, 50, 50, 0.5) 0%, transparent 35%),
+                radial-gradient(circle at 100% 100%, rgba(255, 50, 50, 0.5) 0%, transparent 35%);
+  }
+}
+
+.lose-content {
+  text-align: center;
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+.lose-overlay.active .lose-content {
+  animation: lose-text-up 0.8s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes lose-text-up {
+  0% { transform: translateY(100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.lose-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 52px;
+  color: #ff3333;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(255, 51, 51, 1), 0 0 60px rgba(255, 51, 51, 0.8), 0 0 90px rgba(255, 51, 51, 0.5);
+  animation: lose-glow 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes lose-glow {
+  from { text-shadow: 0 0 30px rgba(255, 51, 51, 1), 0 0 60px rgba(255, 51, 51, 0.8); }
+  to { text-shadow: 0 0 50px rgba(255, 51, 51, 1), 0 0 100px rgba(255, 51, 51, 1), 0 0 150px rgba(255, 0, 0, 0.8); }
+}
+
+/* NIVELES PANEL */
+.niveles-panel {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #ffd700;
+  border-radius: 12px;
+  padding: 15px;
+  z-index: 100;
+  min-width: 160px;
+}
+
+.niveles-titulo {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: #ffd700;
+  text-align: center;
+  margin: 0 0 15px 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.niveles-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nivel-item {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 14px;
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.nivel-item:hover {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+}
+
+.nivel-item.active {
+  background: rgba(255, 215, 0, 0.25);
+  border-color: #ffd700;
+  color: #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.nivel-item .nivel-num {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 11px;
+  color: #ffd700;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.nivel-item .nivel-info {
+  font-size: 12px;
+  color: #aaa;
+  display: block;
+}
+
+.nivel-item.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  border-color: #333;
+}
+
+.nivel-item.locked:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #333;
+  transform: none;
+  box-shadow: none;
+}
+
+.nivel-item .nivel-premio {
+  font-size: 13px;
+  color: #00ff00;
+  display: block;
+  margin-top: 3px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+    #mainContent {
+        padding: 10px 20px 80px 20px;
+    }
+
+    #game-board {
+        gap: 6px;
+    }
+
+    .card {
+        width: clamp(60px, 14vw, 90px);
+        height: clamp(87px, 20vw, 130px);
+    }
+
+    .niveles-panel {
+        position: fixed;
+        left: 10px;
+        min-width: 120px;
+        padding: 10px;
+    }
+
+    .nivel-item {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .titulo {
+        font-size: clamp(18px, 4vw, 28px);
+    }
+}
+
+@media (max-width: 480px) {
+    #mainContent {
+        padding: 10px 8px 60px 8px;
+    }
+
+    #game-board {
+        gap: 4px;
+    }
+
+    .card {
+        width: clamp(44px, 14vw, 66px);
+        height: clamp(64px, 20vw, 96px);
+    }
+
+    .niveles-panel {
+        display: none;
+    }
+
+    .titulo {
+        font-size: 16px;
+    }
+
+    .custom-slider {
+        width: min(85vw, 300px);
+        height: 28px;
+    }
+
+    .apuesta-container {
+        bottom: 10px;
+    }
+
+    .win-text,
+    .lose-text {
+        font-size: clamp(18px, 8vw, 30px);
+    }
+}

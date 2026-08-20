@@ -1,0 +1,493 @@
+/* ── Fondo negro ─────────────────────────────────────────────────────────── */
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+/* ── Balatro - Poker Cartas ───────────────────────────────────────────────── */
+.video-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.3) blur(3px);
+    z-index: -1;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.balatro-floor {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 12vh;
+    min-height: 100vh;
+    position: relative;
+    z-index: 100;
+}
+
+.balatro-hud {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.balatro-hud {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px 18px;
+    border-radius: 0px;
+    border: 3.5px solid #d4af37;
+    color: white;
+}
+
+.balatro-hud .label {
+    display: block;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: #ffd700;
+}
+
+.balatro-hud .value {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.status-bubble {
+    color: white;
+    font-size: 0.9rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(212, 175, 55, 0.2);
+    padding: 6px 16px;
+    border-radius: 0px;
+    font-family: 'Pixelify Sans', sans-serif;
+    min-width: 160px;
+}
+
+/* ── Mesa de cartas ──────────────────────────────────────────────────────── */
+.card-table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: clamp(12px, 3vw, 30px);
+    flex-wrap: wrap;
+    min-height: 175px;
+    min-width: unset;
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+}
+
+.card-placeholder {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+}
+
+/* ── Cartas estilo real ──────────────────────────────────────────────────── */
+.card {
+    width: clamp(60px, 12vw, 100px);
+    height: clamp(84px, 17vw, 140px);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+@keyframes card-deal {
+    from { transform: translateY(-80px) scale(0.5) rotate(-5deg); opacity: 0; }
+    to   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+
+.card .card-corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Georgia', serif;
+}
+
+.card .card-corner.top {
+    top: 5px;
+    left: 6px;
+}
+
+.card .card-corner.bottom {
+    bottom: 5px;
+    right: 6px;
+    transform: rotate(180deg);
+}
+
+.card .card-suit-big {
+    font-size: 44px;
+    margin-top: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.card.red .card-corner,
+.card.red .card-suit-big {
+    color: #cc0000;
+}
+
+.card.black .card-corner,
+.card.black .card-suit-big {
+    color: #1a1a1a;
+}
+
+.card.green .card-corner,
+.card.green .card-suit-big {
+    color: #1a7a2a;
+}
+
+/* ── Joker ───────────────────────────────────────────────────────────────── */
+.card.joker {
+    background: linear-gradient(145deg, #fffde7 0%, #f5f0d0 100%);
+    border-color: #b8960f;
+}
+
+.card.joker .card-corner {
+    font-size: 16px;
+}
+
+.card .card-center-joker {
+    font-size: 50px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* ── Tabla de pagos ───────────────────────────────────────────────────────── */
+.payout-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    min-width: unset;
+    width: min(90vw, 420px);
+    padding: clamp(10px, 2vw, 33px) clamp(12px, 4vw, 33px);
+}
+
+.payout-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.payout-row.active {
+    color: #ffd700;
+    background: rgba(255,215,0,0.15);
+    font-weight: bold;
+}
+
+.payout-row span:last-child {
+    color: #ffd700;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    margin-left: 8px;
+}
+
+/* ── Botón ───────────────────────────────────────────────────────────────── */
+.glow-button {
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: white;
+    padding: 12px 36px;
+    border: none;
+    border-radius: 0px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.glow-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.glow-button:active {
+    transform: translateY(2px);
+}
+
+.glow-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Sistema de apuesta (slider) ─────────────────────────────────────────── */
+.apuesta-container {
+  text-align: center;
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  z-index: 50;
+}
+
+.apuesta-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+}
+
+#apuesta-actual {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+  animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 68, 68, 0.8); }
+  50% { text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 30px rgba(255, 68, 68, 0.6); }
+}
+
+.apuesta-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.apuesta-min,
+.apuesta-max {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.custom-slider {
+  position: relative;
+  width: 300px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.slider-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 12px;
+  background: #333;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+}
+
+.slider-progress {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 12px;
+  background: linear-gradient(to right, #ffd700, #ffaa00);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 35px;
+  height: 35px;
+  background: #ffd700;
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.slider-thumb:active {
+  cursor: grabbing;
+}
+
+/* ── Botón de salida (abajo a la izquierda, pequeño) ─────────────────────── */
+.menu-button {
+    position: fixed;
+    bottom: -5px;
+    left: 15px;
+    width: 65px;
+    z-index: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.menu-button:hover {
+    transform: scale(1.1);
+}
+
+.menu-button img {
+    width: 100%;
+    display: block;
+}
+
+.menu-buttons-container {
+    position: fixed;
+    bottom: 20px;
+    left: 15px;
+    z-index: 600;
+}
+
+/* ── Win/Lose overlays ────────────────────────────────────────────────────── */
+#win-overlay, #lose-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+#win-overlay.active, #lose-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+#win-overlay { background: radial-gradient(ellipse at center, rgba(0,50,0,0.6), rgba(0,0,0,0.85)); }
+#lose-overlay { background: radial-gradient(ellipse at center, rgba(50,0,0,0.6), rgba(0,0,0,0.85)); }
+.overlay-content { text-align: center; padding: 40px 60px; border-radius: 20px; }
+#win-overlay .overlay-content {
+    animation: cr-pulse-win 1s ease-in-out infinite;
+}
+
+.overlay-win-text {
+    font-family: 'Press Start 2P', cursive;
+    color: gold;
+    font-size: 34px;
+    margin: 0;
+    text-shadow: 0 0 30px rgba(255,215,0,0.6);
+}
+.overlay-lose-text {
+    font-family: 'Press Start 2P', cursive;
+    color: #ff4444;
+    font-size: 34px;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(255,68,68,0.5);
+}
+.overlay-amount {
+    font-family: 'Press Start 2P', cursive;
+    color: #44ff88;
+    font-size: 30px;
+    margin: 15px 0 0;
+    text-shadow: 0 0 20px rgba(68,255,136,0.5);
+}
+@keyframes cr-pulse-win {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.3); }
+    50% { box-shadow: 0 0 60px rgba(255,215,0,0.6); }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+    .balatro-floor {
+        padding-top: 6vh;
+    }
+
+    .card-table {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .card {
+        width: clamp(48px, 10vw, 70px);
+        height: clamp(67px, 14vw, 98px);
+    }
+
+    .card .card-corner {
+        font-size: 10px;
+        top: 3px;
+        left: 4px;
+    }
+
+    .payout-info {
+        width: min(95vw, 360px);
+        padding: 10px 14px;
+    }
+
+    .payout-row {
+        font-size: 14px;
+    }
+
+    .payout-value {
+        font-size: 16px;
+    }
+
+    .bet-display {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .balatro-hud {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .card-table {
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .card {
+        width: clamp(36px, 9vw, 52px);
+        height: clamp(50px, 13vw, 73px);
+        border-radius: 6px;
+    }
+
+    .card .card-corner {
+        font-size: 7px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .payout-info {
+        width: 100%;
+        padding: 6px 10px;
+        gap: 6px;
+    }
+
+    .payout-row {
+        font-size: 11px;
+    }
+
+    .payout-value {
+        font-size: 12px;
+    }
+
+    .custom-slider {
+        width: min(90vw, 300px);
+        height: 24px;
+    }
+
+    .bet-display {
+        font-size: 12px;
+    }
+
+    .win-text,
+    .lose-text {
+        font-size: clamp(18px, 8vw, 28px);
+    }
+}

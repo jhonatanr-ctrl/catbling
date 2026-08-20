@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda</title>
+    <link rel="stylesheet" href="../resources/stylesheetglobal.css">
+    <link rel="stylesheet" href="../resources/help.css">
+    <link rel="stylesheet" href="../resources/tutorial.css">
+    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+
+<body data-page="tienda">
+
+  <audio id="bgMusic" loop autoplay>
+    <source src="./resources/assets/Kevin MacLeod - Itty Bitty 8 Bit  NO COPYRIGHT 8-bit Music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- MONEDAS UI -->
+  <div class="monedas-ui">
+      <img id="icono-monedasm"
+           src="../resources/assets/yukonocoins.png"
+           data-src-vacio="../resources/assets/yukonocoins.png"
+           data-src-lleno="../resources/assets/yukocoins.png">
+      <p id="cantidad-monedasm">0</p>
+      <img src="../resources/assets/bag.png" id="btn-bag" onclick="window.mostrarBolsa()">
+  </div>
+
+  <!-- OVERLAY BOLSA -->
+  <div id="bag-overlay">
+      <div id="bag-content">
+          <div id="bag-items-container"></div>
+          <img src="../resources/assets/exit.png" id="bag-close-btn" onclick="window.cerrarBolsa()">
+      </div>
+  </div>
+
+  <!-- OVERLAY USAR ITEM -->
+  <div id="item-use-overlay">
+      <div id="item-use-content"></div>
+  </div>
+
+  <!-- BOTÓN OPCIONES -->
+  <img src="../resources/assets/settings.png" id="btn-opciones">
+
+  <!-- OVERLAY MENÚ -->
+  <div id="overlay-menu"></div>
+
+  <!-- MENÚ OPCIONES -->
+  <div id="menu-opciones">
+    <div class="menu-box">
+      <h2 data-i18n="opciones">OPCIONES</h2>
+      <div class="menu-scroll">
+      <div class="opcion-item">
+        <span data-i18n="musica">Música</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarVolumen(-1)">-</button>
+          <span id="vol-musica"></span>
+          <button onclick="cambiarVolumen(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="efectos">Efectos</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarEfectos(-1)">-</button>
+          <span id="vol-efectos"></span>
+          <button onclick="cambiarEfectos(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="animaciones">Animaciones</span>
+        <div class="grupo-botones">
+          <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="idioma">Idioma</span>
+        <div class="grupo-botones">
+          <button onclick="setIdioma('es')">ES</button>
+          <button onclick="setIdioma('en')">EN</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="config">Configuración</span>
+        <div class="grupo-botones">
+          <button onclick="resetear()">RESET</button>
+        </div>
+      </div>
+      <div class="opcion-item" id="opcion-cerrar-sesion">
+        <span data-i18n="cerrar_sesion">Cerrar Sesión</span>
+        <div class="grupo-botones">
+          <button onclick="mostrarConfirmacionCerrarSesion()">SALIR</button>
+        </div>
+      </div>
+      </div>
+      <img src="../resources/assets/exit.png" id="cerrar-menu">
+    </div>
+</div>
+
+  <!-- SECCIÓN DE CATEGORÍAS (appears first) -->
+  <div class="categorias-container" id="categorias-container">
+    <div class="categorias-box">
+      <div class="categoria-icon" onclick="seleccionarCategoria('mejoras')">
+        <img src="./resources/assets/preguntas.png" alt="Mejoras preguntas">
+        <span data-i18n="pregunta">preguntas</span>
+      </div>
+      <div class="categoria-icon" onclick="seleccionarCategoria('boosts')">
+        <img src="./resources/assets/jackpot.png" alt="Mejoras Casino">
+        <span data-i18n="casino">Casino</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OVERLAY TRABAJO EN CURSO (solo para accesorios) -->
+  <div id="trabajando-overlay" class="trabajando-overlay" onclick="mostrarCategorias()">
+    <div class="trabajando-mensaje">¡estamos trabajando en eso...!</div>
+  </div>
+
+  <!-- BOTÓN VOLVER/SALIR -->
+  <a href="#" class="btn-volver-tienda" id="btn-volver-tienda" onclick="return volverOAtras();">
+    <img id="btn-volver-img" src="../preguntas/assets/salida1.png">
+  </a>
+
+  <!-- CONTENEDOR PRINCIPAL DE LA TIENDA -->
+  <div class="tienda-container" id="tienda-container">
+    
+    <!-- LISTA DE ITEMS (IZQUIERDA - BANDA) -->
+    <div class="items-list-container">
+      <div class="items-list" id="items-list">
+        <!-- Los items se generan dinámicamente -->
+      </div>
+    </div>
+
+    <!-- SECCIÓN DETALLE (DERECHA) -->
+    <div class="detalle-item">
+      <div class="detalle-texto">
+        <h2 id="nombre-item" class="nombre-item">DoblePremio</h2>
+        <p id="descripcion-item" class="descripcion">Duplica tus ganancias en cada apuesta.</p>
+        <p id="mejora-item" class="mejora">Mejora: x2 ganancias</p>
+        <p id="precio-item" class="precio">Monedas necesarias: 100</p>
+      </div>
+      <div class="detalle-imagen">
+        <img id="imagen-item-seleccionado" src="../resources/assets/yukocoins.png" alt="Item">
+      </div>
+      <div class="detalle-boton">
+        <button id="btn-comprar" onclick="comprarItem()" data-i18n="comprar">COMPRAR</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTONES DE NAVEGACIÓN (INDEPENDIENTES) -->
+  <button id="btn-subir" class="btn-navegacion" onclick="moverItems(-1)">
+    <img src="./resources/assets/arrowup.png" alt="Subir">
+  </button>
+  
+  <button id="btn-bajar" class="btn-navegacion" onclick="moverItems(1)">
+      <img src="./resources/assets/arrowdown.png" alt="Bajar">
+  </button>
+
+  <div id="tutorial-overlay" class="tutorial-overlay">
+    <div class="tutorial-container">
+      <div class="tutorial-character-wrapper">
+        <div class="tutorial-character" id="tutorial-character">
+          <img src="../resources/assets/image (1).png" alt="Personaje" id="tutorial-img">
+        </div>
+      </div>
+      <div class="tutorial-speech">
+        <div class="speech-arrow"></div>
+        <div class="speech-bubble">
+          <p id="tutorial-text"></p>
+        </div>
+        <div class="speech-footer">
+          <span id="tutorial-step" class="tutorial-step">1/5</span>
+          <div class="speech-buttons">
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../resources/help.js"></script>
+  <script src="../resources/api.js"></script>
+  <script src="../resources/guest.js?v=2"></script>
+  <script src="../resources/coins.js"></script>
+  <script src="../resources/config.js?v=2"></script>
+  <script src="../resources/tutorial.js"></script>
+  <script src="../resources/script.js"></script>
+  <script src="./resources/script.js"></script>
+
+    <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
+    <div id="confirmacion-cerrar-sesion">
+        <div class="confirmacion-contenido">
+            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <div class="confirmacion-botones">
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

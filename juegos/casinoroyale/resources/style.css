@@ -1,0 +1,471 @@
+/* ── Animaciones globales ─────────────────────────────────────────────────── */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+.video-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.4) blur(2px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ── Botón de salida ─────────────────────────────────────────────────────── */
+.menu-button {
+    position: fixed;
+    bottom: -7px;
+    left: 21px;
+    width: 75px;
+    z-index: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.menu-button:hover {
+    transform: scale(1.1);
+}
+
+.menu-button img {
+    width: 100%;
+}
+
+.menu-buttons-container {
+    position: fixed;
+    bottom: 20px;
+    left: 21px;
+    z-index: 600;
+}
+
+/* ── Monedas UI ──────────────────────────────────────────────────────────── */
+#cantidad-monedasm {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 30px;
+    animation: pulse 1.2s infinite;
+    background: linear-gradient(180deg, #fff8c6 0%, #ffd700 40%, #ffb300 60%, #b8860b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7), 0 0 10px rgba(255, 200, 0, 0.5), 2px 2px 0 #5a3d00;
+    letter-spacing: 3px;
+}
+
+/* ── Casino Royale - juego ───────────────────────────────────────────────── */
+.casino-floor {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    z-index: 100;
+}
+
+.hud {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.status-bubble {
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    background: rgba(212, 175, 55, 0.2);
+    padding: 10px 20px;
+    border: 3px solid #d4af37;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+/* ── Dados ────────────────────────────────────────────────────────────────── */
+.dice-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(30px, 10vw, 100px);
+    flex-shrink: 0;
+    perspective: 1600px;
+    margin-bottom: clamp(20px, 6vh, 60px);
+}
+
+/* ── Botón apostar ───────────────────────────────────────────────────────── */
+.glow-button {
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: white;
+    padding: 18px 45px;
+    border: 4px solid #8B6914;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #5a3d00, 0 10px 20px rgba(0,0,0,0.3);
+    transition: 0.3s;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.glow-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #5a3d00, 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.glow-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #5a3d00, 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.glow-button:disabled {
+    opacity: 0.5;
+    transform: translateY(0);
+    box-shadow: 0 4px 0 #5a3d00, 0 10px 20px rgba(0,0,0,0.3);
+    cursor: not-allowed;
+}
+
+/* ── Panel de multiplicadores ────────────────────────────────────────────── */
+.multiplier-panel {
+    position: fixed;
+    left: clamp(10px, 6vw, 80px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(160px, 25vw, 260px);
+    padding: clamp(12px, 2vh, 24px) clamp(14px, 3vw, 28px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 3px solid #ffd700;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2), inset 0 0 30px rgba(255, 215, 0, 0.05);
+    text-align: center;
+    z-index: 100;
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.multiplier-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: #ffd700;
+  text-align: center;
+  margin: 0 0 18px 0;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.multiplier-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+  border: 2px solid rgba(255, 215, 0, 0.15);
+}
+
+.multiplier-row:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.multiplier-dice {
+  font-size: 26px;
+  color: #fff;
+  min-width: 46px;
+  text-align: center;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+}
+
+.multiplier-label {
+  flex: 1;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 16px;
+  color: #ccc;
+}
+
+.multiplier-value {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 18px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Win overlay ─────────────────────────────────────────────────────────── */
+.win-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 900;
+    flex-direction: column;
+}
+
+.win-overlay.active {
+    display: flex;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.win-lights {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+    animation: pulse-gold 1s infinite;
+}
+
+@keyframes pulse-gold {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.win-content {
+    text-align: center;
+    z-index: 10;
+}
+
+.win-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 48px;
+    color: #00ff00;
+    margin: 0 0 20px 0;
+    text-shadow: 0 0 30px rgba(0, 255, 0, 1), 0 0 60px rgba(0, 255, 0, 0.6);
+    animation: win-bounce 0.5s ease-out;
+}
+
+@keyframes win-bounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.win-amount {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 32px;
+    color: #ffd700;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 1);
+}
+
+/* ── Lose overlay ────────────────────────────────────────────────────────── */
+.lose-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 900;
+    flex-direction: column;
+}
+
+.lose-overlay.active {
+    display: flex;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.lose-lights {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,0,0,0.3) 0%, transparent 70%);
+    animation: pulse-red-bg 1s infinite;
+}
+
+@keyframes pulse-red-bg {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.lose-content {
+    text-align: center;
+    z-index: 10;
+}
+
+.lose-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 48px;
+    color: #ff0000;
+    margin: 0;
+    text-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 60px rgba(255, 0, 0, 0.6);
+    animation: lose-shake 0.5s ease-out;
+}
+
+@keyframes lose-shake {
+    0% { transform: translateX(-20px); }
+    25% { transform: translateX(20px); }
+    50% { transform: translateX(-20px); }
+    75% { transform: translateX(20px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ── Apuesta slider ───────────────────────────────────────────────────────── */
+.apuesta-container {
+  text-align: center;
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  z-index: 100;
+}
+
+.apuesta-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+}
+
+#apuesta-actual {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+  animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 68, 68, 0.8); }
+  50% { text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 30px rgba(255, 68, 68, 0.6); }
+}
+
+.apuesta-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.apuesta-min,
+.apuesta-max {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.custom-slider {
+    position: relative;
+    width: min(80vw, 300px);
+    height: clamp(30px, 5vw, 40px);
+    cursor: pointer;
+}
+
+.slider-track {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 12px;
+  background: #333;
+  border: 3px solid #ffd700;
+}
+
+.slider-progress {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 12px;
+  background: linear-gradient(to right, #ffd700, #ffaa00);
+  pointer-events: none;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background: #ffd700;
+  cursor: grab;
+  border: 3px solid #8B6914;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.slider-thumb:active {
+  cursor: grabbing;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+    .multiplier-panel {
+        position: fixed;
+        left: 10px;
+        width: clamp(120px, 22vw, 180px);
+        padding: 10px 12px;
+    }
+
+    .multiplier-title {
+        font-size: 14px;
+    }
+
+    .multiplier-value {
+        font-size: 28px;
+    }
+
+    .dice-container {
+        gap: clamp(16px, 6vw, 40px);
+    }
+
+    .casino-floor {
+        padding-top: 8vh;
+    }
+
+    .hud {
+        margin-bottom: 20px;
+    }
+
+    .status-bubble {
+        min-width: 100px;
+        font-size: 0.8rem;
+    }
+
+    .bet-display {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .multiplier-panel {
+        position: fixed;
+        top: auto;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(200px, 60vw);
+        padding: 8px 10px;
+    }
+
+    .dice-container {
+        gap: 12px;
+    }
+
+    .hud {
+        margin-bottom: 10px;
+    }
+
+    .apuesta-container {
+        bottom: 10px;
+    }
+
+    .custom-slider {
+        height: 24px;
+    }
+
+    .win-text,
+    .lose-text {
+        font-size: clamp(20px, 8vw, 36px);
+    }
+}

@@ -1,0 +1,377 @@
+.tutorial-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: tutFadeIn 0.4s ease;
+}
+
+.tutorial-overlay.active {
+    display: flex;
+}
+
+.tutorial-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    max-width: 702px;
+    width: 90%;
+    position: relative;
+}
+
+.tutorial-character-wrapper {
+    flex-shrink: 0;
+    width: 216px;
+    height: 0px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 2;
+}
+
+.tutorial-character {
+    width: min(1000px, 90vw);
+    height: auto;
+    aspect-ratio: 984 / 1460;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: tutCharBounce 2s ease-in-out infinite;
+    transform-origin: bottom center;
+    transition: transform 0.3s ease;
+}
+
+.tutorial-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@keyframes tutFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes tutCharBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(-2deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(-4px) rotate(2deg); }
+}
+
+.tutorial-character.step-happy {
+    animation: tutCharHappy 1.5s ease-in-out infinite;
+}
+
+@keyframes tutCharHappy {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    20% { transform: translateY(-12px) rotate(-5deg); }
+    40% { transform: translateY(-6px) rotate(3deg); }
+    60% { transform: translateY(-10px) rotate(-2deg); }
+    80% { transform: translateY(-4px) rotate(4deg); }
+}
+
+.tutorial-character.step-point {
+    animation: tutCharPoint 1.8s ease-in-out infinite;
+}
+
+@keyframes tutCharPoint {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    30% { transform: translateY(-6px) translateX(4px) rotate(3deg); }
+    60% { transform: translateY(-8px) translateX(2px) rotate(1deg); }
+}
+
+.tutorial-character.step-wiggle {
+    animation: tutCharWiggle 0.8s ease-in-out;
+}
+
+@keyframes tutCharWiggle {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(-8deg); }
+    40% { transform: rotate(8deg); }
+    60% { transform: rotate(-6deg); }
+    80% { transform: rotate(6deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.tutorial-character.step-celebrate {
+    animation: tutCharCelebrate 1.2s ease-in-out infinite;
+}
+
+@keyframes tutCharCelebrate {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-14px) scale(1.05) rotate(-3deg); }
+    50% { transform: translateY(-4px) scale(1) rotate(0deg); }
+    75% { transform: translateY(-10px) scale(1.03) rotate(3deg); }
+}
+
+.tutorial-speech {
+    position: relative;
+    background: linear-gradient(160deg, #1a3a1a, #0d260d);
+    border: 7px solid #4CAF50;
+    padding: 24px 28px;
+    flex: 1;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3), inset 0 0 20px rgba(76, 175, 80, 0.08);
+    margin-left: -10px;
+}
+
+.speech-arrow {
+    position: absolute;
+    left: -18px;
+    bottom: 40px;
+    width: 0;
+    height: 0;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    border-right: 18px solid #0d260d;
+    z-index: 1;
+}
+
+.speech-arrow::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: -10px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 13px solid #4CAF50;
+}
+
+.speech-bubble {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0;
+}
+
+.speech-bubble p {
+    font-family: 'Pixelify Sans', cursive;
+    font-size: 24px;
+    color: #e8f5e9;
+    text-align: center;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.speech-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 6px;
+    border-top: 1px solid rgba(76, 175, 80, 0.25);
+}
+
+.tutorial-step {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 22px;
+    color: #81c784;
+}
+
+.speech-buttons {
+    display: flex;
+    gap: 14px;
+}
+
+.speech-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 0px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.15s;
+    text-transform: uppercase;
+}
+
+.speech-btn:hover {
+    transform: scale(1.08);
+}
+
+.speech-btn-skip {
+    background: #444;
+    color: #999;
+    border: 4px solid #666;
+}
+
+.speech-btn-skip:hover {
+    background: #666;
+    color: #ddd;
+}
+
+.speech-btn-next {
+    background: linear-gradient(145deg, #4CAF50, #2E7D32);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.4);
+}
+
+.speech-btn-next:hover {
+    box-shadow: 0 5px 18px rgba(76, 175, 80, 0.6);
+}
+
+.speech-btn-finish {
+    background: linear-gradient(145deg, #FF9800, #E65100);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(255, 152, 0, 0.4);
+}
+
+.speech-btn-finish:hover {
+    box-shadow: 0 5px 18px rgba(255, 152, 0, 0.6);
+}
+
+@keyframes tutTextPop {
+    0% { transform: scale(0.92); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.speech-bubble.pop p {
+    animation: tutTextPop 0.25s ease-out;
+}
+
+.tut-no-mostrar {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.tut-no-mostrar-label {
+    margin-left: 222px;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 25px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 0 8px rgba(255, 50, 50, 0.4);
+    transition: text-shadow 0.2s ease;
+    position: relative;
+    user-select: none;
+}
+
+.tut-no-mostrar-label:hover {
+    text-shadow: 0 0 14px rgba(255, 50, 50, 0.7);
+}
+
+.tut-no-mostrar-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ff3333;
+}
+
+.tut-no-mostrar-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(-240% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #ccc;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 20px;
+    padding: 8px 9px;
+    border-radius: 0px;
+    border: 4px solid #555;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 10000;
+    margin-left: 20px;
+}
+
+.tut-no-mostrar-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #555;
+}
+
+.tut-no-mostrar-label:hover .tut-no-mostrar-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+    .tutorial-container {
+        width: 95%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tutorial-character-wrapper {
+        width: 140px;
+    }
+
+    .tutorial-character {
+        width: min(1000px, 85vw);
+    }
+
+    .tutorial-speech {
+        margin-left: 0;
+        min-height: 140px;
+        padding: 16px 18px;
+    }
+
+    .speech-bubble p {
+        font-size: 18px;
+    }
+
+    .speech-arrow {
+        display: none;
+    }
+
+    .speech-btn {
+        padding: 8px 14px;
+        font-size: 11px;
+    }
+
+    .tutorial-step {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tutorial-character-wrapper {
+        width: 100px;
+    }
+
+    .tutorial-speech {
+        min-height: 120px;
+        padding: 12px 14px;
+    }
+
+    .speech-bubble p {
+        font-size: 14px;
+    }
+
+    .speech-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .speech-buttons {
+        gap: 8px;
+    }
+
+    .tut-no-mostrar-label {
+        margin-left: 0;
+        font-size: 14px;
+    }
+}

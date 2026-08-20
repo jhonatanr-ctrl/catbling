@@ -1,0 +1,13 @@
+api/email_config.php
+logs/
+*.log
+# Ignorar todos los videos
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Ignorar todos los audios
+*.mp3
+*.wav
+*.ogg
