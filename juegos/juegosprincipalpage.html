@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Juegos</title>
+    <link rel="stylesheet" href="../resources/stylesheetglobal.css">
+    <link rel="stylesheet" href="../resources/help.css">
+    <link rel="stylesheet" href="../resources/tutorial.css">
+    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+
+<body data-page="juegos">
+
+  <video class="video-bg" autoplay muted loop>
+      <source src="./resources/assets/Casino Royale Gold 4k loop.mp4" type="video/mp4">
+  </video>
+
+  <audio id="bgMusic" loop autoplay>
+      <source src="./assets/Fun N64PS1 Music - Berrylife City.mp3" type="audio/mp3">
+  </audio>
+
+  <div class="menu-buttons-container">
+    <a href="../principalpage.html" class="menu-button">
+      <img id="menu-img" src="./assets/salida1.png">
+    </a>
+  </div>
+
+  <div class="monedas-ui">
+      <img id="icono-monedas"
+           src="../resources/assets/yukonocoins.png"
+           data-src-vacio="../resources/assets/yukonocoins.png"
+           data-src-lleno="../resources/assets/yukocoins.png">
+      <p id="cantidad-monedas">0</p>
+  </div>
+
+  <img src="../resources/assets/settings.png" id="btn-opciones">
+  <div id="overlay-menu"></div>
+
+  <div id="menu-opciones">
+    <div class="menu-box">
+      <h2 data-i18n="opciones">OPCIONES</h2>
+      <div class="menu-scroll">
+      <div class="opcion-item">
+        <span data-i18n="musica">Música</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarVolumen(-1)">-</button>
+          <span id="vol-musica"></span>
+          <button onclick="cambiarVolumen(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="efectos">Efectos</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarEfectos(-1)">-</button>
+          <span id="vol-efectos"></span>
+          <button onclick="cambiarEfectos(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="animaciones">Animaciones</span>
+        <div class="grupo-botones">
+          <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="idioma">Idioma</span>
+        <div class="grupo-botones">
+          <button onclick="setIdioma('es')">ES</button>
+          <button onclick="setIdioma('en')">EN</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="config">Configuración</span>
+        <div class="grupo-botones">
+          <button onclick="resetear()">RESET</button>
+        </div>
+      </div>
+      <div class="opcion-item" id="opcion-cerrar-sesion">
+        <span data-i18n="cerrar_sesion">Cerrar Sesión</span>
+        <div class="grupo-botones">
+          <button onclick="mostrarConfirmacionCerrarSesion()">SALIR</button>
+        </div>
+      </div>
+      </div>
+      <img src="../resources/assets/exit.png" id="cerrar-menu">
+    </div>
+  </div>
+
+  <div class="juegos-container">
+    <div class="titulo-container">
+      <h1 class="titulo" id="titulo">TÍTULO</h1>
+      <p class="subtitulo" id="subtitulo">Subtítulo</p>
+    </div>
+
+    <div class="carousel">
+      <button class="flecha-izq" id="flecha-izq">
+        <img src="./assets/arrow-izq.png" alt="Anterior">
+      </button>
+
+      <div class="imagen-container">
+        <img src="" id="imagen-principal" alt="Imagen principal">
+      </div>
+
+      <button class="flecha-der" id="flecha-der">
+        <img src="./assets/arrow-der.png" alt="Siguiente">
+      </button>
+    </div>
+  </div>
+
+  <div id="tutorial-overlay" class="tutorial-overlay">
+    <div class="tutorial-container">
+      <div class="tutorial-character-wrapper">
+        <div class="tutorial-character" id="tutorial-character">
+          <img src="../resources/assets/3.png" alt="Personaje" id="tutorial-img">
+        </div>
+      </div>
+      <div class="tutorial-speech">
+        <div class="speech-arrow"></div>
+        <div class="speech-bubble">
+          <p id="tutorial-text"></p>
+        </div>
+        <div class="speech-footer">
+          <span id="tutorial-step" class="tutorial-step">1/5</span>
+          <div class="speech-buttons">
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎒 BAG OVERLAY -->
+  <div id="bag-overlay">
+      <div id="bag-content">
+          <div id="bag-items-container"></div>
+          <img src="../resources/assets/exit.png" id="bag-close-btn" onclick="window.cerrarBolsa()">
+      </div>
+  </div>
+
+  <!-- ✅ ITEM USE CONFIRMATION -->
+  <div id="item-use-overlay">
+      <div id="item-use-content"></div>
+  </div>
+
+  <script src="../resources/help.js"></script>
+  <script src="../resources/tutorial.js"></script>
+  <script src="./resources/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../resources/supabase-client.js"></script>
+  <script src="../resources/api.js"></script>
+  <script src="../resources/guest.js?v=2"></script>
+  <script src="../resources/coins.js"></script>
+  <script src="../resources/config.js?v=2"></script>
+  <script src="../resources/script.js"></script>
+
+    <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
+    <div id="confirmacion-cerrar-sesion">
+        <div class="confirmacion-contenido">
+            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <div class="confirmacion-botones">
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

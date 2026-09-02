@@ -1,0 +1,16 @@
+api/email_config.php
+logs/
+*.log
+# Ignorar todos los videos
+# *.mp4  (comentado para permitir 9438466.mp4 en deploy)
+*.mov
+*.avi
+*.webm
+
+# Ignorar todos los audios
+*.mp3
+*.wav
+*.ogg
+supabase/.temp/
+api/tokens.json
+api/reset_tokens.json

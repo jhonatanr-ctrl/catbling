@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Let's go catbling!</title>
+    <link rel="stylesheet" href="./resources/stylesheetglobal.css">
+    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="stylesheet" href="./resources/tutorial.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body data-page="principal">
+
+    <!-- ðŸŽ¥ Video de fondo -->
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="./resources/assets/Casino poker playing cards suits icons diamonds, clovers, hearts, spades template 4K 60_00_Min_ Free.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bgMusic" loop muted>
+      <source src="./resources/assets/sounds/Epic 8-bit Electro Gaming Music Mix  Royalty Free Chiptune Music.mp3" type="audio/mpeg">
+      Tu navegador no soporta audio.
+    </audio>
+
+    <!-- ðŸŒ‘ Oscurecer -->
+    <div class="overlay"></div>
+
+    <!-- TÃTULO -->
+
+    <header class="titulo-principal">
+        <h1>LET'S GO CATBLING</h1>
+    </header>
+
+    <div class="titulo-container">
+        <h2 id="subtitulo"></h2>
+    </div>
+
+    <div class="monedas-ui">
+        <img id="icono-monedas" src="./resources/assets/yukonocoins.png" data-src-vacio="./resources/assets/yukonocoins.png" data-src-lleno="./resources/assets/yukocoins.png">
+        <p id="cantidad-monedas">0</p>
+    </div>
+<!-- âš™ï¸ BOTÓN -->
+<img src="./resources/assets/settings.png" id="btn-opciones">
+
+<!-- ðŸŒ‘ OVERLAY -->
+<div id="overlay-menu"></div>
+
+<!-- ðŸ“œ MENÚ -->
+<div id="menu-opciones">
+
+  <!-- ðŸ”² CAJA CENTRAL -->
+<div class="menu-box">
+
+  <h2>OPCIONES</h2>
+
+  <div class="menu-scroll">
+
+  <!-- ðŸŽµ MÚSICA -->
+  <div class="opcion-item">
+    <span>Música</span>
+    <div class="grupo-botones">
+      <button onclick="cambiarVolumen(-1)">-</button>
+      <span id="vol-musica"></span>
+      <button onclick="cambiarVolumen(1)">+</button>
+    </div>
+  </div>
+
+  <!-- ðŸ”Š EFECTOS -->
+  <div class="opcion-item">
+    <span>Efectos</span>
+    <div class="grupo-botones">
+      <button onclick="cambiarEfectos(-1)">-</button>
+      <span id="vol-efectos"></span>
+      <button onclick="cambiarEfectos(1)">+</button>
+    </div>
+  </div>
+
+  <!-- âœ¨ ANIMACIONES -->
+  <div class="opcion-item">
+    <span>Animaciones</span>
+    <div class="grupo-botones">
+      <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
+    </div>
+  </div>
+
+  <!-- ðŸŒ IDIOMA -->
+  <div class="opcion-item">
+    <span>Idioma</span>
+    <div class="grupo-botones">
+      <button onclick="setIdioma('es')">ES</button>
+      <button onclick="setIdioma('en')">EN</button>
+    </div>
+  </div>
+
+  <!-- âš ï¸ RESET -->
+  <div class="opcion-item">
+    <span>Configuración</span>
+    <div class="grupo-botones">
+      <button onclick="resetear()">RESET</button>
+    </div>
+  </div>
+
+  <!-- ðŸšª CERRAR SESIÓN -->
+  <div class="opcion-item" id="opcion-cerrar-sesion">
+    <span>Cerrar Sesión</span>
+    <div class="grupo-botones">
+      <button onclick="mostrarConfirmacionCerrarSesion()">SALIR</button>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- âŒ cerrar -->
+  <img src="./resources/assets/exit.png" id="cerrar-menu">
+
+</div>
+
+</div>
+
+    <!-- OPCIONES -->
+    <div class="opciones">
+
+        <a href="./preguntas/preguntasinicialpage.html" class="opcion" data-texto="Preguntas">
+            <div class="animacion">
+                <img src="./resources/assets/preguntas.png">
+            </div> 
+        </a>
+
+        <a href="./juegos/juegosprincipalpage.html" class="opcion opcion-central" data-texto="Casino">
+            <div class="animacion">
+                <img src="./resources/assets/juegos.png">
+            </div>
+        </a>
+
+        <a href="./tienda/tienda.html" class="opcion" data-texto="Tienda">
+            <div class="animacion">
+                <img src="./resources/assets/tienda.png">
+            </div>  
+        </a>
+
+    </div>
+
+    <!-- RULETA -->
+    <div class="contenedor-imagen-ruleta">
+        <div class="ruleta-animacion">
+            <img src="./resources/assets/ruleta.png" id="imagen-giratoria">
+        </div>
+    </div>
+
+    <!-- âš ï¸ CONFIRMACIÓN CERRAR SESIÓN -->
+    <div id="confirmacion-cerrar-sesion">
+        <div class="confirmacion-contenido">
+            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <div class="confirmacion-botones">
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ðŸ” AUTH OVERLAY (LOGIN / REGISTER) -->
+    <div id="auth-overlay" class="hidden">
+        <div class="auth-container">
+            <h2 class="auth-title" data-i18n="iniciar_sesion">INICIAR SESIÓN</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" data-i18n="iniciar_sesion">INICIAR SESIÓN</button>
+                <button class="auth-tab" data-tab="register" data-i18n="registrarse">REGISTRARSE</button>
+            </div>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Correo electrónico" required>
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" placeholder="Contraseña" required>
+                    <span class="toggle-password" data-target="login-password">ðŸ‘</span>
+                </div>
+                <div class="auth-error" id="login-error"></div>
+                <button type="submit" data-i18n="entrar">ENTRAR</button>
+                <a href="#" class="forgot-password-link" id="forgot-password-link" data-i18n="forgot_link">¿Olvidaste tu contraseña?</a>
+            </form>
+            <form id="register-form" style="display:none;">
+                <input type="text" id="register-username" placeholder="Nombre de usuario" required>
+                <input type="email" id="register-email" placeholder="Correo electrónico" required>
+                <div class="password-wrapper">
+                    <input type="password" id="register-password" placeholder="Contraseña" required>
+                    <span class="toggle-password" data-target="register-password">ðŸ‘</span>
+                </div>
+                <div class="password-wrapper">
+                    <input type="password" id="register-confirm" placeholder="Confirmar contraseña" required>
+                    <span class="toggle-password" data-target="register-confirm">ðŸ‘</span>
+                </div>
+                <div class="auth-error" id="register-error"></div>
+                <button type="submit" data-i18n="registrarse">REGISTRARSE</button>
+            </form>
+
+            <!-- ðŸ”‘ RECUPERAR CONTRASEÑA -->
+            <div id="forgot-password-form" style="display:none;">
+                <p class="forgot-desc" data-i18n="forgot_desc">Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
+                <input type="email" id="forgot-email" placeholder="Correo electrónico" required>
+                <div class="auth-error" id="forgot-error"></div>
+                <div class="auth-success" id="forgot-success" style="display:none;"></div>
+                <button id="forgot-submit-btn" data-i18n="enviar">ENVIAR</button>
+                <a href="#" class="forgot-back-link" id="forgot-back-link" data-i18n="back_login">← Volver a inicio de sesión</a>
+            </div>
+
+            <!-- ðŸ” RESTABLECER CONTRASEÑA -->
+            <div id="reset-password-form" style="display:none;">
+                <h3 class="reset-title" data-i18n="reset_title">RESTABLECER CONTRASEÑA</h3>
+                <p class="forgot-desc">Ingresa tu nueva contraseña.</p>
+                <div class="password-wrapper">
+                    <input type="password" id="reset-password" placeholder="Nueva contraseña" required>
+                    <span class="toggle-password" data-target="reset-password">ðŸ‘</span>
+                </div>
+                <div class="password-wrapper">
+                    <input type="password" id="reset-confirm" placeholder="Confirmar nueva contraseña" required>
+                    <span class="toggle-password" data-target="reset-confirm">ðŸ‘</span>
+                </div>
+                <div class="auth-error" id="reset-error"></div>
+                <div class="auth-success" id="reset-success" style="display:none;"></div>
+                <button id="reset-submit-btn" data-i18n="restablecer">RESTABLECER</button>
+                <a href="#" class="forgot-back-link" id="reset-back-link" data-i18n="back_login">← Volver a inicio de sesión</a>
+            </div>
+
+            </div>
+    </div>
+
+    <!-- ðŸŽ’ BAG OVERLAY -->
+    <div id="bag-overlay">
+        <div id="bag-content">
+            <div id="bag-items-container"></div>
+            <img src="./resources/assets/exit.png" id="bag-close-btn" onclick="window.cerrarBolsa()">
+        </div>
+    </div>
+
+    <!-- âœ… ITEM USE CONFIRMATION -->
+    <div id="item-use-overlay">
+        <div id="item-use-content"></div>
+    </div>
+
+    <!-- ðŸ“– TUTORIAL OVERLAY -->
+    <div id="tutorial-overlay" class="tutorial-overlay">
+        <div class="tutorial-container">
+            <div class="tutorial-character-wrapper">
+                <div class="tutorial-character" id="tutorial-character">
+                    <img src="./resources/assets/image.jpg" alt="Personaje" id="tutorial-img">
+                </div>
+            </div>
+            <div class="tutorial-speech">
+                <div class="speech-arrow"></div>
+                <div class="speech-bubble">
+                    <p id="tutorial-text"></p>
+                </div>
+                <div class="speech-footer">
+                    <span id="tutorial-step" class="tutorial-step">1/5</span>
+                    <div class="speech-buttons">
+                        <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
+                        <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="resources/supabase-client.js"></script>
+    <script src="resources/api.js"></script>
+    <script src="resources/guest.js?v=2"></script>
+    <script src="resources/coins.js"></script>
+    <script src="resources/config.js?v=2"></script>
+    <script src="resources/tutorial.js"></script>
+    <script src="resources/script.js"></script>
+    
+</body>
+</html>
+

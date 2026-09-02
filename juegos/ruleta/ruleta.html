@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ruleta</title>
+    <link rel="stylesheet" href="../../resources/stylesheetglobal.css">
+    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="stylesheet" href="../../resources/help.css">
+    <link rel="stylesheet" href="../../resources/tutorial.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start 2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <video class="video-bg" autoplay muted loop>
+      <source src="./resources/assets/4k Golden Dust Particles Falling Relaxing Meditation Background Screensaver.mp4" type="video/mp4">
+  </video>
+
+  <audio id="bgMusic" loop autoplay>
+      <source src="./resources/assets/noname.mp3" type="audio/mp3">
+  </audio>
+
+  <div class="menu-buttons-container">
+    <a href="../juegosprincipalpage.html" class="menu-button">
+      <img id="menu-img" src="../assets/salida1.png">
+    </a>
+  </div>
+
+  <div class="monedas-ui">
+      <img id="icono-monedasm"
+           src="../../resources/assets/yukonocoins.png"
+           data-src-vacio="../../resources/assets/yukonocoins.png"
+           data-src-lleno="../../resources/assets/yukocoins.png">
+      <p id="cantidad-monedasm">0</p>
+  </div>
+
+  <img src="../../resources/assets/settings.png" id="btn-opciones">
+  <div id="overlay-menu"></div>
+
+  <div id="bag-overlay">
+    <div id="bag-content">
+      <div id="bag-items-container"></div>
+    </div>
+  </div>
+  <div id="item-use-overlay">
+    <div id="item-use-content"></div>
+  </div>
+
+  <div id="menu-opciones">
+    <div class="menu-box">
+      <h2 data-i18n="opciones">OPCIONES</h2>
+      <div class="menu-scroll">
+      <div class="opcion-item">
+        <span data-i18n="musica">Música</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarVolumen(-1)">-</button>
+          <span id="vol-musica"></span>
+          <button onclick="cambiarVolumen(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="efectos">Efectos</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarEfectos(-1)">-</button>
+          <span id="vol-efectos"></span>
+          <button onclick="cambiarEfectos(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="animaciones">Animaciones</span>
+        <div class="grupo-botones">
+          <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="idioma">Idioma</span>
+        <div class="grupo-botones">
+          <button onclick="setIdioma('es')">ES</button>
+          <button onclick="setIdioma('en')">EN</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="config">Configuración</span>
+        <div class="grupo-botones">
+          <button onclick="resetear()">RESET</button>
+        </div>
+      </div>
+      <div class="opcion-item" id="opcion-cerrar-sesion">
+        <span data-i18n="cerrar_sesion">Cerrar Sesión</span>
+        <div class="grupo-botones">
+          <button onclick="mostrarConfirmacionCerrarSesion()">SALIR</button>
+        </div>
+      </div>
+      </div>
+      <img src="../../resources/assets/exit.png" id="cerrar-menu">
+    </div>
+  </div>
+
+  <div class="game-container">
+    <h1 class="titulo"> RULETA</h1>
+
+    <div class="spin-button-wrapper">
+      <button class="spin-btn" id="spin-button">
+        <span class="spin-text">GIRAR</span>
+      </button>
+    </div>
+
+    <div class="main-layout">
+      <div class="left-panel">
+        <div class="column-buttons">
+          <button class="column-btn" data-column="1">
+            <span class="btn-text">Col 1</span>
+          </button>
+          <button class="column-btn" data-column="2">
+            <span class="btn-text">Col 2</span>
+          </button>
+          <button class="column-btn" data-column="3">
+            <span class="btn-text">Col 3</span>
+          </button>
+        </div>
+        <div class="color-buttons-container">
+          <button class="color-btn" id="btn-rojo">
+            <span class="btn-text">ROJO</span>
+          </button>
+          <button class="color-btn" id="btn-negro">
+            <span class="btn-text">NEGRO</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="center-panel">
+        <div class="pixel-roulette" id="pixel-roulette">
+          <canvas id="roulette-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="roulette-table-rotated" id="roulette-table">
+          <div class="zero-cell" data-number="0">0</div>
+          <div class="numbers-grid-rotated" id="numbers-grid-rotated"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-display" id="result-display">
+      <p id="result-text">¡Elige tus números para jugar!</p>
+      <p id="selected-count">0 números seleccionados</p>
+    </div>
+
+    <p class="apuesta-text">Apuesta: <span id="apuesta-actual">10</span> monedas</p>
+    
+    <div class="apuesta-slider-wrapper">
+      <span class="apuesta-min">6</span>
+      <input type="number" class="bet-input" id="bet-input" value="10" min="6" max="500" step="1" inputmode="numeric">
+      <span class="apuesta-max">500</span>
+    </div>
+  </div>
+
+  <div class="win-overlay" id="win-overlay">
+    <div class="win-lights" id="win-lights"></div>
+    <div class="win-content">
+      <h2 class="win-text" id="win-text">¡GANASTE!</h2>
+      <p class="win-amount" id="win-amount">+0</p>
+    </div>
+  </div>
+
+  <div class="lose-overlay" id="lose-overlay">
+    <div class="lose-lights"></div>
+    <div class="lose-content">
+      <h2 class="lose-text" id="lose-text">¡PERDISTE!</h2>
+    </div>
+  </div>
+
+  <div id="tutorial-overlay" class="tutorial-overlay">
+    <div class="tutorial-container">
+      <div class="tutorial-character-wrapper">
+        <div class="tutorial-character" id="tutorial-character">
+          <img src="../../resources/assets/1.png" alt="Personaje" id="tutorial-img">
+        </div>
+      </div>
+      <div class="tutorial-speech">
+        <div class="speech-arrow"></div>
+        <div class="speech-bubble">
+          <p id="tutorial-text"></p>
+        </div>
+        <div class="speech-footer">
+          <span id="tutorial-step" class="tutorial-step">1/5</span>
+          <div class="speech-buttons">
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../resources/tutorial.js"></script>
+  <script src="../../resources/api.js"></script>
+  <script src="../../resources/guest.js?v=2"></script>
+  <script src="../../resources/coins.js"></script>
+  <script src="./resources/script.js"></script>
+  <script src="../../resources/config.js?v=2"></script>
+  <script src="../../resources/help.js"></script>
+
+    <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
+    <div id="confirmacion-cerrar-sesion">
+        <div class="confirmacion-contenido">
+            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <div class="confirmacion-botones">
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

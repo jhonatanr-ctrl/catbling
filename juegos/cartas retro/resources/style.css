@@ -1,0 +1,725 @@
+/* ── Fondo negro ─────────────────────────────────────────────────────────── */
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+/* ── Balatro - Poker Cartas ───────────────────────────────────────────────── */
+.video-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.3) blur(3px);
+    z-index: -1;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.balatro-floor {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 12vh;
+    min-height: 100vh;
+    position: relative;
+    z-index: 100;
+}
+
+.balatro-hud {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.balatro-hud {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px 18px;
+    border-radius: 0px;
+    border: 3.5px solid #d4af37;
+    color: white;
+}
+
+.balatro-hud .label {
+    display: block;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: #ffd700;
+}
+
+.balatro-hud .value {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.status-bubble {
+    color: white;
+    font-size: 0.9rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(212, 175, 55, 0.2);
+    padding: 6px 16px;
+    border-radius: 0px;
+    font-family: 'Pixelify Sans', sans-serif;
+    min-width: 160px;
+}
+
+/* ── Mesa de cartas ──────────────────────────────────────────────────────── */
+.card-table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: clamp(1px, -7vw, 30px);
+    flex-wrap: wrap;
+    min-height: 170px;
+    min-width: unset;
+    width: 100%;
+    max-width: 798px;
+    position: relative;
+    margin-bottom: 51px;
+}
+
+.card-placeholder {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+}
+
+/* ── Cartas estilo real ──────────────────────────────────────────────────── */
+.card {
+    width: clamp(60px, 12vw, 100px);
+    height: clamp(84px, 17vw, 140px);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: white;
+    /* El JS ya fija animation-delay por carta (mostrarCartas), pero nunca
+       había una propiedad "animation" que disparara @keyframes card-deal:
+       las cartas aparecían de golpe, sin la animación de reparto prevista. */
+    animation: card-deal 0.4s ease both;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+@keyframes card-deal {
+    from { transform: translateY(-80px) scale(0.5) rotate(-5deg); opacity: 0; }
+    to   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+
+.card .card-corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Georgia', serif;
+}
+
+.card .card-corner.top {
+    top: 5px;
+    left: 6px;
+}
+
+.card .card-corner.bottom {
+    bottom: 5px;
+    right: 6px;
+    transform: rotate(180deg);
+}
+
+.card .card-suit-big {
+    font-size: 44px;
+    margin-top: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.card.red .card-corner,
+.card.red .card-suit-big {
+    color: #cc0000;
+}
+
+.card.black .card-corner,
+.card.black .card-suit-big {
+    color: #1a1a1a;
+}
+
+.card.green .card-corner,
+.card.green .card-suit-big {
+    color: #1a7a2a;
+}
+
+.card.seleccionada {
+    box-shadow: 0 0 15px #ffd700 inset, 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid #ffd700;
+}
+
+/* ── Joker ───────────────────────────────────────────────────────────────── */
+.card.joker {
+    background: linear-gradient(145deg, #fffde7 0%, #f5f0d0 100%);
+    border-color: #b8960f;
+}
+
+.card.joker .card-corner {
+    font-size: 16px;
+}
+
+.card .card-center-joker {
+    font-size: 50px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* ── Tabla de pagos ───────────────────────────────────────────────────────── */
+.payout-info {
+    background: #1a3a2a;
+    color: white;
+    border: 2px solid white;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    min-width: unset;
+    width: min(90vw, 394px);
+    padding: clamp(6px, 0vw, 33px) clamp(12px, 4vw, 11px);
+}
+
+.payout-info span[data-i18n] {
+    color: white !important;
+}
+
+.payout-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.payout-row.active {
+    color: #ffd700;
+    background: rgba(255,215,0,0.15);
+    font-weight: bold;
+}
+
+.payout-row span:last-child {
+    color: #ffd700;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    margin-left: 8px;
+}
+
+#cambios-disponibles{
+    margin-right: 22px;
+}
+
+/* ── Botón ───────────────────────────────────────────────────────────────── */
+.glow-button {
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: white;
+    padding: 9px 36px;
+    border: none;
+    border-radius: 0px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    font-family: 'Press Start 2P', cursive;
+    margin-bottom: 6px;
+}
+
+.glow-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.glow-button:active {
+    transform: translateY(2px);
+}
+
+.glow-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Sistema de apuesta (slider) ─────────────────────────────────────────── */
+.apuesta-container {
+  text-align: center;
+  position: fixed;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  z-index: 50;
+}
+
+.apuesta-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+}
+
+#apuesta-actual {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+  animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 68, 68, 0.8); }
+  50% { text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 30px rgba(255, 68, 68, 0.6); }
+}
+
+.apuesta-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.apuesta-min,
+.apuesta-max {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.bet-input {
+    width: min(45vw,120px);
+    height:30px;
+    font-size:11px;
+    background-color: #ffcc00;
+    border: 3px solid #D99A00;
+    border-radius: 0;
+    color:#1a1a1a;
+    text-align:center;
+    outline:none;
+}
+.bet-input::-webkit-outer-spin-button,
+.bet-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin:0;
+}
+.bet-input {
+  -moz-appearance: textfield;
+}
+.bet-input:hover { background-color:#ffd633; }
+.bet-input:focus { border-color:#ff8c00; box-shadow:0 0 8px rgba(217,154,0,.7); }
+
+.menu-button {
+    position: fixed;
+    bottom: -7px;
+    left: 21px;
+    width: 75px;
+    z-index: 600;
+    cursor: pointer;
+    display: block;
+    line-height: 0;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    pointer-events: auto;
+}
+
+.menu-button:hover {
+    transform: scale(1.1);
+}
+
+.menu-button img,
+#menu-img {
+    width: 80%;
+    height: auto;
+    display: block;
+}
+
+.menu-buttons-container {
+    position: fixed;
+    bottom: -5px;
+    left: 10px;
+    z-index: 600;
+    gap: 10px;
+}
+
+/* ── Win/Lose overlays ────────────────────────────────────────────────────── */
+#win-overlay, #lose-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+#win-overlay.active, #lose-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+#win-overlay { background: radial-gradient(ellipse at center, rgba(0,50,0,0.6), rgba(0,0,0,0.85)); }
+#lose-overlay { background: radial-gradient(ellipse at center, rgba(50,0,0,0.6), rgba(0,0,0,0.85)); }
+.overlay-content { text-align: center; padding: 40px 60px; border-radius: 20px; }
+#win-overlay .overlay-content {
+    animation: cr-pulse-win 1s ease-in-out infinite;
+}
+
+.overlay-win-text {
+    font-family: 'Press Start 2P', cursive;
+    color: gold;
+    font-size: 34px;
+    margin: 0;
+    text-shadow: 0 0 30px rgba(255,215,0,0.6);
+}
+.overlay-lose-text {
+    font-family: 'Press Start 2P', cursive;
+    color: #ff4444;
+    font-size: 34px;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(255,68,68,0.5);
+}
+.overlay-amount {
+    font-family: 'Press Start 2P', cursive;
+    color: #44ff88;
+    font-size: 30px;
+    margin: 15px 0 0;
+    text-shadow: 0 0 20px rgba(68,255,136,0.5);
+}
+@keyframes cr-pulse-win {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.3); }
+    50% { box-shadow: 0 0 60px rgba(255,215,0,0.6); }
+}
+
+/* ─── Overlay "No puedes hacer más cambios" ───
+   Se define aquí explícitamente position/display/z-index porque estos
+   overlays se crean dinámicamente en JS con className = 'overlay' pero
+   SIN clase '.active'. Si dependieran de una regla global .overlay que
+   los oculte por defecto (como win-overlay/lose-overlay simulan con
+   opacity+active), nunca se harían visibles. Al fijarlo aquí por ID
+   quedan garantizados independientemente de esa hoja global. */
+#overlay-no-mas-cambios,
+#overlay-confirmar-repartir {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    background: rgba(0,0,0,0.8);
+}
+#overlay-no-mas-cambios .overlay-content {
+    color: rgb(216, 0, 0);
+    padding: 20px 40px;
+    border-radius: 0;
+    min-width: 200px;
+    margin: 20px auto;
+}
+
+#overlay-no-mas-cambios .overlay-content p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 35px;
+    margin: 0;
+}
+
+/* ─── Overlay de confirmación de reparto ─── */
+#overlay-confirmar-repartir .overlay-content {
+    color: white;
+    padding: 20px 40px;
+    border-radius: 0;
+    min-width: 250px;
+    margin: 20px auto;
+    font-size: 30px;
+    line-height: 1.4;
+}
+
+#overlay-confirmar-repartir .confirmacion-botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+#overlay-confirmar-repartir .confirmacion-botones button {
+    background: #d4af37;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+#overlay-confirmar-repartir .confirmacion-botones button:hover {
+    background: #b8860b;
+    transform: translateY(-2px);
+}
+
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+    .balatro-floor {
+        padding-top: 8vh;
+    }
+
+    .balatro-hud {
+        width: min(92vw, 320px);
+        padding: 2px 10px;
+    }
+
+    .status-bubble {
+        min-width: 100px;
+        font-size: 0.8rem;
+    }
+
+    .menu-buttons-container,
+    .menu-button {
+        left: 8px;
+        bottom: 8px;
+    }
+
+    .menu-button {
+        width: 52px;
+    }
+
+    .card-table {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .payout-info {
+        width: min(92vw, 380px);
+        padding: 10px 14px;
+    }
+
+    .payout-row {
+        font-size: 15px;
+    }
+
+    .apuesta-container {
+        bottom: 18px;
+    }
+
+    .apuesta-text {
+        font-size: 11px;
+    }
+
+    .bet-input {
+        width: min(72vw, 260px);
+        height: 22px;
+        font-size: 11px;
+    }
+
+    .glow-button {
+        padding: 8px 26px;
+        font-size: 0.72rem;
+        margin-top: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .balatro-floor {
+        padding-top: 6vh;
+    }
+
+    .card-table {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .card {
+        width: clamp(48px, 10vw, 70px);
+        height: clamp(67px, 14vw, 98px);
+    }
+
+    .card .card-corner {
+        font-size: 10px;
+        top: 3px;
+        left: 4px;
+    }
+
+    .payout-info {
+        width: min(95vw, 360px);
+        padding: 10px 14px;
+    }
+
+    .payout-row {
+        font-size: 14px;
+    }
+
+    .payout-value {
+        font-size: 16px;
+    }
+
+    .bet-display {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .balatro-floor {
+        margin-bottom: -120px;
+    }
+
+    .balatro-hud {
+        flex-wrap: wrap;
+        gap: 8px;
+        width: min(90vw, 143px);
+    }
+
+    .status-bubble {
+        min-width: 0;
+        width: 100%;
+        font-size: 0.72rem;
+    }
+
+    .menu-buttons-container,
+    .menu-button {
+        position: fixed;
+        left: 10px;
+        bottom: -5px;
+        z-index: 600;
+    }
+
+    .menu-button {
+        width: 80px;
+    }
+
+    .card-table {
+        gap: 4px;
+        padding: 6px;
+        min-height: 120px;
+        margin-bottom: 18px;
+    }
+
+    .card {
+        width: clamp(36px, 9vw, 52px);
+        height: clamp(50px, 13vw, 73px);
+        border-radius: 6px;
+    }
+
+    .card .card-corner {
+        font-size: 7px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .payout-info {
+        width: min(88vw, 300px);
+        grid-template-columns: 1fr 1fr;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+
+    .payout-row {
+        font-size: 11px;
+    }
+
+    .payout-value {
+        font-size: 12px;
+    }
+
+    .apuesta-container {
+        position: static;
+        margin-top: 0px;
+        padding: 0px 6px 0;
+    }
+
+    .apuesta-text {
+        font-size: 10px;
+        line-height: 1.5;
+        margin-bottom: 4px;
+    }
+
+    .apuesta-slider-wrapper {
+        gap: 8px;
+    }
+
+    .bet-input {
+        display: block;
+        width: min(36vw, 197px);
+        margin: 6px 3px 6px;
+        font-size: 0.80rem;
+    }
+
+    #cambios-disponibles {
+        margin-right: 0;
+        display: inline-block;
+    }
+
+    .bet-display {
+        font-size: 12px;
+    }
+
+    .win-text,
+    .lose-text {
+        font-size: clamp(18px, 8vw, 28px);
+    }
+}
+
+@media (max-width: 480px) {
+    .balatro-hud {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .card-table {
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .card {
+        width: clamp(40px, 9vw, 52px);
+        height: clamp(56px, 13vw, 73px);
+        border-radius: 6px;
+    }
+
+    .card .card-corner {
+        font-size: 7px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .payout-info {
+        width: 92%;
+        padding: 11px 0px;
+        gap: 6px;
+    }
+
+    .payout-row {
+        font-size: 11px;
+    }
+
+    .payout-value {
+        font-size: 12px;
+    }
+
+    .bet-display {
+        font-size: 12px;
+    }
+
+    .win-text,
+    .lose-text {
+        font-size: clamp(18px, 8vw, 28px);
+    }
+}

@@ -1,0 +1,278 @@
+@keyframes flotar {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes entrar-derecha {
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes salir-izquierda {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes entrar-izquierda {
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes salir-derecha {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+}
+
+.video-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.4) blur(2px);
+    z-index: -1;
+}
+
+.menu-button {
+    position: fixed;
+    bottom: -7px;
+    left: 21px;
+    width: 75px;
+    z-index: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.menu-button:hover {
+    transform: scale(1.1);
+}
+
+.menu-button img {
+    width: 100%;
+}
+
+.menu-buttons-container {
+    position: fixed;
+    bottom: 20px;
+    left: 21px;
+    z-index: 600;
+}
+
+.juegos-container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.titulo-container {
+    text-align: center;
+    margin-bottom: 73px;
+    margin-top: -64px;
+}
+
+.titulo {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(24px, 5vw, 47px);
+    color: #ffd700;
+    margin: 107px 0 -9px 0;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.subtitulo {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: clamp(18px, 3.5vw, 30px);
+    color: white;
+    margin: 0;
+    padding-top: 18px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: flotar 3s ease-in-out infinite;
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+}
+
+.imagen-container {
+    width: min(503px, 65vw);
+    height: auto;
+    aspect-ratio: 503 / 301;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    padding: clamp(12px, 4vh, 40px) 0;
+}
+
+.imagen-container img {
+    max-width: 93%;
+    max-height: 146%;
+    object-fit: contain;
+    border-radius: 15px
+}
+
+.imagen-container img.entrar-derecha {
+    animation: entrar-derecha 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.imagen-container img.salir-izquierda {
+    animation: salir-izquierda 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.imagen-container img.entrar-izquierda {
+    animation: entrar-izquierda 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.imagen-container img.salir-derecha {
+    animation: salir-derecha 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.flecha-izq,
+.flecha-der {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: clamp(60px, 15vw, 138px);
+    height: clamp(58px, 15vw, 134px);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 10;
+}
+
+.flecha-izq:hover,
+.flecha-der:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+}
+
+.flecha-izq img,
+.flecha-der img {
+    width: 132%;
+    height: 118%;
+    object-fit: contain;
+}
+
+.imagen-container img {
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.imagen-container img:hover {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+/* ─── RESPONSIVE (alineado con principal, tienda y preguntas) ─── */
+@media (max-width: 768px) {
+    .juegos-container {
+        padding: 0 12px;
+    }
+
+    .titulo-container {
+        margin-bottom: 30px;
+        margin-top: -18px;
+    }
+
+    .titulo {
+        font-size: clamp(18px, 5vw, 34px);
+    }
+
+    .subtitulo {
+        font-size: clamp(15px, 3vw, 22px);
+        padding-top: 12px;
+    }
+
+    .carousel {
+        gap: 0;
+    }
+
+    .imagen-container {
+        width: min(503px, 72vw);
+        padding: 18px 0;
+    }
+
+    .flecha-izq,
+    .flecha-der {
+        width: clamp(38px, 9vw, 80px);
+        height: clamp(36px, 9vw, 78px);
+    }
+
+    .menu-button {
+        width: clamp(52px, 10vw, 82px);
+        left: clamp(8px, 2vw, 18px);
+        bottom: clamp(8px, 1vh, 16px);
+    }
+
+    .menu-buttons-container {
+        bottom: -5px;
+        left: 10px;
+        z-index: 600;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .juegos-container {
+        padding: 0 10px;
+    }
+
+    .titulo-container {
+        margin-bottom: 1px;
+        margin-top: -99px;
+    }
+
+    .titulo {
+        font-size: clamp(16px, 3vw, 24px);
+        padding-left: 30px;
+        padding-right: 30px;
+        line-height: 1.4;
+        letter-spacing: 0;
+        margin-bottom: 15px;
+    }
+
+    .subtitulo {
+        font-size: clamp(15px, 4vw, 18px);
+        padding-top: 8px;
+    }
+
+    .imagen-container {
+        width: min(503px, 72vw);
+        padding: 8px 0;
+    }
+
+    .flecha-izq,
+    .flecha-der {
+        width: clamp(30px, 36vw, 52px);
+        height: clamp(28px, 47vw, 69px);
+        margin-left: -22px;
+        margin-right: -9px;
+    }
+
+    .menu-button {
+        width: clamp(42px, 23vw, 58px);
+        left: 10px;
+        bottom: -5px;
+    }
+
+    .menu-buttons-container {
+        bottom: -5px;
+        left: 10px;
+        z-index: 600;
+        gap: 10px;
+    }
+}
