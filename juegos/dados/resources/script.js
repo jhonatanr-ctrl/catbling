@@ -251,10 +251,9 @@ function finalizarPartida() {
     if (tirando) return;
     if (typeof marcarJuegoCompletado === 'function') marcarJuegoCompletado();
     const textoResultado = document.getElementById('result-text');
-    const gananciaNeta = apuesta * bossActual;
+    let gananciaNeta = apuesta * bossActual;
     const rollBtn = document.getElementById('roll-btn');
     const gano = puntosJugador > puntosMaquina;
-    const resultadoMonedas = gano ? apuesta + gananciaNeta : 0;
 
     tirando = false;
     rollBtn.disabled = false;
@@ -288,8 +287,14 @@ function finalizarPartida() {
     rollBtn.textContent = '🎲 LANZAR DADOS';
     apuestaDeducida = false;
 
-    // Registrar en Supabase via RPC
-    if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+    // resultadoMonedas se calcula aquí (tras el posible bono de items aplicado
+    // arriba a gananciaNeta) para que el valor enviado a Supabase coincida
+    // exactamente con el que se le mostró al jugador en pantalla.
+    const resultadoMonedas = gano ? apuesta + gananciaNeta : 0;
+
+    // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
+    // sin este chequeo los invitados nunca llegaban al fallback local)
+    if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
         window.apiRpc.registrarSesionCasino('duelo_dados', apuesta, resultadoMonedas, gano).then(function(r) {
             if (r.success) {
                 // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).

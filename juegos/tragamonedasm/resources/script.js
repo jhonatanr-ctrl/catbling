@@ -196,8 +196,10 @@ function checkWin() {
 
     limpiarCarretes();
 
-    // Registrar en Supabase via RPC
-    if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+    // Registrar en Supabase via RPC (solo para usuarios autenticados; window.apiRpc
+    // siempre existe una vez cargado api.js, así que sin el chequeo de autenticación
+    // los invitados también entraban aquí y nunca recibían el fallback local)
+    if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
         window.apiRpc.registrarSesionCasino('tragamonedas', apuestaActual, resultadoMonedas, gano).then(function(r) {
             if (r.success) {
                 // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).
@@ -211,7 +213,10 @@ function checkWin() {
             }
         }).catch(function(e) { console.warn('[tragamonedasm] Error registrando partida:', e); });
     } else {
-        // Fallback local (ya manejado arriba con cambiarMonedas/procesarPerdida)
+        // Fallback local (invitado). La derrota ya se maneja arriba (deducción al girar
+        // + procesarPerdida al perder); pero la VICTORIA no tenía ningún camino que
+        // acreditara la ganancia localmente — se agrega aquí.
+        if (gano) cambiarMonedas(gananciaNeta);
         actualizarUI();
     }
 }

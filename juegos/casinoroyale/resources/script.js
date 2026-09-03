@@ -164,8 +164,9 @@ function evaluateResult() {
         if (maxLabel) maxLabel.textContent = Math.max(10, Math.min(500, getMonedas()));
     }, 500);
 
-    // Registrar en Supabase via RPC
-    if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+    // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
+    // sin este chequeo los invitados nunca llegaban al fallback local)
+    if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
         window.apiRpc.registrarSesionCasino('jackpot_dados', apuesta, resultadoMonedas, gano).then(function(r) {
             if (r.success) {
                 // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).

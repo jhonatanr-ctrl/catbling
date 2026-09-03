@@ -173,6 +173,14 @@ function crearOverlayConfirmarRepartir(mensaje) {
 }
 
 function iniciarNuevaMano() {
+    // Descuento real de la apuesta: ocurre aquí, justo donde se reparte
+    // la mano de verdad, en vez de en repartir() (donde podía cobrarse
+    // sin llegar a repartir si el usuario cancelaba la confirmación).
+    var deduccion = typeof window.calcularDeduccionApuesta === 'function' ? window.calcularDeduccionApuesta(apuesta) : apuesta;
+    if (deduccion > 0 && !_isAuthenticatedSync()) {
+        descontarMonedas(deduccion);
+    }
+
     // Limpiar overlays previos
     document.querySelectorAll('.overlay').forEach(function(o) { if (o.parentNode) o.parentNode.removeChild(o); });
     
@@ -243,11 +251,12 @@ function repartir() {
             return;
         }
     }
-    var deduccion = typeof window.calcularDeduccionApuesta === 'function' ? window.calcularDeduccionApuesta(apuesta) : apuesta;
-    if (deduccion > 0 && !_isAuthenticatedSync()) {
-        // Solo descontar localmente para invitados
-        if (deduccion > 0) descontarMonedas(deduccion);
-    }
+    // El descuento de la apuesta se hace en iniciarNuevaMano(), que es el
+    // único punto donde realmente se reparte una mano nueva (tanto en el
+    // camino directo de abajo como al confirmar "Sí" en el overlay de
+    // sobreescritura). Antes se descontaba aquí, ANTES de comprobar si
+    // hacía falta confirmación: si el usuario respondía "No", la apuesta
+    // ya se había perdido sin repartir mano ni reembolsarla.
     actualizarUI();
     
     // Verificar si ya hay una mano repartida (no es la primera partida).
@@ -459,11 +468,16 @@ function jugar() {
     }
 
     isPlaying = false;
+    // La mano ya fue evaluada y puntuada por completo: se limpia aquí para
+    // que el próximo clic en REPARTIR no la detecte como "mano sin usar"
+    // (yaHayCartas) y dispare de más la confirmación de sobreescritura.
+    hand = [];
     var btn = document.getElementById('deal-btn');
     if (btn) btn.textContent = typeof __ === 'function' ? __('repartir') : 'REPARTIR';
 
-    // Registrar en Supabase via RPC
-    if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+    // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
+    // sin este chequeo los invitados nunca llegaban al fallback local)
+    if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
         window.apiRpc.registrarSesionCasino('cartas', apuesta, resultadoMonedas, gano).then(function(r) {
             if (r.success) {
                 // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).

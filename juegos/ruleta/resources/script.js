@@ -519,10 +519,12 @@ function finishSpin() {
 
     if (typeof actualizarUI === 'function') actualizarUI();
 
-    // Registrar en Supabase via RPC
     var gananciaNeta = gano ? payout - apuesta : 0;
     var resultadoMonedas = gano ? payout : 0; // payout ya es el premio bruto (apuesta + ganancia neta)
-    if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+
+    // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
+    // sin este chequeo los invitados nunca llegaban al fallback local)
+    if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
         window.apiRpc.registrarSesionCasino('ruleta', apuesta, resultadoMonedas, gano).then(function(r) {
             if (r.success) {
                 // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).

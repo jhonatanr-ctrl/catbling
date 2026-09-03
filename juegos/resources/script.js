@@ -58,7 +58,7 @@ const paginasJuegos = {
     "MEMORIA": "./memoria/memoria.html",
     "DUELO DE DADOS": "./dados/dadosindex.html",
     "RULETA": "./ruleta/ruleta.html",
-    "CARTAS RETRO": "./balatro/balatro.html",
+    "CARTAS RETRO": "./cartas retro/cartas retro.html",
     "CASINO ROYALE": "./casinoroyale/casinoroyale.html"
 };
 

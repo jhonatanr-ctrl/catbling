@@ -292,7 +292,7 @@ function endGame() {
   if (gano) {
     gananciaNeta = apuestaActual * nivel.mult;
     if (typeof window.calcularGananciaConItems === 'function') gananciaNeta = window.calcularGananciaConItems(gananciaNeta, apuestaActual);
-    const resultadoMonedas = apuestaActual + gananciaNeta; // premio bruto
+    resultadoMonedas = apuestaActual + gananciaNeta; // premio bruto
     
     if (winOverlay) {
       winOverlay.classList.add("active");
@@ -319,8 +319,9 @@ function endGame() {
     actualizarUI();
   }, 3000);
 
-  // Registrar en Supabase via RPC
-  if (window.apiRpc && window.apiRpc.registrarSesionCasino) {
+  // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
+  // sin este chequeo los invitados nunca llegaban al fallback local)
+  if (_isAuthenticatedSync() && window.apiRpc && window.apiRpc.registrarSesionCasino) {
     window.apiRpc.registrarSesionCasino('emparejar_pares', apuestaActual, gano ? apuestaActual + gananciaNeta : 0, gano).then(function(r) {
       if (r.success) {
         // registrar_sesion_casino no devuelve nuevo_saldo (TABLE(ok,id) unicamente).
