@@ -76,11 +76,15 @@
           <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
         </div>
       </div>
-      <div class="opcion-item">
+      <div class="opcion-item opcion-item-idioma">
         <span data-i18n="idioma">Idioma</span>
-        <div class="grupo-botones">
-          <button onclick="setIdioma('es')">ES</button>
-          <button onclick="setIdioma('en')">EN</button>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
         </div>
       </div>
       <div class="opcion-item">
@@ -104,12 +108,12 @@
   <div class="categorias-container" id="categorias-container">
     <div class="categorias-box">
       <div class="categoria-icon" onclick="seleccionarCategoria('mejoras')">
-        <img src="./resources/assets/preguntas.png" alt="Mejoras preguntas">
-        <span data-i18n="pregunta">preguntas</span>
+        <img src="./resources/assets/preguntas.png" alt="Mejoras preguntas" data-i18n-alt="categoria_preguntas">
+        <span data-i18n="categoria_preguntas">preguntas</span>
       </div>
       <div class="categoria-icon" onclick="seleccionarCategoria('boosts')">
-        <img src="./resources/assets/jackpot.png" alt="Mejoras Casino">
-        <span data-i18n="casino">Casino</span>
+        <img src="./resources/assets/jackpot.png" alt="Mejoras Casino" data-i18n-alt="categoria_casino">
+        <span data-i18n="categoria_casino">Casino</span>
       </div>
 
     </div>
@@ -117,7 +121,7 @@
 
   <!-- OVERLAY TRABAJO EN CURSO (solo para accesorios) -->
   <div id="trabajando-overlay" class="trabajando-overlay" onclick="mostrarCategorias()">
-    <div class="trabajando-mensaje">¡estamos trabajando en eso...!</div>
+    <div class="trabajando-mensaje" data-i18n="tienda_trabajando">¡estamos trabajando en eso...!</div>
   </div>
 
   <!-- BOTÓN VOLVER/SALIR -->
@@ -147,7 +151,7 @@
         <p id="precio-item" class="precio">Monedas necesarias: 100</p>
       </div>
       <div class="detalle-imagen">
-        <img id="imagen-item-seleccionado" src="../resources/assets/yukocoins.png" alt="Item">
+        <img id="imagen-item-seleccionado" src="../resources/assets/yukocoins.png" alt="Item" data-i18n-alt="item_alt">
       </div>
       <div class="detalle-boton">
         <button id="btn-comprar" onclick="comprarItem()" data-i18n="comprar">COMPRAR</button>
@@ -202,11 +206,11 @@
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
         <div class="confirmacion-contenido">
-            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
-            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
             <div class="confirmacion-botones">
-                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
-                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
             </div>
         </div>
     </div>

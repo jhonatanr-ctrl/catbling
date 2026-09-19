@@ -60,15 +60,15 @@ async function apiRegister(username, email, password) {
       let errorMessage = error.message;
       
       if (lowerMsg.includes('rate limit')) {
-        errorMessage = 'Se alcanzó temporalmente el límite de envío de correos de verificación. No realices más intentos por ahora. Espera un momento y vuelve a intentarlo.';
+        errorMessage = (typeof __ === 'function') ? __('error_rate_limit_registro') : 'Se alcanzó temporalmente el límite de envío de correos de verificación. No realices más intentos por ahora. Espera un momento y vuelve a intentarlo.';
       } else if (lowerMsg.includes('already registered') || lowerMsg.includes('already exists')) {
-        errorMessage = 'Este correo ya está registrado. Inicia sesión en lugar de registrarte.';
+        errorMessage = (typeof __ === 'function') ? __('error_correo_ya_registrado') : 'Este correo ya está registrado. Inicia sesión en lugar de registrarte.';
       } else if (lowerMsg.includes('invalid email')) {
-        errorMessage = 'El correo electrónico no es válido.';
+        errorMessage = (typeof __ === 'function') ? __('error_correo_invalido') : 'El correo electrónico no es válido.';
       } else if (lowerMsg.includes('weak password') || lowerMsg.includes('password too weak') || lowerMsg.includes('password too short')) {
-        errorMessage = 'La contraseña es demasiado débil. Usa al menos 6 caracteres con mayúsculas, minúsculas y números.';
+        errorMessage = (typeof __ === 'function') ? __('error_contrasena_debil') : 'La contraseña es demasiado débil. Usa al menos 6 caracteres con mayúsculas, minúsculas y números.';
       } else if (lowerMsg.includes('invalid credentials') || lowerMsg.includes('invalid login')) {
-        errorMessage = 'Credenciales inválidas.';
+        errorMessage = (typeof __ === 'function') ? __('error_credenciales_invalidas') : 'Credenciales inválidas.';
       }
       
       throw new Error(errorMessage);
@@ -95,7 +95,7 @@ async function apiRegister(username, email, password) {
         email: email
       };
     } else {
-      throw new Error('Error desconocido al registrar');
+      throw new Error((typeof __ === 'function') ? __('error_desconocido_registro', 'Error desconocido al registrar') : 'Error desconocido al registrar');
     }
   });
 }
@@ -106,7 +106,33 @@ async function apiLogin(email, password) {
       email,
       password
     });
-    if (error) throw error;
+    if (error) {
+      // A diferencia de apiRegister, este mapeo de mensajes no existía
+      // aquí: cualquier error de login llegaba al usuario en inglés y
+      // sin traducir (p. ej. "Email not confirmed" o "Invalid login
+      // credentials" tal cual los devuelve Supabase). Esto es, en la
+      // práctica, buena parte de lo que se percibía como "intentar
+      // iniciar sesión nuevamente puede producir un error": no es un
+      // fallo de la sesión, sino un mensaje crudo sin traducir — más
+      // notorio justo después de registrarse si el proyecto tiene
+      // habilitada la confirmación de correo (Authentication → Providers
+      // → Email → "Confirm email") y la cuenta nueva intenta iniciar
+      // sesión antes de confirmar el correo.
+      const lowerMsg = error.message.toLowerCase();
+      let errorMessage = error.message;
+
+      if (lowerMsg.includes('email not confirmed') || lowerMsg.includes('email_not_confirmed')) {
+        errorMessage = (typeof __ === 'function') ? __('error_correo_no_confirmado') : 'Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada (y spam).';
+      } else if (lowerMsg.includes('invalid login credentials') || lowerMsg.includes('invalid credentials')) {
+        errorMessage = (typeof __ === 'function') ? __('error_correo_o_contrasena_incorrectos') : 'Correo o contraseña incorrectos.';
+      } else if (lowerMsg.includes('rate limit')) {
+        errorMessage = (typeof __ === 'function') ? __('error_demasiados_intentos') : 'Demasiados intentos. Espera un momento y vuelve a intentarlo.';
+      } else if (lowerMsg.includes('invalid email')) {
+        errorMessage = (typeof __ === 'function') ? __('error_correo_invalido') : 'El correo electrónico no es válido.';
+      }
+
+      throw new Error(errorMessage);
+    }
     // Supabase persiste la sesión completa mediante el cliente configurado.
     return { user: data.user, session: data.session };
   });
@@ -253,9 +279,10 @@ async function rpcComprarItem(itemId, cantidad = 1) {
   }, 'comprar_item');
 }
 
-async function rpcRegistrarRondaPreguntas(dificultad, area, preguntasTotal, correctas, monedasGanadas) {
+async function rpcRegistrarRondaPreguntas(nivelAcademico, dificultad, area, preguntasTotal, correctas, monedasGanadas) {
   return _supabaseRequest(async () => {
     const { data, error } = await window.supabase.rpc('registrar_ronda_preguntas', {
+      p_nivel_academico: nivelAcademico,
       p_dificultad: dificultad,
       p_area: area,
       p_preguntas_total: preguntasTotal,
@@ -267,20 +294,68 @@ async function rpcRegistrarRondaPreguntas(dificultad, area, preguntasTotal, corr
   }, 'registrar_ronda_preguntas');
 }
 
-async function rpcRegistrarRespuestaPregunta(dificultad, esCorrecta) {
+// Ya NO se envía un booleano "es_correcta": el servidor determina la
+// corrección comparando p_indice_elegido contra su propia copia del
+// índice correcto (tabla respuestas_correctas, no legible desde el
+// cliente). Requiere haber llamado antes a marcarPreguntaServida con el
+// MISMO preguntaId (ver rpcMarcarPreguntaServida más abajo).
+async function rpcRegistrarRespuestaPregunta(nivelAcademico, dificultad, preguntaId, indiceElegido) {
   return _supabaseRequest(async () => {
     const { data, error } = await window.supabase.rpc('registrar_respuesta_pregunta', {
+      p_nivel_academico: nivelAcademico,
       p_dificultad: dificultad,
-      p_es_correcta: esCorrecta
+      p_pregunta_id: preguntaId,
+      p_indice_elegido: indiceElegido
     });
     if (error) throw error;
     return data[0];
   }, 'registrar_respuesta_pregunta');
 }
 
-// RPC genérica ya existente (usada también por compra_tienda/apuesta_casino/
-// recarga_gratis). Se reutiliza para el motivo 'entrada_pregunta' — costo de
-// entrada de la ronda de Preguntas, cobrado una sola vez al iniciarla.
+// Debe llamarse justo cuando se muestra una pregunta en pantalla, ANTES
+// de que el usuario pueda responderla. Arranca en servidor el mínimo de
+// tiempo de lectura (1.2s) y registra qué pregunta concreta se le
+// mostró, para que registrar_respuesta_pregunta pueda exigir que la
+// respuesta corresponda a algo realmente servido.
+async function rpcMarcarPreguntaServida(nivelAcademico, dificultad, preguntaId) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('marcar_pregunta_servida', {
+      p_nivel_academico: nivelAcademico,
+      p_dificultad: dificultad,
+      p_pregunta_id: preguntaId
+    });
+    if (error) throw error;
+    return data[0];
+  }, 'marcar_pregunta_servida');
+}
+
+// Costo de entrada de la ronda de Preguntas, cobrado una sola vez al
+// iniciarla. RPC dedicada (ya NO se reutiliza transaccion_monedas con el
+// motivo 'entrada_pregunta', que esa función nunca aceptó — el costo se
+// calcula y valida enteramente en servidor a partir de la dificultad).
+async function rpcCobrarEntradaPreguntaRonda(dificultad) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('cobrar_entrada_pregunta_ronda', {
+      p_dificultad: dificultad
+    });
+    if (error) throw error;
+    return data[0];
+  }, 'cobrar_entrada_pregunta_ronda');
+}
+
+async function rpcObtenerDominioActual(nivelAcademico, dificultad) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('obtener_dominio_actual', {
+      p_nivel_academico: nivelAcademico,
+      p_dificultad: dificultad
+    });
+    if (error) throw error;
+    return data[0];
+  }, 'obtener_dominio_actual');
+}
+
+// RPC genérica ya existente (usada por compra_tienda/apuesta_casino/
+// recarga_gratis).
 async function rpcTransaccionMonedas(delta, motivo, ref) {
   return _supabaseRequest(async () => {
     const { data, error } = await window.supabase.rpc('transaccion_monedas', {
@@ -314,13 +389,47 @@ async function rpcGetMonedas() {
   }, 'get_monedas');
 }
 
+// ---------------------------------------------------------------------
+// Carreras — apuesta por puesto (Fase 7): a diferencia de
+// rpcRegistrarSesionCasino, estas dos RPC nunca reciben del cliente
+// "cuánto gané" ni el costo/multiplicador — sólo la clasificación real
+// (para registrarla) y el caballo/puestos elegidos (para liquidar
+// contra esa clasificación ya guardada). Ver 006_carreras_apuesta_puesto_segura.sql.
+// ---------------------------------------------------------------------
+async function rpcRegistrarResultadoCarrera(clasificacion) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('registrar_resultado_carrera', {
+      p_clasificacion: clasificacion
+    });
+    if (error) throw error;
+    return data[0];
+  }, 'registrar_resultado_carrera');
+}
+
+async function rpcLiquidarApuestaPuestoCarrera(resultadoId, caballoId, puestosSeleccionados) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('liquidar_apuesta_puesto_carrera', {
+      p_resultado_id: resultadoId,
+      p_caballo_id: caballoId,
+      p_puestos_seleccionados: puestosSeleccionados
+    });
+    if (error) throw error;
+    return data[0];
+  }, 'liquidar_apuesta_puesto_carrera');
+}
+
 // Exponer RPCs globalmente para que los juegos las usen directamente
 window.apiRpc = {
   reclamarRecargaGratis: rpcReclamarRecargaGratis,
   comprarItem: rpcComprarItem,
   registrarRondaPreguntas: rpcRegistrarRondaPreguntas,
   registrarRespuestaPregunta: rpcRegistrarRespuestaPregunta,
+  marcarPreguntaServida: rpcMarcarPreguntaServida,
+  cobrarEntradaPreguntaRonda: rpcCobrarEntradaPreguntaRonda,
+  obtenerDominioActual: rpcObtenerDominioActual,
   transaccionMonedas: rpcTransaccionMonedas,
   registrarSesionCasino: rpcRegistrarSesionCasino,
-  getMonedas: rpcGetMonedas
+  getMonedas: rpcGetMonedas,
+  registrarResultadoCarrera: rpcRegistrarResultadoCarrera,
+  liquidarApuestaPuestoCarrera: rpcLiquidarApuestaPuestoCarrera
 };

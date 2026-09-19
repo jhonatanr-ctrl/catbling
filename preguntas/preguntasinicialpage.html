@@ -68,11 +68,15 @@
           <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
         </div>
       </div>
-      <div class="opcion-item">
+      <div class="opcion-item opcion-item-idioma">
         <span data-i18n="idioma">Idioma</span>
-        <div class="grupo-botones">
-          <button onclick="setIdioma('es')">ES</button>
-          <button onclick="setIdioma('en')">EN</button>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
         </div>
       </div>
       <div class="opcion-item">
@@ -96,7 +100,7 @@
       <div class="slot-wrapper">
         <img src="./assets/slotmachinequestionselecter.png" class="slot">
         <div class="machine-screen">
-          <p id="display-text" data-i18n="area">Selecciona un área</p>
+          <p id="display-text" data-i18n="preg_selecciona_area">Selecciona un área</p>
           <div class="display-image-wrapper">
             <img id="preview-img" src="">
           </div>
@@ -125,13 +129,13 @@
       </div>
 
       <div class="dificultad-panel">
-        <p class="dificultad-titulo" data-i18n="dificultad">DIFICULTAD</p>
+        <p class="dificultad-titulo" data-i18n="preg_dificultad_titulo">DIFICULTAD</p>
         <div class="dificultad-selector">
           <button class="flecha-dif" id="flecha-izq">
               <img src="./assets/arrowizq.png" alt="◀">
           </button>
           <div class="dificultad-display">
-            <p class="dificultad-nombre" id="dificultad-nombre" data-i18n="facil">FÁCIL</p>
+            <p class="dificultad-nombre" id="dificultad-nombre" data-i18n="nivel_facil">FÁCIL</p>
             <img class="dificultad-img" id="dificultad-img" src="./assets/dificultades/facil.png">
           </div>
           <button class="flecha-dif" id="flecha-der">
@@ -179,6 +183,7 @@
 
   <script src="../resources/help.js"></script>
   <script src="./resources/questions.js"></script>
+  <script src="./resources/i18n-preguntas.js"></script>
   <script src="../resources/tutorial.js"></script>
   <script src="../resources/api.js"></script>
   <script src="../resources/guest.js?v=2"></script>
@@ -192,11 +197,11 @@
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
         <div class="confirmacion-contenido">
-            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
-            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
             <div class="confirmacion-botones">
-                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
-                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
             </div>
         </div>
     </div>

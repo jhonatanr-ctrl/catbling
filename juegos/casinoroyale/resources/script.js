@@ -22,7 +22,7 @@ function cambiarApuesta(valor) {
     var apuestaActualEl = document.getElementById('apuesta-actual');
     if (apuestaActualEl) apuestaActualEl.textContent = apuesta;
     var btn = document.getElementById('roll-btn');
-    if (btn) btn.textContent = 'APOSTAR ' + apuesta + ' MONEDAS';
+    if (btn) btn.textContent = (typeof __f === 'function') ? __f('cr_apostar_monedas', { monedas: apuesta }) : ('APOSTAR ' + apuesta + ' MONEDAS');
 }
 
 // Inicializar input de apuesta
@@ -45,7 +45,7 @@ function initApuestaInput() {
         apuesta = n;
         if (apuestaActualEl) apuestaActualEl.textContent = apuesta;
         var btn = document.getElementById('roll-btn');
-        if (btn) btn.textContent = 'APOSTAR ' + apuesta + ' MONEDAS';
+        if (btn) btn.textContent = (typeof __f === 'function') ? __f('cr_apostar_monedas', { monedas: apuesta }) : ('APOSTAR ' + apuesta + ' MONEDAS');
     }
     input.addEventListener('input', function () { sync(false); });
     input.addEventListener('change', function () { sync(true); });
@@ -114,20 +114,20 @@ function evaluateResult() {
     if (isEqual) {
         multiplicador = 4;
         gano = true;
-        statusMsg.innerText = '¡DADOS IGUALES! x4 (' + res1 + '-' + res2 + ')';
+        statusMsg.innerText = (typeof __f === 'function') ? __f('cr_dados_iguales', { r1: res1, r2: res2 }) : ('¡DADOS IGUALES! x4 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else if (isSequence) {
         multiplicador = 3;
         gano = true;
-        statusMsg.innerText = '¡SECUENCIA! x3 (' + res1 + '-' + res2 + ')';
+        statusMsg.innerText = (typeof __f === 'function') ? __f('cr_secuencia_msg', { r1: res1, r2: res2 }) : ('¡SECUENCIA! x3 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else if (isBothEven) {
         multiplicador = 2;
         gano = true;
-        statusMsg.innerText = '¡AMBOS PARES! x2 (' + res1 + '-' + res2 + ')';
+        statusMsg.innerText = (typeof __f === 'function') ? __f('cr_ambos_pares_msg', { r1: res1, r2: res2 }) : ('¡AMBOS PARES! x2 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else {
-        statusMsg.innerText = res1 + ' - ' + res2 + '. ¡PIERDES!';
+        statusMsg.innerText = (typeof __f === 'function') ? __f('cr_pierdes_msg', { r1: res1, r2: res2 }) : (res1 + ' - ' + res2 + '. ¡PIERDES!');
         statusMsg.style.color = '#ff4444';
     }
     
@@ -226,7 +226,7 @@ window.onload = function() {
     var btn = document.getElementById('roll-btn');
     if (btn) {
         function actualizarBtnApuesta() {
-            btn.textContent = 'APOSTAR ' + apuesta + ' MONEDAS';
+            btn.textContent = (typeof __f === 'function') ? __f('cr_apostar_monedas', { monedas: apuesta }) : ('APOSTAR ' + apuesta + ' MONEDAS');
         }
         actualizarBtnApuesta();
         btn.onclick = function() {
@@ -262,7 +262,7 @@ window.onload = function() {
             
             var statusMsg = document.getElementById('status-msg');
             if (statusMsg) {
-                statusMsg.innerText = '🎲 LANZANDO...';
+                statusMsg.innerText = (typeof __ === 'function') ? __('cr_lanzando') : '🎲 LANZANDO...';
                 statusMsg.style.color = 'white';
             }
 
@@ -333,3 +333,12 @@ window.onload = function() {
         };
     }
 };
+
+// Refresca el texto del botón "APOSTAR X MONEDAS" si el usuario cambia de
+// idioma (ese texto se genera dinámicamente y no pasa por data-i18n).
+window.addEventListener('idiomaAplicado', function () {
+    var btn = document.getElementById('roll-btn');
+    if (btn && !isRolling) {
+        btn.textContent = (typeof __f === 'function') ? __f('cr_apostar_monedas', { monedas: apuesta }) : ('APOSTAR ' + apuesta + ' MONEDAS');
+    }
+});

@@ -2,6 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&family=Sixtyfour&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 /* Evita seleccionar texto y elementos de la página */
 * {
     user-select: none;
@@ -317,7 +322,7 @@ img {
     font-size: 11px;
     cursor: pointer;
     border-radius: 0px;
-    min-width: 120px;
+    min-width: 141px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -599,6 +604,8 @@ img {
     user-select: none;
     z-index: 2;
     line-height: 1;
+    color: #ffffff;
+    text-shadow: 0 0 3px #000000;
 }
 
 /* 🔑 RECUPERAR CONTRASEÑA */
@@ -1156,7 +1163,8 @@ img {
 		padding: 2px;
 	}
 
-    #cantidad-monedas {
+    #cantidad-monedas,
+    #cantidad-monedasm {
         --coin-font-size: 14px;
     }
 
@@ -1224,6 +1232,142 @@ img {
 
     .confirmacion-botones {
         gap: clamp(8px, 4vw, 20px);
+    }
+}
+
+/* 🌍 SELECTOR DE IDIOMA (DROPDOWN) ─────────────────────────────────────── */
+.opcion-item.opcion-item-idioma {
+    grid-template-columns: 1fr;
+    row-gap: clamp(6px, 1.2vh, 12px);
+}
+
+.idioma-selector {
+    position: relative;
+    width: 100%;
+}
+
+.idioma-selector-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1.5vw, 10px);
+    padding: clamp(8px, 1.6vh, 12px) clamp(10px, 2.5vw, 16px);
+    background: #0b1442;
+    border: 3px solid #ffd700;
+    border-radius: 0px;
+    color: #ffffff;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: clamp(14px, 3.4vw, 20px);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.idioma-selector-btn:hover,
+.idioma-selector-btn:focus-visible {
+    background: #142057;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    outline: none;
+}
+
+.idioma-selector-flag {
+    font-size: clamp(16px, 4vw, 22px);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.idioma-selector-nombre {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.idioma-selector-arrow {
+    flex-shrink: 0;
+    color: #ffd700;
+    font-size: clamp(12px, 3vw, 16px);
+    transition: transform 0.2s ease;
+}
+
+.idioma-selector-btn[aria-expanded="true"] .idioma-selector-arrow {
+    transform: rotate(180deg);
+}
+
+/* La lista se traslada a <body> vía JS para escapar de overflow/z-index
+   de contenedores padres (el scroll interno del menú de opciones),
+   por eso usa position: fixed y un z-index muy alto. */
+.idioma-selector-lista {
+    position: fixed;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    background: #0b1442;
+    border: 3px solid #ffd700;
+    border-radius: 0px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    z-index: 999999;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: none;
+    scrollbar-width: thin;
+    scrollbar-color: #ffd700 rgba(0, 0, 0, 0.3);
+}
+
+.idioma-selector-lista.activo {
+    display: block;
+}
+
+.idioma-selector-lista::-webkit-scrollbar {
+    width: 6px;
+}
+
+.idioma-selector-lista::-webkit-scrollbar-thumb {
+    background: #ffd700;
+}
+
+.idioma-opcion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: clamp(14px, 3.2vw, 18px);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.idioma-opcion:hover,
+.idioma-opcion:focus-visible {
+    background: rgba(255, 215, 0, 0.25);
+}
+
+.idioma-opcion.seleccionado {
+    background: rgba(255, 215, 0, 0.12);
+    font-weight: bold;
+}
+
+.idioma-bandera {
+    font-size: 1.15em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.idioma-nombre {
+    flex: 1;
+}
+
+.idioma-check {
+    color: #ffd700;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .idioma-selector-lista {
+        max-height: 45vh;
     }
 }
 

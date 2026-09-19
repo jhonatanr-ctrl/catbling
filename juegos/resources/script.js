@@ -1,39 +1,52 @@
 const juegos = [
     {
+        id: "tragamonedas",
         titulo: "TRAGAMONEDAS",
         subtitulo: "¡Prueba tu suerte con el gran tragamonedas!",
         imagen: "./assets/slotmachineicon.png",
         pagina: "./tragamonedasm/tragamonedaindex.html"
     },
     {
+        id: "memoria",
         titulo: "MEMORIA",
         subtitulo: "¡Encuentra los pares en la menor cantidad de movimientos!",
         imagen: "./assets/fichasicon.png",
         pagina: "./memoria/memoria.html"
     },
     {
+        id: "dados",
         titulo: "DUELO DE DADOS",
         subtitulo: "¡Lanza los dados y compite contra los locales!",
         imagen: "./assets/diceicon.png",
         pagina: "./dados/dadosindex.html"
     },
     {
+        id: "ruleta",
         titulo: "RULETA",
         subtitulo: "¿Serás capaz de acertar el próximo número de la ruleta?",
         imagen: "./assets/ruleta2.png",
         pagina: "./ruleta/ruleta.html"
     },
     {
+        id: "cartas",
         titulo: "CARTAS RETRO",
         subtitulo: "¡Consigue la mejor mano de póker y gana premios!",
         imagen: "./assets/card-icon.png",
         pagina: "./cartas retro/cartas retro.html"
     },
     {
+        id: "casinoroyale",
         titulo: "CASINO ROYALE",
         subtitulo: "¡Lanza los dados y consigue grandes multiplicadores!",
         imagen: "./assets/casinoroyaleicon.png",
         pagina: "./casinoroyale/casinoroyale.html"
+    },
+    {
+        id: "carreras",
+        titulo: "CARRERAS DE CABALLOS",
+        subtitulo: "¡Elige tu hipódromo, estudia a los caballos y apuesta por el ganador!",
+        imagen: "./assets/horseraceicon.png",
+        pagina: "./carreras/carreras.html"
     }
 ];
 
@@ -47,8 +60,8 @@ const flechaDer = document.getElementById("flecha-der");
 
 function actualizarJuego() {
     const juego = juegos[indiceActual];
-    tituloEl.textContent = juego.titulo;
-    subtituloEl.textContent = juego.subtitulo;
+    tituloEl.textContent = (typeof __ === "function") ? __("juego_" + juego.id + "_titulo", juego.titulo) : juego.titulo;
+    subtituloEl.textContent = (typeof __ === "function") ? __("juego_" + juego.id + "_subtitulo", juego.subtitulo) : juego.subtitulo;
     imagenEl.src = juego.imagen;
     imagenEl.dataset.pagina = juego.pagina || "";
 }
@@ -59,7 +72,8 @@ const paginasJuegos = {
     "DUELO DE DADOS": "./dados/dadosindex.html",
     "RULETA": "./ruleta/ruleta.html",
     "CARTAS RETRO": "./cartas retro/cartas retro.html",
-    "CASINO ROYALE": "./casinoroyale/casinoroyale.html"
+    "CASINO ROYALE": "./casinoroyale/casinoroyale.html",
+    "CARRERAS DE CABALLOS": "./carreras/carreras.html"
 };
 
 function irAJuego() {
@@ -155,3 +169,7 @@ if (btn && menu && overlay && cerrar) {
     btn.onclick = () => { menu.classList.add("active"); overlay.classList.add("active"); };
     cerrar.onclick = () => { menu.classList.remove("active"); overlay.classList.remove("active"); };
 }
+
+// Si el usuario abre el menú de configuración y cambia de idioma sin
+// navegar a otro juego, el título/subtítulo visibles se refrescan aquí.
+window.addEventListener("idiomaAplicado", actualizarJuego);

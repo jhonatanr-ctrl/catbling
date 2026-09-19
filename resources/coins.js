@@ -233,12 +233,10 @@ function actualizarNoMonedasOverlay(restante) {
     const horas = Math.floor(restante / (1000 * 60 * 60));
     const minutos = Math.floor((restante % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((restante % (1000 * 60)) / 1000);
-    const lang = (typeof config !== 'undefined' && config.idioma) || 'es';
-    const prefix = lang === 'en' ? '10 Coins will be added in ' : 'Se agregarán 10 Monedas en ';
+    const prefix = (typeof __ === 'function') ? __("recarga_prefijo") : 'Se agregarán 10 Monedas en ';
     overlayTimer.textContent = prefix + `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
   } else {
-    const lang = (typeof config !== 'undefined' && config.idioma) || 'es';
-    overlayTimer.textContent = lang === 'en' ? '10 Coins have been added!' : '¡Se han agregado 10 Monedas!';
+    overlayTimer.textContent = (typeof __ === 'function') ? __("recarga_completa") : '¡Se han agregado 10 Monedas!';
   }
 }
 
@@ -262,9 +260,9 @@ function crearOverlayGlobal() {
   overlay.className = 'global-no-monedass-overlay';
   overlay.innerHTML = `
     <div class="global-no-monedass-content">
-      <h2 id="no-coins-title">¡Sin monedas!</h2>
-      <p id="no-coins-desc">No tienes suficientes monedas para apostar.</p>
-      <p class="monedas-necesarias" id="no-coins-needed">Monedas necesarias: <span id="overlay-monedas-necesarias">0</span></p>
+      <h2 id="no-coins-title" data-i18n="sin_monedas">¡Sin monedas!</h2>
+      <p id="no-coins-desc" data-i18n="no_suf_mon_apostar">No tienes suficientes monedas para apostar.</p>
+      <p class="monedas-necesarias" id="no-coins-needed"><span data-i18n="monedas_neces">Monedas necesarias:</span> <span id="overlay-monedas-necesarias">0</span></p>
       <p id="overlay-timer-text" style="display: none; margin-top: 15px;"></p>
     </div>
   `;
@@ -335,14 +333,13 @@ function mostrarOverlayGlobal(cantidadNecesaria) {
     necesidadesEl.textContent = cantidadNecesaria;
     overlay.classList.add('visible');
 
-    if (typeof __ === 'function') {
-      const lang = (typeof config !== 'undefined' && config.idioma) || 'es';
+    if (typeof aplicarIdioma === 'function') {
+      aplicarIdioma();
+    } else if (typeof __ === 'function') {
       const titulo = document.getElementById('no-coins-title');
       const desc = document.getElementById('no-coins-desc');
-      const needed = document.getElementById('no-coins-needed');
-      if (titulo) titulo.textContent = lang === 'en' ? 'No coins!' : '¡Sin monedas!';
-      if (desc) desc.textContent = lang === 'en' ? "You don't have enough coins to bet." : 'No tienes suficientes monedas para apostar.';
-      if (needed) needed.textContent = (lang === 'en' ? 'Coins needed: ' : 'Monedas necesarias: ') + cantidadNecesaria;
+      if (titulo) titulo.textContent = __("sin_monedas");
+      if (desc) desc.textContent = __("no_suf_mon_apostar");
     }
 
     if (timerEnd > 0) {
@@ -444,7 +441,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       actualizarTimerUI();
     }
-  } else if (monedas === 0 && timerEnd === 0) {
+  } else if ((monedas === null || monedas === 0) && timerEnd === 0) {
     // No asumir 200. Para autenticado, se cargará via fetchMonedas().
     // Para invitado, se mantiene comportamiento legacy (200 inicial).
     if (!await _isAuthenticated()) {

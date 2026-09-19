@@ -8,20 +8,48 @@
       }
   }
 
+  // Aviso de error técnico (RPC caída, función inexistente, red, etc.).
+  // Deliberadamente independiente de mostrarOverlayGlobal(): ese overlay
+  // se autocancela en silencio si el usuario ya tiene monedas suficientes
+  // (ver resources/coins.js), lo cual está bien para "saldo insuficiente"
+  // pero NO debe usarse para errores técnicos, donde el saldo es irrelevante
+  // y el usuario necesita ver que algo falló en el servidor.
+  function mostrarErrorTecnicoOverlay(mensaje) {
+      const existente = document.getElementById("error-tecnico-overlay");
+      if (existente) existente.remove();
+
+      const overlay = document.createElement("div");
+      overlay.id = "error-tecnico-overlay";
+      overlay.style.cssText = `
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        max-width: 320px; text-align: center; padding: 16px 20px;
+        font-family: 'Press Start 2P', cursive; font-size: 13px; line-height: 1.5;
+        color: #ffffff; background: rgba(120, 0, 0, 0.92); border: 2px solid #ff5555;
+        border-radius: 8px; z-index: 600; pointer-events: none;
+        text-shadow: 0 0 10px rgba(255,0,0,0.6);
+      `;
+      overlay.textContent = "⚠️ " + (mensaje || ((typeof __ === 'function') ? __('error_conexion_servidor') : "Error de conexión con el servidor. Intenta de nuevo."));
+      document.body.appendChild(overlay);
+
+      setTimeout(() => {
+          if (overlay.parentNode) overlay.remove();
+      }, 3500);
+  }
+
   const previews = [
-      {id: "socials", img: "./assets/topics/socials.png", text: "SOCIALES", width: "183px"},
-      {id: "literature", img: "./assets/topics/literaturetopic.png", text: "LITERATURA", width: "170px"},
-      {id: "physics", img: "./assets/topics/physicstopic.png", text: "FÍSICA", width: "164px"},
-      {id: "math", img: "./assets/topics/mathtopic.png", text: "MATEMÁTICAS", width: "135px"},
-      {id: "logic", img: "./assets/topics/logitopic.png", text: "LÓGICA", width: "150px"},
-      {id: "english", img: "./assets/topics/englishtopic.png", text: "INGLES", width: "169px"},
+      {id: "socials", img: "./assets/topics/socials.png", text: "SOCIALES", textKey: "topic_sociales", width: "183px"},
+      {id: "literature", img: "./assets/topics/literaturetopic.png", text: "LITERATURA", textKey: "topic_literatura", width: "170px"},
+      {id: "physics", img: "./assets/topics/physicstopic.png", text: "FÍSICA", textKey: "topic_fisica", width: "164px"},
+      {id: "math", img: "./assets/topics/mathtopic.png", text: "MATEMÁTICAS", textKey: "topic_matematicas", width: "135px"},
+      {id: "logic", img: "./assets/topics/logitopic.png", text: "LÓGICA", textKey: "topic_logica", width: "150px"},
+      {id: "english", img: "./assets/topics/englishtopic.png", text: "INGLES", textKey: "topic_ingles", width: "169px"},
   ];
 
   function updateSelection(index) {
       options.forEach(opt => opt.classList.remove("active"));
       options[index].classList.add("active");
       previewImg.src = previews[index].img;
-      previewText.innerText = previews[index].text;
+      previewText.innerText = (typeof __ === "function") ? __(previews[index].textKey, previews[index].text) : previews[index].text;
       previewImg.style.width = previews[index].width;
       previewImg.style.marginTop = "";
       previewImg.style.top = "";
@@ -63,11 +91,33 @@
   });
 
   // DIFICULTAD
+  // "costo" aquí es solo el costo de ENTRADA de la ronda (se cobra una vez,
+  // vía cobrar_entrada_pregunta_ronda). La recompensa POR PREGUNTA ya no es
+  // fija por dificultad: depende de la combinación real
+  // (nivel académico x dificultad), calculada y validada en el servidor
+  // (tabla recompensas_nivel). RECOMPENSAS_NIVEL de abajo es solo un espejo
+  // para mostrar una vista previa en la UI (igual que el catálogo de la
+  // tienda, que también está duplicado en cliente solo para mostrarlo).
   const dificultades = [
-      { nombre: "FÁCIL",   img: "./assets/dificultades/facil.png",   tiempo: 10, costo: 5 },
-      { nombre: "NORMAL",  img: "./assets/dificultades/normal.png",  tiempo: 15, costo: 10 },
-      { nombre: "DIFÍCIL", img: "./assets/dificultades/difícil.png", tiempo: 25, costo: 15 },
+      { nombre: "FÁCIL",   labelKey: "nivel_facil",   img: "./assets/dificultades/facil.png",   tiempo: 10, costo: 5 },
+      { nombre: "NORMAL",  labelKey: "nivel_normal",  img: "./assets/dificultades/normal.png",  tiempo: 15, costo: 10 },
+      { nombre: "DIFÍCIL", labelKey: "nivel_dificil", img: "./assets/dificultades/difícil.png", tiempo: 25, costo: 15 },
   ];
+
+  // Espejo de supabase/migrations/003_recompensas_dinamicas_antifarming.sql
+  // (tabla recompensas_nivel). Solo para vista previa; el servidor jamás
+  // confía en este objeto ni en ningún valor calculado en el cliente.
+  const RECOMPENSAS_NIVEL = {
+      primariaBasica:       { facil: 2, normal: 4,  dificil: 6  },
+      primariaAvanzada:     { facil: 3, normal: 6,  dificil: 9  },
+      bachilleratoBasico:   { facil: 4, normal: 8,  dificil: 12 },
+      bachilleratoAvanzado: { facil: 5, normal: 10, dificil: 15 },
+      universitario:        { facil: 7, normal: 13, dificil: 20 },
+  };
+
+  function obtenerNivelAcademicoActual() {
+      return window.nivelAcademicoSeleccionado || 'bachilleratoAvanzado';
+  }
 
   let dificultadActual = 0;
   const panel     = document.querySelector(".dificultad-panel");
@@ -76,14 +126,28 @@
   const flechaIzq = document.getElementById("flecha-izq");
   const flechaDer = document.getElementById("flecha-der");
 
+  // Vista previa de recompensa: "Recompensa: +N monedas por acierto"
+  const recompensaPreview = document.createElement("p");
+  recompensaPreview.id = "recompensa-preview";
+  panel.appendChild(recompensaPreview);
+
+  function actualizarRecompensaPreview() {
+      const claveDif = ["facil", "normal", "dificil"][dificultadActual];
+      const nivel = obtenerNivelAcademicoActual();
+      const tabla = RECOMPENSAS_NIVEL[nivel] || RECOMPENSAS_NIVEL.bachilleratoAvanzado;
+      const valor = tabla[claveDif];
+      recompensaPreview.textContent = (typeof __f === "function") ? __f("preg_recompensa_por_acierto", { valor: valor }) : `+${valor} 🪙 por acierto`;
+  }
+
   function actualizarDificultad() {
       const d = dificultades[dificultadActual];
-      nomEl.textContent = d.nombre;
+      nomEl.textContent = (typeof __ === "function") ? __(d.labelKey, d.nombre) : d.nombre;
       panel.dataset.dif = dificultadActual;
       imgDifEl.classList.remove("animar");
       void imgDifEl.offsetWidth;
       imgDifEl.src = d.img;
       imgDifEl.classList.add("animar");
+      actualizarRecompensaPreview();
   }
 
   flechaIzq.addEventListener("click", () => {
@@ -100,7 +164,7 @@ actualizarDificultad();
 const pantalla = document.createElement("div");
 pantalla.id = "pantalla-resultado";
 pantalla.innerHTML = `
-    <h2 id="res-titulo">¿SEGURO?</h2>
+    <h2 id="res-titulo" data-i18n="preg_seguro">¿SEGURO?</h2>
     <p id="res-area"></p>
     <p id="res-dif"></p>
     <div style="display:flex; gap:24px; margin-top:30px;">
@@ -112,22 +176,22 @@ document.body.appendChild(pantalla);
 
 // 🎓 OVERLAY DE SELECCIÓN DE NIVEL ACADÉMICO
 const nivelesAcademico = [
-    { id: 'primariaBasica',     nombre: 'Primaria básica',       color: '#44cc44' },
-    { id: 'primariaAvanzada',   nombre: 'Primaria avanzada',     color: '#ffdd00' },
-    { id: 'bachilleratoBasico', nombre: 'Bachillerato básico',   color: '#ff8800' },
-    { id: 'bachilleratoAvanzado', nombre: 'Bachillerato avanzado', color: '#ff4444' },
-    { id: 'universitario',      nombre: 'Universitario',         color: '#9944ff' },
+    { id: 'primariaBasica',     nombre: 'Primaria básica',       nombreKey: 'nivel_primaria_basica',       color: '#44cc44' },
+    { id: 'primariaAvanzada',   nombre: 'Primaria avanzada',     nombreKey: 'nivel_primaria_avanzada',     color: '#ffdd00' },
+    { id: 'bachilleratoBasico', nombre: 'Bachillerato básico',   nombreKey: 'nivel_bachillerato_basico',   color: '#ff8800' },
+    { id: 'bachilleratoAvanzado', nombre: 'Bachillerato avanzado', nombreKey: 'nivel_bachillerato_avanzado', color: '#ff4444' },
+    { id: 'universitario',      nombre: 'Universitario',         nombreKey: 'nivel_universitario',         color: '#9944ff' },
 ];
 
 const nivelOverlay = document.createElement('div');
 nivelOverlay.id = 'nivel-academico-overlay';
 nivelOverlay.innerHTML = `
     <div id="nivel-overlay-content">
-        <h2 id="nivel-titulo">Selecciona tu nivel académico</h2>
+        <h2 id="nivel-titulo" data-i18n="preg_nivel_titulo">Selecciona tu nivel académico</h2>
         <div id="nivel-tarjetas">
             ${nivelesAcademico.map(n => `
                 <div class="nivel-tarjeta" data-nivel="${n.id}" style="--nivel-color: ${n.color}">
-                    <span class="nivel-tarjeta-texto">${n.nombre}</span>
+                    <span class="nivel-tarjeta-texto" data-i18n="${n.nombreKey}">${n.nombre}</span>
                 </div>
             `).join('')}
         </div>
@@ -158,6 +222,7 @@ function cerrarOverlayNivel() {
 nivelOverlay.querySelectorAll('.nivel-tarjeta').forEach(tarjeta => {
     tarjeta.addEventListener('click', () => {
         window.nivelAcademicoSeleccionado = tarjeta.dataset.nivel;
+        if (typeof actualizarRecompensaPreview === 'function') actualizarRecompensaPreview();
         cerrarOverlayNivel();
     });
 });
@@ -188,13 +253,15 @@ btnAceptarConf.addEventListener("mouseleave", () => {
 
 btnAceptarConf.addEventListener("click", async () => {
     const costo = dificultades[currentDifficulty].costo;
-    const currentCoins = typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem('monedas') || '0');
+    let currentCoins = typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem('monedas') || '0');
+    if (currentCoins === null && typeof fetchMonedas === 'function') {
+        currentCoins = await fetchMonedas();
+    }
     if (currentCoins < costo) {
         pantalla.classList.remove("visible");
         mostrarNoMonedasOverlay(costo);
         return;
     }
-    pantalla.classList.remove("visible");
 
     const dificultadEntrada = ["facil", "normal", "dificil"][currentDifficulty];
 
@@ -211,14 +278,14 @@ btnAceptarConf.addEventListener("click", async () => {
         }
     }
 
-    if (sesionValida && window.apiRpc && window.apiRpc.transaccionMonedas) {
-        console.log('[CATBLING][ECONOMIA] RPC transaccion_monedas (entrada ronda)', {
+    if (sesionValida && window.apiRpc && window.apiRpc.cobrarEntradaPreguntaRonda) {
+        console.log('[CATBLING][ECONOMIA] RPC cobrar_entrada_pregunta_ronda (entrada ronda)', {
             dificultad: dificultadEntrada,
             costo
         });
 
         try {
-            const r = await window.apiRpc.transaccionMonedas(-costo, 'entrada_pregunta', dificultadEntrada);
+            const r = await window.apiRpc.cobrarEntradaPreguntaRonda(dificultadEntrada);
 
             console.log('[CATBLING][ECONOMIA] Resultado RPC entrada ronda', {
                 success: r.success,
@@ -234,7 +301,21 @@ btnAceptarConf.addEventListener("click", async () => {
                 } else if (typeof fetchMonedas === 'function') {
                     await fetchMonedas();
                 }
-                mostrarNoMonedasOverlay(costo);
+                pantalla.classList.remove("visible");
+                if (r.success) {
+                    // r.success === true y data.ok === false: el servidor SÍ
+                    // respondió y rechazó la operación explícitamente
+                    // (p. ej. saldo insuficiente). Comportamiento sin cambios.
+                    mostrarNoMonedasOverlay(costo);
+                } else {
+                    // r.success === false: la llamada RPC falló por un motivo
+                    // técnico (función inexistente en el schema, red caída,
+                    // error del servidor), no por saldo. No usar
+                    // mostrarNoMonedasOverlay aquí: esa función se autocancela
+                    // en silencio si el usuario ya tiene monedas suficientes,
+                    // dejando el fallo sin ningún aviso visible.
+                    mostrarErrorTecnicoOverlay((typeof __ === 'function') ? __('preg_no_pudo_iniciar_ronda') : 'No se pudo iniciar la ronda. Intenta de nuevo en unos segundos.');
+                }
                 return;
             }
 
@@ -245,7 +326,10 @@ btnAceptarConf.addEventListener("click", async () => {
             }
         } catch (e) {
             console.error('[CATBLING][ECONOMIA] Excepción cobrando entrada de ronda:', e);
-            mostrarNoMonedasOverlay(costo);
+            pantalla.classList.remove("visible");
+            // Excepción real (red, JS, etc.) — nunca es "saldo insuficiente",
+            // así que usamos el aviso de error técnico, no mostrarNoMonedasOverlay.
+            mostrarErrorTecnicoOverlay((typeof __ === 'function') ? __('preg_no_pudo_iniciar_ronda') : 'No se pudo iniciar la ronda. Intenta de nuevo en unos segundos.');
             return;
         }
     } else if (typeof window.cambiarMonedasLocal === 'function') {
@@ -253,7 +337,10 @@ btnAceptarConf.addEventListener("click", async () => {
         window.cambiarMonedasLocal(-costo, false);
     }
 
-    iniciarJuego(currentArea, currentDifficulty);
+    const rondaIniciada = await iniciarJuego(currentArea, currentDifficulty);
+    if (rondaIniciada) {
+        pantalla.classList.remove("visible");
+    }
 });
 
 let currentArea = "";
@@ -262,19 +349,24 @@ let currentDifficulty = 0;
 options.forEach((opt, index) => {
     const wrapper = opt.closest('.option-wrapper');
     const clickTarget = wrapper || opt;
-    clickTarget.addEventListener("click", () => {
-        if (typeof invitadoPuedeResponder === 'function' && typeof requerirAutenticacion === 'function' && !invitadoPuedeResponder()) {
+    clickTarget.addEventListener("click", async () => {
+        if (typeof invitadoPuedeResponder === 'function' && typeof requerirAutenticacion === 'function' && !(await invitadoPuedeResponder())) {
             requerirAutenticacion();
             return;
         }
         const costo = dificultades[dificultadActual].costo;
-        const currentCoins = typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem('monedas') || '0');
+        let currentCoins = typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem('monedas') || '0');
+        if (currentCoins === null && typeof fetchMonedas === 'function') {
+            currentCoins = await fetchMonedas();
+        }
         if (currentCoins < costo) {
             mostrarNoMonedasOverlay(costo);
             return;
         }
-        document.getElementById("res-area").textContent = "Área: " + previews[index].text;
-        document.getElementById("res-dif").textContent  = "Dificultad: " + dificultades[dificultadActual].nombre;
+        const areaTraducida = (typeof __ === "function") ? __(previews[index].textKey, previews[index].text) : previews[index].text;
+        const difTraducida = (typeof __ === "function") ? __(dificultades[dificultadActual].labelKey, dificultades[dificultadActual].nombre) : dificultades[dificultadActual].nombre;
+        document.getElementById("res-area").textContent = ((typeof __ === "function") ? __("preg_area_prefijo") : "Área:") + " " + areaTraducida;
+        document.getElementById("res-dif").textContent  = ((typeof __ === "function") ? __("preg_dificultad_prefijo") : "Dificultad:") + " " + difTraducida;
         pantalla.classList.add("visible");
         currentArea = previews[index].text;
         currentDifficulty = dificultadActual;
@@ -301,11 +393,11 @@ zonaPreguntas.innerHTML = `
 `;
 
 botonesPreg.innerHTML = `
-    <img id="btn-explicacion" src="./assets/explicacion.png" title="Ver explicación" alt="EXPLICACIÓN" class="boton-pregunta-img">
-    <img id="btn-siguiente" src="./assets/arrowder1.png" title="Siguiente pregunta" alt="SIGUIENTE" class="boton-pregunta-img">
+    <img id="btn-explicacion" src="./assets/explicacion.png" title="Ver explicación" alt="EXPLICACIÓN" class="boton-pregunta-img" data-i18n-title="preg_ver_explicacion" data-i18n-alt="explicacion_titulo">
+    <img id="btn-siguiente" src="./assets/arrowder1.png" title="Siguiente pregunta" alt="SIGUIENTE" class="boton-pregunta-img" data-i18n-title="preg_siguiente_pregunta" data-i18n-alt="siguiente">
 `;
 
-panelExpl.innerHTML = `<h3>EXPLICACIÓN</h3><p id="texto-explicacion"></p>`;
+panelExpl.innerHTML = `<h3 data-i18n="explicacion_titulo">EXPLICACIÓN</h3><p id="texto-explicacion"></p>`;
 
 document.body.appendChild(flashCorrecto);
 document.body.appendChild(flashIncorrecto);
@@ -316,6 +408,7 @@ document.body.appendChild(panelExpl);
 // elementos del juego
   let preguntasActuales = [];
   let indicePregunta    = 0;
+  let preguntaIdActual  = null; // ID estable de la pregunta en pantalla, usado para el gate de "pregunta servida"
   let respondido        = false;
   let explicacionVisible = false;
   let preguntaTimerInterval = null;
@@ -459,11 +552,25 @@ const elementosSalida = [
     document.querySelector(".dificultad-panel"),
 ];
 
-function iniciarJuego(area, difIndex) {
-    if (typeof invitadoPuedeResponder === 'function' && typeof requerirAutenticacion === 'function' && !invitadoPuedeResponder()) {
-        requerirAutenticacion();
-        return;
+async function iniciarJuego(area, difIndex) {
+    if (typeof invitadoPuedeResponder === 'function' && typeof requerirAutenticacion === 'function' && !(await invitadoPuedeResponder())) {
+        console.warn('[CATBLING][PREGUNTAS] No se pudo iniciar la ronda: autenticación requerida.');
+        return false;
     }
+
+    // CAUSA RAÍZ (abandonar la ronda a medias permitía repetirla): antes
+    // solo se llamaba a marcarPreguntasCompletadas() dentro de finJuego(),
+    // es decir, al llegar al final de las 15 preguntas. Si el invitado
+    // cerraba la pestaña, recargaba o navegaba fuera antes de terminar,
+    // finJuego() nunca se ejecutaba y GUEST_QUESTIONS_KEY seguía en
+    // "false", así que podía volver a entrar y recibir una ronda
+    // completamente nueva sin límite. Se marca aquí, al arrancar la
+    // ronda (justo tras el guard de arriba, que ya confirma que el
+    // invitado SÍ tenía derecho a empezarla), para que "iniciar" ya
+    // cuente como el uso, tal como pide el flujo esperado. La llamada
+    // que ya existía en finJuego() se deja igual (es idempotente).
+    if (typeof marcarPreguntasCompletadas === 'function') marcarPreguntasCompletadas();
+
     const claveDif = ["FACIL", "NORMAL", "DIFICIL"][difIndex];
     const claveArea = {
         "SOCIALES":    "SOCIALES",
@@ -489,9 +596,18 @@ function iniciarJuego(area, difIndex) {
         });
 
         // cargar preguntas desde preguntas.js - solo 15 aleatorias
-        const todasLasPreguntas = obtenerPreguntas(claveArea, claveDif);
+        // Se etiqueta cada pregunta con un ID estable
+        // "nivel:area:dificultad:posición" (posición dentro del banco
+        // ANTES de barajar), usado para el gate de "pregunta servida" y
+        // la validación real de la respuesta en servidor. No requiere
+        // tocar el contenido de questions.js.
+        const nivelParaId = obtenerNivelAcademicoActual();
+        const todasLasPreguntas = obtenerPreguntas(claveArea, claveDif).map((p, i) => ({
+            ...p,
+            _preguntaId: `${nivelParaId}:${claveArea}:${claveDif}:${i}`
+        }));
         if (!todasLasPreguntas || todasLasPreguntas.length === 0) {
-            alert('No hay preguntas disponibles para este nivel académico.');
+            alert((typeof __ === 'function') ? __('preg_sin_preguntas_nivel') : 'No hay preguntas disponibles para este nivel académico.');
             location.reload();
             return;
         }
@@ -503,6 +619,7 @@ function iniciarJuego(area, difIndex) {
         botonesPreg.style.display = "flex";
         mostrarPregunta();
     }, 650);
+    return true;
 }
 
 function alternarExplicacion(forzarEstado = null) {
@@ -526,8 +643,41 @@ function mostrarPregunta(animacion = false) {
     if (btnExpl) btnExpl.classList.remove("habilitado");
     if (btnSig) btnSig.classList.remove("habilitado");
 
-    const p = preguntasActuales[indicePregunta];
+    const p = (typeof obtenerPreguntaTraducida === "function") ? obtenerPreguntaTraducida(preguntasActuales[indicePregunta]) : preguntasActuales[indicePregunta];
     const bloque = document.getElementById("bloque-pregunta");
+
+    // Avisar al servidor de qué pregunta se está mostrando (gate de
+    // "pregunta servida" + arranque del mínimo de lectura de 1.2s). No
+    // bloquea el RENDER de la pregunta (se ve de inmediato); lo que sí
+    // queda bloqueado hasta cumplir ese margen son los botones de
+    // respuesta para usuarios autenticados (ver bloque de más abajo).
+    preguntaIdActual = p._preguntaId || null;
+
+    // CAUSA RAÍZ (las monedas no se actualizan correctamente tras cada
+    // respuesta): registrar_respuesta_pregunta() en Supabase exige, como
+    // parte de su antifraude, que hayan pasado >=1200ms desde que se
+    // llamó a marcar_pregunta_servida() para ESA misma pregunta. Antes,
+    // los botones de respuesta quedaban habilitados de inmediato mientras
+    // marcarPreguntaServida() se disparaba en paralelo sin esperarse
+    // ("fire and forget"): si el jugador respondía antes de que se
+    // cumpliera ese margen (+ la latencia de red de esa llamada), el
+    // servidor rechazaba la transacción (ok:false) sin lanzar ningún
+    // error. El cliente nunca comprobaba ese campo "ok" (solo que
+    // "nuevo_saldo" viniera definido, cosa que la RPC siempre devuelve,
+    // incluso al rechazar), así que la animación optimista de +/- monedas
+    // se mostraba igual, pero el saldo real nunca cambiaba y no había
+    // ningún aviso. Se corrige esperando aquí ese mismo margen (solo para
+    // usuarios autenticados, que son los que pasan por este candado del
+    // servidor) antes de habilitar los botones, y comprobando "ok" al
+    // procesar la respuesta (ver procesarRespuesta más abajo).
+    const preguntaMostradaEn = Date.now();
+    let promesaPreguntaServida = Promise.resolve();
+    if (preguntaIdActual && window.apiRpc && window.apiRpc.marcarPreguntaServida) {
+        const nivelParaServir = obtenerNivelAcademicoActual();
+        const claveDifRpc = ["facil", "normal", "dificil"][currentDifficulty];
+        promesaPreguntaServida = window.apiRpc.marcarPreguntaServida(nivelParaServir, claveDifRpc, preguntaIdActual)
+            .catch(e => console.warn('[CATBLING][ECONOMIA] No se pudo marcar pregunta servida:', e));
+    }
 
     document.getElementById("respondidas").textContent = indicePregunta + 1;
     document.getElementById("total").textContent = preguntasActuales.length;
@@ -551,9 +701,29 @@ function mostrarPregunta(animacion = false) {
         const btn = document.createElement("button");
         btn.className      = "opcion-respuesta";
         btn.textContent    = item.texto;
-        btn.addEventListener("click", () => responder(i, indiceBarajadoCorrecto, p.explicacion));
+        btn.addEventListener("click", () => responder(i, indiceBarajadoCorrecto, p.explicacion, item.indiceOriginal));
         contenedor.appendChild(btn);
     });
+
+    // Ver nota de "CAUSA RAÍZ" más arriba: para usuarios autenticados, no
+    // dejar responder hasta que se cumpla el mismo margen que exige
+    // registrar_respuesta_pregunta() en el servidor. Guest queda igual
+    // que antes (su economía es local, sin este candado).
+    if (typeof _isAuthenticatedSync === 'function' && _isAuthenticatedSync()) {
+        const botonesDeEstaPregunta = Array.from(contenedor.querySelectorAll(".opcion-respuesta"));
+        const idPreguntaDeEstosBotones = preguntaIdActual;
+        botonesDeEstaPregunta.forEach(b => b.disabled = true);
+        promesaPreguntaServida.then(() => {
+            const restante = Math.max(0, 1300 - (Date.now() - preguntaMostradaEn));
+            setTimeout(() => {
+                // Si mientras se esperaba el jugador ya cambió de pregunta
+                // (Cambiar/siguiente) o ya respondió, no reactivar botones
+                // obsoletos.
+                if (preguntaIdActual !== idPreguntaDeEstosBotones || respondido) return;
+                botonesDeEstaPregunta.forEach(b => b.disabled = false);
+            }, restante);
+        });
+    }
 
     // conectar botones
     if (btnExpl) {
@@ -582,7 +752,7 @@ function mostrarPregunta(animacion = false) {
     iniciarTimer();
 }
 
-function responder(elegida, correcta, explicacion) {
+function responder(elegida, correcta, explicacion, indiceOriginalElegido) {
     if (respondido) return;
     respondido = true;
     detenerTimer();
@@ -600,7 +770,15 @@ function responder(elegida, correcta, explicacion) {
     if (btnSig) btnSig.classList.add("habilitado");
 
     const esCorrecta = (elegida === correcta);
-    const costoPregunta = dificultades[currentDifficulty].costo;
+    // Vista previa optimista (se corrige de inmediato con el saldo real del
+    // servidor tras la RPC). Refleja el nivel académico real, pero NO el
+    // descuento por dominio -- ese ajuste fino solo importa para el saldo
+    // real, que siempre se vuelve a sincronizar justo después via
+    // window.coinsAPI.fetch().
+    const nivelParaPreview = obtenerNivelAcademicoActual();
+    const claveDifParaPreview = ["facil", "normal", "dificil"][currentDifficulty];
+    const tablaParaPreview = RECOMPENSAS_NIVEL[nivelParaPreview] || RECOMPENSAS_NIVEL.bachilleratoAvanzado;
+    const costoPregunta = tablaParaPreview[claveDifParaPreview];
 
     if (esCorrecta) {
         botones[elegida].classList.add("correcta");
@@ -647,23 +825,34 @@ function responder(elegida, correcta, explicacion) {
         }
 
         const dificultad = ["facil", "normal", "dificil"][currentDifficulty];
-        
+        const nivelAcademico = obtenerNivelAcademicoActual();
+
         console.log('[CATBLING][ECONOMIA] RPC registrar_respuesta_pregunta', {
+            nivelAcademico,
             dificultad,
-            esCorrecta,
+            preguntaId: preguntaIdActual,
+            indiceOriginalElegido,
             costoPregunta
         });
 
         try {
-            const r = await window.apiRpc.registrarRespuestaPregunta(dificultad, esCorrecta);
+            const r = await window.apiRpc.registrarRespuestaPregunta(nivelAcademico, dificultad, preguntaIdActual, indiceOriginalElegido);
             
             console.log('[CATBLING][ECONOMIA] Resultado RPC', {
                 success: r.success,
+                ok: r.data?.ok,
                 nuevo_saldo: r.data?.nuevo_saldo,
                 error: r.error
             });
 
-            if (r.success && r.data?.nuevo_saldo !== undefined) {
+            // CAUSA RAÍZ: antes solo se comprobaba "r.data?.nuevo_saldo !==
+            // undefined", pero registrar_respuesta_pregunta() SIEMPRE
+            // devuelve nuevo_saldo (incluso cuando rechaza la respuesta),
+            // así que esta rama se tomaba como "éxito" tanto si la
+            // transacción se aplicó como si el servidor la rechazó por su
+            // antifraude (ok:false). Ahora se exige "ok === true" para
+            // considerar la respuesta realmente registrada.
+            if (r.success && r.data?.ok === true && r.data?.nuevo_saldo !== undefined) {
                 console.log('[CATBLING][ECONOMIA] Transacción confirmada en Supabase, nuevo saldo:', r.data.nuevo_saldo);
                 if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
                     await window.coinsAPI.fetch();
@@ -671,7 +860,7 @@ function responder(elegida, correcta, explicacion) {
                     await fetchMonedas();
                 }
             } else {
-                console.warn('[CATBLING][ECONOMIA] RPC falló:', {
+                console.warn('[CATBLING][ECONOMIA] RPC falló o rechazó la respuesta:', {
                     error: r.error,
                     data: r.data
                 });
@@ -680,6 +869,15 @@ function responder(elegida, correcta, explicacion) {
                     await window.coinsAPI.fetch();
                 } else if (typeof fetchMonedas === 'function') {
                     await fetchMonedas();
+                }
+                // Avisar honestamente: la animación ya mostró +/- monedas,
+                // pero el servidor no aplicó el cambio. Se reutiliza el
+                // overlay de error técnico ya existente en este archivo
+                // (no se crea un segundo sistema de avisos).
+                if (r.success && r.data?.ok === false) {
+                    mostrarErrorTecnicoOverlay((typeof __ === 'function') ? __('preg_respuesta_no_registrada') : 'Esta respuesta no se pudo registrar. Se muestra tu saldo real.');
+                } else {
+                    mostrarErrorTecnicoOverlay();
                 }
             }
         } catch (e) {
@@ -702,9 +900,8 @@ function responder(elegida, correcta, explicacion) {
 }
 
 function cambiarMonedasLocal(valor, positivo) {
-    if (!_isAuthenticatedSync()) {
-        // Para usuarios autenticados, NO modificar localStorage directamente
-        // Las mutaciones reales se hacen via RPC al final de la partida
+    if (_isAuthenticatedSync()) {
+        // Para usuarios autenticados, las mutaciones reales se hacen via RPC.
         console.warn('[preguntas] cambiarMonedasLocal: uso RPC para usuarios autenticados');
         return;
     }
@@ -755,16 +952,44 @@ async function finJuego() {
     // Registrar ronda en Supabase via RPC (SOLO ESTADÍSTICAS - cambios monetarios ya hechos por pregunta)
     let monedasFinal = typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem("monedas") || "0");
     let rondaRegistrada = false;
-    
-    if (window.apiRpc && window.apiRpc.registrarRondaPreguntas) {
+    let dominioMensaje = '';
+
+    // CAUSA RAÍZ ("Ronda no registrada" aparece también para invitados):
+    // esta condición comprobaba solo si window.apiRpc.registrarRondaPreguntas
+    // EXISTE como función -- y existe siempre, para invitado y autenticado
+    // por igual, ya que api.js define el objeto apiRpc sin condicionarlo a
+    // la sesión. Así que un invitado también entraba a esta rama, llamaba
+    // a la RPC real, y esta la rechazaba (ok:false) porque auth.uid() es
+    // NULL sin sesión -- mostrando "Ronda no registrada" SIEMPRE al
+    // invitado, aunque su ronda local fuera perfectamente normal. El resto
+    // del flujo (cobrar_entrada_pregunta_ronda más arriba, procesarRespuesta
+    // más abajo) ya comprobaba la sesión real antes de llamar a su RPC; se
+    // aplica aquí el mismo patrón para que sea consistente en todo el
+    // archivo.
+    let sesionValidaFin = false;
+    if (window.supabase && typeof window.supabase.auth.getSession === 'function') {
+        try {
+            const { data: { session } } = await window.supabase.auth.getSession();
+            sesionValidaFin = !!session;
+        } catch (e) {
+            console.warn('[CATBLING][ECONOMIA] Error verificando sesión (fin de ronda):', e);
+        }
+    }
+
+    if (sesionValidaFin && window.apiRpc && window.apiRpc.registrarRondaPreguntas) {
         try {
             const dificultad = ["facil", "normal", "dificil"][currentDifficulty]; // sin tildes, coincide con el enum dificultad_nivel de Supabase
-            const costoPregunta = dificultades[currentDifficulty].costo;
-            // monedas_ganadas netas de la ronda para estadísticas (puede ser negativo)
-            // NO se aplican cambios monetarios aquí; ya se hicieron via registrar_respuesta_pregunta por cada respuesta
+            const nivelAcademico = obtenerNivelAcademicoActual();
+            const tablaEstim = RECOMPENSAS_NIVEL[nivelAcademico] || RECOMPENSAS_NIVEL.bachilleratoAvanzado;
+            const costoPregunta = tablaEstim[dificultad];
+            // monedas_ganadas: solo un valor informativo enviado al servidor
+            // (que la RPC ya recalcula por su cuenta y no usa como fuente de
+            // verdad); NO se aplican cambios monetarios aquí, ya se hicieron
+            // vía registrar_respuesta_pregunta por cada respuesta.
             const monedas_ganadas = (correctas - incorrectas) * costoPregunta;
-            
+
             console.log('[CATBLING][ECONOMIA] RPC registrar_ronda_preguntas', {
+                nivelAcademico,
                 dificultad,
                 area: currentArea,
                 preguntasTotal: 15,
@@ -773,8 +998,8 @@ async function finJuego() {
                 monedas_ganadas
             });
 
-            const r = await window.apiRpc.registrarRondaPreguntas(dificultad, currentArea, 15, correctas, monedas_ganadas);
-            
+            const r = await window.apiRpc.registrarRondaPreguntas(nivelAcademico, dificultad, currentArea, 15, correctas, monedas_ganadas);
+
             console.log('[CATBLING][ECONOMIA] Resultado RPC ronda', {
                 success: r.success,
                 id: r.data?.id,
@@ -788,6 +1013,22 @@ async function finJuego() {
                     monedasFinal = await window.coinsAPI.fetch();
                 } else if (typeof fetchMonedas === 'function') {
                     monedasFinal = await fetchMonedas();
+                }
+
+                // Mensaje amigable de progresión (NO académico/vigilante):
+                // se consulta el dominio vigente de ESTA combinación y, si
+                // está alto, se invita a subir de dificultad/nivel para
+                // mejores recompensas -- nunca se bloquea ni se acusa nada.
+                if (window.apiRpc.obtenerDominioActual) {
+                    try {
+                        const d = await window.apiRpc.obtenerDominioActual(nivelAcademico, dificultad);
+                        if (d.success && d.data?.racha_dominio >= 4) {
+                            const txtDomina = (typeof __ === 'function') ? __('preg_dominas_nivel') : '💪 ¡Dominas este nivel! Prueba una dificultad o nivel mayor para ganar más monedas.';
+                            dominioMensaje = '<p style="font-family:\'Pixelify Sans\',sans-serif; color:#7fffd4; font-size:15px; margin-bottom:10px;">' + txtDomina + '</p>';
+                        }
+                    } catch (e) {
+                        console.warn('[CATBLING][ECONOMIA] No se pudo leer dominio actual:', e);
+                    }
                 }
             } else {
                 console.warn('[CATBLING][ECONOMIA] RPC registrar_ronda_preguntas falló:', {
@@ -806,7 +1047,8 @@ async function finJuego() {
             }
         }
     } else {
-        // Sin RPC disponible (invitado o sin Supabase)
+        // Invitado (sin sesión válida) o sin RPC disponible: no se llama a
+        // Supabase, se usa el saldo local (fetchMonedas ya distingue esto).
         if (typeof fetchMonedas === 'function') {
             monedasFinal = await fetchMonedas();
         }
@@ -820,18 +1062,22 @@ async function finJuego() {
     `;
     
     let mensajeExtra = '';
-    if (!rondaRegistrada && window.apiRpc && window.apiRpc.registrarRondaPreguntas) {
-        mensajeExtra = '<p style="font-family:\'Pixelify Sans\',sans-serif; color:#ffaa00; font-size:14px; margin-bottom:10px;">⚠ Ronda no registrada en servidor. Se muestra saldo actual.</p>';
+    if (!rondaRegistrada && sesionValidaFin && window.apiRpc && window.apiRpc.registrarRondaPreguntas) {
+        const txtNoRegistrada = (typeof __ === 'function') ? __('preg_ronda_no_registrada') : '⚠ Ronda no registrada en servidor. Se muestra saldo actual.';
+        mensajeExtra = '<p style="font-family:\'Pixelify Sans\',sans-serif; color:#ffaa00; font-size:14px; margin-bottom:10px;">' + txtNoRegistrada + '</p>';
     }
-    
+    const txtCompletado = (typeof __ === 'function') ? __('preg_completado') : '¡COMPLETADO!';
+    const txtResumen = (typeof __f === 'function') ? __f('preg_resultado_resumen', { correctas: correctas, incorrectas: incorrectas, monedas: monedasFinal }) : ('Correctas: ' + correctas + ' | Incorrectas: ' + incorrectas + ' | Monedas: ' + monedasFinal);
+
     fin.innerHTML = `
         <p style="font-family:'Press Start 2P',cursive; color:gold; font-size:20px; margin-bottom:20px;">
-            ¡COMPLETADO!
+            ${txtCompletado}
         </p>
         <p style="font-family:'Pixelify Sans',sans-serif; color:white; font-size:26px; margin-bottom:30px;">
-            Correctas: ${correctas} | Incorrectas: ${incorrectas} | Monedas: ${monedasFinal}
+            ${txtResumen}
         </p>
         ${mensajeExtra}
+        ${dominioMensaje}
         <img src="./assets/reply-arrow.png" id="btn-fin-volver"
              style="width:90px; cursor:pointer;">
     `;
@@ -911,7 +1157,7 @@ function getIndiceCorrectoBarajado() {
 
 function aplicarPistaBreve() {
   if (!juegoEstaActivo()) return;
-  const p = preguntasActuales[indicePregunta];
+  const p = (typeof obtenerPreguntaTraducida === "function") ? obtenerPreguntaTraducida(preguntasActuales[indicePregunta]) : preguntasActuales[indicePregunta];
   if (!p) return;
   const palabras = (p.explicacion || p.pregunta).split(/\s+/).filter(w => w.length > 4);
   if (palabras.length === 0) return;
@@ -928,7 +1174,7 @@ function aplicarPistaBreve() {
     text-shadow: 0 0 15px rgba(0,255,255,0.8);
     animation: pista-aparecer 0.5s ease forwards;
   `;
-  hintEl.textContent = "💡 Pista: " + palabraClave;
+  hintEl.textContent = (typeof __f === "function") ? __f("preg_pista_prefijo", { palabra: palabraClave }) : ("💡 Pista: " + palabraClave);
   document.body.appendChild(hintEl);
   setTimeout(() => {
     if (hintEl.parentNode) hintEl.remove();
@@ -1029,7 +1275,7 @@ function aplicarRespuestaPopular() {
   const rect = botones[elegirIdx].getBoundingClientRect();
   popularEl.style.left = (rect.right + 10) + 'px';
   popularEl.style.top = (rect.top + rect.height / 2 - 10) + 'px';
-  popularEl.textContent = "👥 POPULAR";
+  popularEl.textContent = (typeof __ === "function") ? __("preg_popular") : "👥 POPULAR";
   document.body.appendChild(popularEl);
   setTimeout(() => { if (popularEl.parentNode) popularEl.remove(); }, 3000);
   
@@ -1068,7 +1314,7 @@ function aplicarReintentar() {
     color: #ff8800; z-index: 500; animation: flotar-feedback 2s ease forwards;
     text-shadow: 0 0 20px rgba(255,136,0,0.8);
   `;
-  msg.textContent = "♻️ ¡INTENTA DE NUEVO!";
+  msg.textContent = (typeof __ === "function") ? __("preg_intenta_de_nuevo") : "♻️ ¡INTENTA DE NUEVO!";
   document.body.appendChild(msg);
   setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2000);
 }
@@ -1087,7 +1333,7 @@ function aplicarTiempoInfinito() {
     text-shadow: 0 0 30px rgba(255,0,255,0.9);
     animation: flotar-feedback 3s ease forwards;
   `;
-  msg.textContent = "⌛ ¡TIEMPO INFINITO!";
+  msg.textContent = (typeof __ === "function") ? __("preg_tiempo_infinito") : "⌛ ¡TIEMPO INFINITO!";
   document.body.appendChild(msg);
   setTimeout(() => { if (msg.parentNode) msg.remove(); }, 3000);
 }
@@ -1147,5 +1393,29 @@ window.aplicarItemPregunta = function(nombre, itemData) {
   }
 
   if (typeof tutorialInit === 'function') tutorialInit();
+
+  // Refresca los textos ya visibles (selector de área, panel de
+  // dificultad, pantalla de confirmación) si el usuario cambia de idioma,
+  // sin recargar la página. currentArea/claveArea (usados como IDs
+  // internos) no se tocan, solo lo que se muestra en pantalla.
+  window.addEventListener('idiomaAplicado', function () {
+    if (typeof __ !== 'function') return;
+    previewText.innerText = __(previews[current].textKey, previews[current].text);
+    nomEl.textContent = __(dificultades[dificultadActual].labelKey, dificultades[dificultadActual].nombre);
+    if (typeof actualizarRecompensaPreview === 'function') actualizarRecompensaPreview();
+    if (pantalla.classList.contains('visible')) {
+      const areaEl = document.getElementById('res-area');
+      const difEl = document.getElementById('res-dif');
+      if (areaEl) areaEl.textContent = __('preg_area_prefijo') + ' ' + __(previews[current].textKey, previews[current].text);
+      if (difEl) difEl.textContent = __('preg_dificultad_prefijo') + ' ' + __(dificultades[dificultadActual].labelKey, dificultades[dificultadActual].nombre);
+    }
+    // Nota: la pregunta actualmente visible (si hay una ronda en curso) no
+    // se vuelve a renderizar aquí a propósito: mostrarPregunta() reinicia
+    // el temporizador de la ronda, así que hacerlo solo por un cambio de
+    // idioma penalizaría injustamente el tiempo del jugador. La pregunta
+    // en curso se termina de responder en el idioma en que se mostró; la
+    // traducción (si existe) se aplicará a partir de la siguiente
+    // pregunta, que ya pasa por obtenerPreguntaTraducida().
+  });
 });
 

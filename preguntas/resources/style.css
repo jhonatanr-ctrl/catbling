@@ -245,7 +245,7 @@ body {
     grid-template-columns: repeat(2, auto);
     grid-template-rows: repeat(3, auto);
     gap: 0px 3px;
-    z-index: 3;
+    z-index: 6;
     justify-items: center;
     align-items: center;
 }
@@ -344,6 +344,19 @@ body {
 .dificultad-panel[data-dif="1"] .dificultad-nombre {color: #ffd700;margin-left: -6px;}
 
 .dificultad-panel[data-dif="2"] .dificultad-nombre {color: #ff4444;margin-left: -24px;}
+
+/* Vista previa de recompensa real (nivel académico x dificultad).
+   Meramente informativa: la fuente de verdad económica vive en Supabase
+   (tabla recompensas_nivel + dominio_usuario). */
+#recompensa-preview {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 14px;
+    color: #ffd700;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+    margin: -6px 0 0 0;
+    text-align: center;
+    animation: flotar 3s ease-in-out infinite;
+}
 
 /* flechas */
 .flecha-dif {

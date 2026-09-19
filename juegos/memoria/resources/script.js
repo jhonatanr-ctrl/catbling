@@ -23,11 +23,11 @@ const ICONS = [
 ];
 
 const NIVELES = [
-  { pares: 4,  mult: 2,  label: "FÁCIL",   rows: 2, cols: 4 },
-  { pares: 6,  mult: 3,  label: "NORMAL",  rows: 2, cols: 6 },
-  { pares: 8,  mult: 4,  label: "DIFÍCIL", rows: 4, cols: 4 },
-  { pares: 10, mult: 6,  label: "EXPERTO", rows: 2, cols: 10 },
-  { pares: 12, mult: 8,  label: "LEYENDA", rows: 3, cols: 8 }
+  { pares: 4,  mult: 2,  label: "FÁCIL",   labelKey: "nivel_facil",   rows: 2, cols: 4 },
+  { pares: 6,  mult: 3,  label: "NORMAL",  labelKey: "nivel_normal",  rows: 2, cols: 6 },
+  { pares: 8,  mult: 4,  label: "DIFÍCIL", labelKey: "nivel_dificil", rows: 4, cols: 4 },
+  { pares: 10, mult: 6,  label: "EXPERTO", labelKey: "nivel_experto", rows: 2, cols: 10 },
+  { pares: 12, mult: 8,  label: "LEYENDA", labelKey: "nivel_leyenda", rows: 3, cols: 8 }
 ];
 
 // helper
@@ -204,9 +204,9 @@ function initNiveles() {
     const div = document.createElement("div");
     div.className = "nivel-item" + (i === nivelActual ? " active" : "") + (bloqueado ? " locked" : "");
     div.innerHTML = bloqueado
-      ? '<span class="nivel-num">' + (i + 1) + '. ' + n.label + ' 🔒</span>'
-      : '<span class="nivel-num">' + (i + 1) + '. ' + n.label + '</span>' +
-        '<span class="nivel-info">' + n.pares + ' pares / ' + getMovMax(n.pares) + ' mov</span>' +
+      ? '<span class="nivel-num">' + (i + 1) + '. ' + (typeof __ === 'function' ? __(n.labelKey, n.label) : n.label) + ' 🔒</span>'
+      : '<span class="nivel-num">' + (i + 1) + '. ' + (typeof __ === 'function' ? __(n.labelKey, n.label) : n.label) + '</span>' +
+        '<span class="nivel-info">' + ((typeof __f === 'function') ? __f('memoria_pares_mov', { pares: n.pares, mov: getMovMax(n.pares) }) : (n.pares + ' pares / ' + getMovMax(n.pares) + ' mov')) + '</span>' +
         '<span class="nivel-premio">x' + n.mult + '</span>';
     div.onclick = function() {
       if (juegoIniciado || bloqueado) return;
@@ -218,7 +218,7 @@ function initNiveles() {
       pairsFound = 0;
       if (movesSpan) { movesSpan.textContent = "0"; updateMovesColor(); }
       var inst = document.getElementById("instruccion-text");
-      if (inst) inst.textContent = '¡Encuentra ' + n.pares + ' pares en menos de ' + getMovMax(n.pares) + ' movimientos!';
+      if (inst) inst.textContent = (typeof __f === 'function') ? __f('memoria_encuentra_pares', { pares: n.pares, mov: getMovMax(n.pares) }) : ('¡Encuentra ' + n.pares + ' pares en menos de ' + getMovMax(n.pares) + ' movimientos!');
     };
     lista.appendChild(div);
   });
@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
   juegoIniciado = false;
   if (movesSpan) { movesSpan.textContent = "0"; updateMovesColor(); }
   const inst = document.getElementById("instruccion-text");
-  if (inst) inst.textContent = `¡Encuentra ${NIVELES[nivelActual].pares} pares en menos de ${getMovMax(NIVELES[nivelActual].pares)} movimientos!`;
+  if (inst) inst.textContent = (typeof __f === 'function') ? __f('memoria_encuentra_pares', { pares: NIVELES[nivelActual].pares, mov: getMovMax(NIVELES[nivelActual].pares) }) : (`¡Encuentra ${NIVELES[nivelActual].pares} pares en menos de ${getMovMax(NIVELES[nivelActual].pares)} movimientos!`);
   const menuImg = document.getElementById("menu-img");
   const menuBtn = document.querySelector(".menu-button");
   if (menuBtn && menuImg) {
@@ -435,3 +435,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("storage", () => { actualizarUI(); });
+
+// Refresca la lista de niveles y el mensaje de instrucción visibles si el
+// usuario cambia de idioma, sin recargar la página ni afectar la partida
+// en curso (movimientos y cartas ya volteadas no se tocan).
+window.addEventListener("idiomaAplicado", function () {
+  if (typeof initNiveles === "function") initNiveles();
+  const inst = document.getElementById("instruccion-text");
+  if (inst && typeof __f === "function") {
+    inst.textContent = __f("memoria_encuentra_pares", {
+      pares: NIVELES[nivelActual].pares,
+      mov: getMovMax(NIVELES[nivelActual].pares)
+    });
+  }
+});

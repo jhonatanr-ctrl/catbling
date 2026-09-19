@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   opciones.forEach(opcion => {
     opcion.addEventListener("mouseenter", () => {
       if (subtitulo) {
-        subtitulo.textContent = opcion.dataset.texto;
+        const clave = opcion.dataset.i18nTexto;
+        subtitulo.textContent = (clave && typeof __ === "function") ? __(clave, opcion.dataset.texto) : opcion.dataset.texto;
         subtitulo.classList.add("animar-texto");
       }
     });

@@ -67,11 +67,15 @@
           <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
         </div>
       </div>
-      <div class="opcion-item">
+      <div class="opcion-item opcion-item-idioma">
         <span data-i18n="idioma">Idioma</span>
-        <div class="grupo-botones">
-          <button onclick="setIdioma('es')">ES</button>
-          <button onclick="setIdioma('en')">EN</button>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
         </div>
       </div>
       <div class="opcion-item">
@@ -99,15 +103,15 @@
 
     <div class="carousel">
       <button class="flecha-izq" id="flecha-izq">
-        <img src="./assets/arrow-izq.png" alt="Anterior">
+        <img src="./assets/arrow-izq.png" alt="Anterior" data-i18n-alt="anterior_alt">
       </button>
 
       <div class="imagen-container">
-        <img src="" id="imagen-principal" alt="Imagen principal">
+        <img src="" id="imagen-principal" alt="Imagen principal" data-i18n-alt="imagen_principal_alt">
       </div>
 
       <button class="flecha-der" id="flecha-der">
-        <img src="./assets/arrow-der.png" alt="Siguiente">
+        <img src="./assets/arrow-der.png" alt="Siguiente" data-i18n-alt="siguiente_alt">
       </button>
     </div>
   </div>
@@ -116,7 +120,7 @@
     <div class="tutorial-container">
       <div class="tutorial-character-wrapper">
         <div class="tutorial-character" id="tutorial-character">
-          <img src="../resources/assets/3.png" alt="Personaje" id="tutorial-img">
+          <img src="../resources/assets/3.png" alt="Personaje" data-i18n-alt="personaje_alt" id="tutorial-img">
         </div>
       </div>
       <div class="tutorial-speech">
@@ -127,8 +131,8 @@
         <div class="speech-footer">
           <span id="tutorial-step" class="tutorial-step">1/5</span>
           <div class="speech-buttons">
-            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
-            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip" data-i18n="saltar">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next" data-i18n="siguiente">SIGUIENTE</button>
           </div>
         </div>
       </div>
@@ -162,11 +166,11 @@
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
         <div class="confirmacion-contenido">
-            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
-            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
             <div class="confirmacion-botones">
-                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
-                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
             </div>
         </div>
     </div>

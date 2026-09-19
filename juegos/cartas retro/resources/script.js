@@ -1,6 +1,7 @@
 var deck = [];
 var hand = [];
 var isPlaying = false;
+var ultimoResultadoManoLabel = null; // { handKey, mult } o 'carta_alta', para refrescar el label al cambiar de idioma
 var apuesta = 10;
 var maxLabel = null;
 var selecciones = [];
@@ -126,7 +127,7 @@ function crearOverlayNoMasCambios() {
     var overlay = document.createElement('div');
     overlay.id = 'overlay-no-mas-cambios';
     overlay.className = 'overlay';
-    overlay.innerHTML = '<div class="overlay-content"><p>¡NO PUEDES HACER MÁS CAMBIOS!</p></div>';
+    overlay.innerHTML = '<div class="overlay-content"><p>' + ((typeof __ === 'function') ? __('cartas_no_mas_cambios') : '¡NO PUEDES HACER MÁS CAMBIOS!') + '</p></div>';
     document.body.appendChild(overlay);
     
     var timeoutId = setTimeout(function() {
@@ -155,7 +156,9 @@ function crearOverlayConfirmarRepartir(mensaje) {
     var overlay = document.createElement('div');
     overlay.id = 'overlay-confirmar-repartir';
     overlay.className = 'overlay';
-    overlay.innerHTML = '<div class="overlay-content">' + mensaje + '<div class="confirmacion-botones"><button id="btn-si-sobreescribe">Sí</button><button id="btn-no-sobreescribe">No</button></div></div>';
+    var txtSi = (typeof __ === 'function') ? __('si') : 'Sí';
+    var txtNo = (typeof __ === 'function') ? __('no') : 'No';
+    overlay.innerHTML = '<div class="overlay-content">' + mensaje + '<div class="confirmacion-botones"><button id="btn-si-sobreescribe">' + txtSi + '</button><button id="btn-no-sobreescribe">' + txtNo + '</button></div></div>';
     document.body.appendChild(overlay);
     
     document.getElementById('btn-si-sobreescribe').onclick = function() {
@@ -204,6 +207,7 @@ function iniciarNuevaMano() {
     if (btn) btn.textContent = typeof __ === 'function' ? __('jugar') : 'JUGAR';
     var label = document.getElementById('hand-label');
     if (label) { label.textContent = '--'; label.style.color = 'white'; }
+    ultimoResultadoManoLabel = null;
     document.querySelectorAll('.payout-row').forEach(function(r) { r.classList.remove('active'); });
 }
 
@@ -271,7 +275,7 @@ function repartir() {
     // Si ya hay una mano y hay cambios disponibles, pedir confirmación
     // Pero NO en la primera mano (cuando la tabla está vacía)
     if (yaHayCartas && cambiosDisponibles > 0) {
-        var mensaje = 'Aún tienes ' + cambiosDisponibles + ' cambios disponibles, ¿desea continuar?';
+        var mensaje = (typeof __f === 'function') ? __f('cartas_confirmar_repartir', { n: cambiosDisponibles }) : ('Aún tienes ' + cambiosDisponibles + ' cambios disponibles, ¿desea continuar?');
         crearOverlayConfirmarRepartir(mensaje);
         return;
     }
@@ -458,11 +462,13 @@ function jugar() {
             pair: 'par'
         };
         var handName = handI18n[result.name] ? (typeof __ === 'function' ? __(handI18n[result.name]) : result.name.replace(/_/g,' ').toUpperCase()) : result.name.replace(/_/g,' ').toUpperCase();
+        ultimoResultadoManoLabel = { handKey: handI18n[result.name] || null, mult: result.mult, rawName: result.name };
         if (label) { label.textContent = handName + ' x' + result.mult; label.style.color = '#00ff00'; }
         if (winOverlay && winAmount) { winAmount.textContent = '+' + gananciaNeta; winOverlay.classList.add('active'); }
         if (loseOverlay) loseOverlay.classList.remove('active');
     } else {
         if (label) { label.textContent = typeof __ === 'function' ? __('carta_alta') : 'CARTA ALTA'; label.style.color = '#ff4444'; }
+        ultimoResultadoManoLabel = { handKey: 'carta_alta', mult: null };
         if (winOverlay) winOverlay.classList.remove('active');
         if (loseOverlay) loseOverlay.classList.add('active');
     }
@@ -586,3 +592,20 @@ window.onload = function() {
     if (cerrar) cerrar.onclick = function() { menu.classList.remove('active'); overlay.classList.remove('active'); };
     if (overlay) overlay.onclick = function() { menu.classList.remove('active'); overlay.classList.remove('active'); };
 };
+
+// Refresca el botón REPARTIR/JUGAR y el resultado de mano visible (si lo
+// hay) cuando el usuario cambia de idioma, sin recargar la página.
+window.addEventListener('idiomaAplicado', function () {
+    var btn = document.getElementById('deal-btn');
+    if (btn && typeof __ === 'function') {
+        btn.textContent = isPlaying ? __('jugar') : __('repartir');
+    }
+    var label = document.getElementById('hand-label');
+    if (label && ultimoResultadoManoLabel && typeof __ === 'function') {
+        if (ultimoResultadoManoLabel.handKey === 'carta_alta') {
+            label.textContent = __('carta_alta');
+        } else if (ultimoResultadoManoLabel.handKey) {
+            label.textContent = __(ultimoResultadoManoLabel.handKey) + ' x' + ultimoResultadoManoLabel.mult;
+        }
+    }
+});

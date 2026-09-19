@@ -541,10 +541,11 @@ function renderItems() {
             itemEl.classList.add('slide-abajo');
         }
         itemEl.onclick = () => seleccionarItem(i);
+        const nombreTraducido = window.obtenerNombreItemTraducido ? window.obtenerNombreItemTraducido(item) : item.nombre;
         itemEl.innerHTML = `
-            <span class="item-nombre">${item.nombre}</span>
+            <span class="item-nombre">${nombreTraducido}</span>
             <div class="item-img-container">
-                <img src="${item.imagen}" alt="${item.nombre}">
+                <img src="${item.imagen}" alt="${nombreTraducido}">
             </div>
         `;
         
@@ -595,10 +596,13 @@ function seleccionarItem(index) {
     });
     
     const itemData = items[index];
-    document.getElementById('nombre-item').textContent = itemData.nombre;
-    document.getElementById('descripcion-item').textContent = itemData.descripcion;
-    document.getElementById('mejora-item').textContent = itemData.mejora;
-    document.getElementById('precio-item').textContent = 'Monedas necesarias: ' + itemData.precio;
+    const nombreTraducido = window.obtenerNombreItemTraducido ? window.obtenerNombreItemTraducido(itemData) : itemData.nombre;
+    const descripcionTraducida = window.obtenerDescripcionItemTraducida ? window.obtenerDescripcionItemTraducida(itemData) : itemData.descripcion;
+    const mejoraTraducida = window.obtenerMejoraItemTraducida ? window.obtenerMejoraItemTraducida(itemData) : itemData.mejora;
+    document.getElementById('nombre-item').textContent = nombreTraducido;
+    document.getElementById('descripcion-item').textContent = descripcionTraducida;
+    document.getElementById('mejora-item').textContent = mejoraTraducida;
+    document.getElementById('precio-item').textContent = __("monedas_necesarias") + ' ' + itemData.precio;
     document.getElementById('imagen-item-seleccionado').src = itemData.imagen;
 }
 
@@ -616,8 +620,61 @@ async function comprarItem() {
         }
         return;
     }
+
+    // ─── COMPRA COMO INVITADO (sin sesión Supabase) ──────────────────
+    // CAUSA RAÍZ: antes de este cambio, comprarItem() siempre terminaba
+    // llamando a window.comprarItemTienda() (config.js), que exige
+    // `await apiIsAuthenticated()` de forma incondicional y, si no hay
+    // sesión, redirige a auth de inmediato. Es decir: aunque
+    // invitadoPuedeComprar() diera el visto bueno, un invitado NUNCA
+    // podía completar una compra real, porque el siguiente paso ya
+    // exigía Supabase. No existía ningún camino local equivalente al
+    // que sí tienen preguntas/juegos (que descuentan monedas localmente
+    // vía coins.js -> cambiarMonedas() cuando no hay sesión).
+    // Esta rama reutiliza exactamente esas mismas piezas ya existentes:
+    //  - _isAuthenticatedSync() (guest.js) para decidir el camino,
+    //  - getMonedas()/cambiarMonedas() (coins.js) para el saldo local,
+    //  - window.agregarItemInventario() (config.js) para el inventario
+    //    (la MISMA función que usa también la compra autenticada: el
+    //    inventario visible siempre vive en sessionStorage, no es
+    //    exclusivo de invitados),
+    //  - marcarCompraTiendaCompletada() (guest.js) para consumir el
+    //    único intento de compra de invitado.
+    // No se crea ningún sistema de economía nuevo ni paralelo.
+    if (typeof _isAuthenticatedSync === 'function' && !_isAuthenticatedSync()) {
+        const saldoActual = typeof getMonedas === 'function'
+            ? getMonedas()
+            : (parseInt(localStorage.getItem('monedas')) || 0);
+
+        if (saldoActual < itemData.precio) {
+            const deficit = itemData.precio - saldoActual;
+            if (typeof window.mostrarOverlayTienda === 'function') {
+                window.mostrarOverlayTienda(deficit);
+            }
+            return;
+        }
+
+        if (typeof cambiarMonedas === 'function') {
+            cambiarMonedas(-itemData.precio);
+        } else if (typeof window._setCache === 'function') {
+            window._setCache(saldoActual - itemData.precio);
+            if (typeof window.actualizarMonedasUI === 'function') {
+                window.actualizarMonedasUI(saldoActual - itemData.precio);
+            }
+        }
+
+        const itemToStoreInvitado = Object.assign({}, itemData);
+        itemToStoreInvitado.imagen = './tienda/' + itemData.imagen.replace('./', '');
+        await window.agregarItemInventario(itemToStoreInvitado);
+
+        if (typeof marcarCompraTiendaCompletada === 'function') marcarCompraTiendaCompletada();
+
+        mostrarCompraExitosa(itemData);
+        return;
+    }
     
-    // Verificar que el item tenga dbId (existe en BD)
+    // Verificar que el item tenga dbId (existe en BD) — sólo aplica a la
+    // compra autenticada vía RPC; el invitado nunca llega hasta aquí.
     if (!itemData.dbId) {
         console.error('[tienda] Item sin dbId válido:', itemData.nombre);
         if (typeof window.mostrarOverlayTienda === 'function') {
@@ -678,21 +735,21 @@ function mostrarOverlayTienda(cantidadNecesaria) {
                     color: #ff4444;
                     margin: 0 0 15px 0;
                     text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 40px rgba(255, 68, 68, 0.6);
-                ">¡Sin monedas!</h2>
+                ">${__("tienda_sin_monedas_titulo")}</h2>
                 <p style="
                     font-family: 'Pixelify Sans', sans-serif;
                     font-size: 20px;
                     color: white;
                     margin: 8px 0;
                     text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.4);
-                ">No tienes suficientes monedas para comprarlo.</p>
+                ">${__("tienda_sin_monedas_desc")}</p>
                 <p class="monedas-necesarias" style="
                     color: #ffd700 !important;
                     margin-top: 15px !important;
                     font-family: 'Pixelify Sans', sans-serif;
                     font-size: 20px;
                     text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.6);
-                ">Monedas necesarias: <span id="tienda-overlay-monedass-necesarias">0</span></p>
+                ">${__("monedas_necesarias")} <span id="tienda-overlay-monedass-necesarias">0</span></p>
             </div>
         `;
         document.body.appendChild(overlay);
@@ -756,7 +813,7 @@ function mostrarCompraExitosa(itemData) {
                     color: #00ff00;
                     margin: 0;
                     text-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
-                ">¡Guardado en tu inventario!</p>
+                ">${__("tienda_guardado_inventario")}</p>
             </div>
         `;
         document.body.appendChild(overlay);
@@ -764,7 +821,7 @@ function mostrarCompraExitosa(itemData) {
     
     // Configurar contenido
     document.getElementById('compra-item-img').src = itemData.imagen;
-    document.getElementById('compra-item-nombre').textContent = itemData.nombre;
+    document.getElementById('compra-item-nombre').textContent = window.obtenerNombreItemTraducido ? window.obtenerNombreItemTraducido(itemData) : itemData.nombre;
     
     // Mostrar overlay con animación
     const content = overlay.querySelector('.compra-exitosa-content');
@@ -900,4 +957,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // Sincronizar monedas cuando cambie el storage
 window.addEventListener('storage', function() {
     actualizarUIMonedass();
+});
+// Refresca los textos ya visibles (lista de ítems + panel de detalle)
+// cuando el usuario cambia de idioma, sin necesidad de recargar la página.
+window.addEventListener('idiomaAplicado', function () {
+    const tienda = document.getElementById('tienda-container');
+    if (tienda && tienda.classList.contains('active') && items.length > 0) {
+        renderItems();
+        seleccionarItem(itemSeleccionado);
+    }
 });

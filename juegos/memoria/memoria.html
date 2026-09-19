@@ -71,11 +71,15 @@
           <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
         </div>
       </div>
-      <div class="opcion-item">
+      <div class="opcion-item opcion-item-idioma">
         <span data-i18n="idioma">Idioma</span>
-        <div class="grupo-botones">
-          <button onclick="setIdioma('es')">ES</button>
-          <button onclick="setIdioma('en')">EN</button>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
         </div>
       </div>
       <div class="opcion-item">
@@ -131,7 +135,7 @@
     </div>
 
     <div class="apuesta-container">
-      <p class="apuesta-text" data-i18n="apuesta">Apuesta: <span id="apuesta-actual">20</span> monedas</p>
+      <p class="apuesta-text"><span data-i18n="apuesta">Apuesta:</span> <span id="apuesta-actual">20</span> <span data-i18n="monedas">monedas</span></p>
       <div class="apuesta-slider-wrapper">
         <span class="apuesta-min">7</span>
         <input type="number" class="bet-input" id="bet-input" value="20" min="7" max="500" step="1" inputmode="numeric">
@@ -182,11 +186,11 @@
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
         <div class="confirmacion-contenido">
-            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
-            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
             <div class="confirmacion-botones">
-                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
-                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
             </div>
         </div>
     </div>

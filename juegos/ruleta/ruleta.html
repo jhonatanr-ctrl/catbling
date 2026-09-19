@@ -74,11 +74,15 @@
           <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
         </div>
       </div>
-      <div class="opcion-item">
+      <div class="opcion-item opcion-item-idioma">
         <span data-i18n="idioma">Idioma</span>
-        <div class="grupo-botones">
-          <button onclick="setIdioma('es')">ES</button>
-          <button onclick="setIdioma('en')">EN</button>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
         </div>
       </div>
       <div class="opcion-item">
@@ -99,11 +103,11 @@
   </div>
 
   <div class="game-container">
-    <h1 class="titulo"> RULETA</h1>
+    <h1 class="titulo" data-i18n="ruleta"> RULETA</h1>
 
     <div class="spin-button-wrapper">
       <button class="spin-btn" id="spin-button">
-        <span class="spin-text">GIRAR</span>
+        <span class="spin-text" data-i18n="girar">GIRAR</span>
       </button>
     </div>
 
@@ -111,21 +115,21 @@
       <div class="left-panel">
         <div class="column-buttons">
           <button class="column-btn" data-column="1">
-            <span class="btn-text">Col 1</span>
+            <span class="btn-text" data-i18n="ruleta_col1">Col 1</span>
           </button>
           <button class="column-btn" data-column="2">
-            <span class="btn-text">Col 2</span>
+            <span class="btn-text" data-i18n="ruleta_col2">Col 2</span>
           </button>
           <button class="column-btn" data-column="3">
-            <span class="btn-text">Col 3</span>
+            <span class="btn-text" data-i18n="ruleta_col3">Col 3</span>
           </button>
         </div>
         <div class="color-buttons-container">
           <button class="color-btn" id="btn-rojo">
-            <span class="btn-text">ROJO</span>
+            <span class="btn-text" data-i18n="color_rojo">ROJO</span>
           </button>
           <button class="color-btn" id="btn-negro">
-            <span class="btn-text">NEGRO</span>
+            <span class="btn-text" data-i18n="color_negro">NEGRO</span>
           </button>
         </div>
       </div>
@@ -145,11 +149,11 @@
     </div>
 
     <div class="result-display" id="result-display">
-      <p id="result-text">¡Elige tus números para jugar!</p>
+      <p id="result-text" data-i18n="ruleta_elige_numeros">¡Elige tus números para jugar!</p>
       <p id="selected-count">0 números seleccionados</p>
     </div>
 
-    <p class="apuesta-text">Apuesta: <span id="apuesta-actual">10</span> monedas</p>
+    <p class="apuesta-text"><span data-i18n="apuesta">Apuesta:</span> <span id="apuesta-actual">10</span> <span data-i18n="monedas">monedas</span></p>
     
     <div class="apuesta-slider-wrapper">
       <span class="apuesta-min">6</span>
@@ -161,7 +165,7 @@
   <div class="win-overlay" id="win-overlay">
     <div class="win-lights" id="win-lights"></div>
     <div class="win-content">
-      <h2 class="win-text" id="win-text">¡GANASTE!</h2>
+      <h2 class="win-text" id="win-text" data-i18n="ganaste">¡GANASTE!</h2>
       <p class="win-amount" id="win-amount">+0</p>
     </div>
   </div>
@@ -169,7 +173,7 @@
   <div class="lose-overlay" id="lose-overlay">
     <div class="lose-lights"></div>
     <div class="lose-content">
-      <h2 class="lose-text" id="lose-text">¡PERDISTE!</h2>
+      <h2 class="lose-text" id="lose-text" data-i18n="perdiste">¡PERDISTE!</h2>
     </div>
   </div>
 
@@ -188,8 +192,8 @@
         <div class="speech-footer">
           <span id="tutorial-step" class="tutorial-step">1/5</span>
           <div class="speech-buttons">
-            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
-            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip" data-i18n="saltar">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next" data-i18n="siguiente">SIGUIENTE</button>
           </div>
         </div>
       </div>
@@ -209,11 +213,11 @@
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
         <div class="confirmacion-contenido">
-            <h2 class="confirmacion-titulo">¿CERRAR SESIÓN?</h2>
-            <p class="confirmacion-texto">Toda su información será eliminada, ¿desea continuar?</p>
+            <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+            <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
             <div class="confirmacion-botones">
-                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si">SÍ</button>
-                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no">NO</button>
+                <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+                <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
             </div>
         </div>
     </div>

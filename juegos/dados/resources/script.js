@@ -111,7 +111,7 @@ function actualizarBossUI() {
     const nameEl = document.getElementById('boss-name');
     const barEl = document.getElementById('boss-bar-text');
     if (emojiEl) emojiEl.textContent = boss.emoji;
-    if (nameEl) nameEl.textContent = __(bossActual === 5 ? 'boss_5' : 'boss_' + bossActual);
+    if (nameEl) nameEl.textContent = __('boss_' + bossActual);
     if (barEl) barEl.textContent = bossActual + '/5';
     const barFill = document.getElementById('boss-bar-fill');
     if (barFill) barFill.style.width = (bossActual / 5) * 100 + '%';
@@ -162,7 +162,7 @@ function lanzarDados() {
             const btn = document.getElementById('roll-btn');
             if (btn) {
                 btn.disabled = false;
-                btn.textContent = '🎲 LANZAR DADOS';
+                btn.textContent = ((typeof __ === 'function') ? ('🎲 ' + __('lanzar')) : '🎲 LANZAR DADOS');
             }
         }
     }, 3000);
@@ -177,7 +177,7 @@ function lanzarDados() {
     document.querySelector('.machine-char').classList.add('animando');
     valorJugador.textContent = '?';
     valorMaquina.textContent = '?';
-    textoResultado.textContent = '🎲 ¡Tirando! 🎲';
+    textoResultado.textContent = (typeof __ === 'function') ? __('dados_tirando') : '🎲 ¡Tirando! 🎲';
     textoResultado.style.color = '#ddbbff';
 
     crearSparkles();
@@ -209,14 +209,14 @@ function lanzarDados() {
                 dadoMaquina.classList.add('loser-glow');
                 document.querySelector('.player-char').classList.add('winner-char');
                 document.querySelector('.machine-char').classList.add('loser-char');
-                textoResultado.textContent = '🎉 ¡Ganaste la ronda! (' + vJugador + ' vs ' + vMaquina + ')';
+                textoResultado.textContent = (typeof __f === 'function') ? __f('dados_ganaste_ronda', { j: vJugador, m: vMaquina }) : ('🎉 ¡Ganaste la ronda! (' + vJugador + ' vs ' + vMaquina + ')');
                 textoResultado.style.color = '#44ff88';
                 crearBurst(window.innerWidth * 0.3, window.innerHeight * 0.4);
             } else if (vJugador === vMaquina) {
                 puntosMaquina++;
                 document.querySelector('.machine-char').classList.add('winner-char');
                 document.querySelector('.player-char').classList.add('loser-char');
-                textoResultado.textContent = '😤 ¡Empate! La máquina gana el desempate. (' + vJugador + ' vs ' + vMaquina + ')';
+                textoResultado.textContent = (typeof __f === 'function') ? __f('dados_empate_maquina', { j: vJugador, m: vMaquina }) : ('😤 ¡Empate! La máquina gana el desempate. (' + vJugador + ' vs ' + vMaquina + ')');
                 textoResultado.style.color = '#ffaa00';
             } else {
                 puntosMaquina++;
@@ -224,7 +224,7 @@ function lanzarDados() {
                 dadoJugador.classList.add('loser-glow');
                 document.querySelector('.machine-char').classList.add('winner-char');
                 document.querySelector('.player-char').classList.add('loser-char');
-                textoResultado.textContent = '💻 La máquina ganó la ronda. (' + vJugador + ' vs ' + vMaquina + ')';
+                textoResultado.textContent = (typeof __f === 'function') ? __f('dados_maquina_gano_ronda', { j: vJugador, m: vMaquina }) : ('💻 La máquina ganó la ronda. (' + vJugador + ' vs ' + vMaquina + ')');
                 textoResultado.style.color = '#ff4444';
             }
 
@@ -232,12 +232,12 @@ function lanzarDados() {
             marcarResultadoRonda(ganasteRonda);
 
             if (puntosJugador >= 2 || puntosMaquina >= 2 || rondaActual >= RONDAS_TOTALES) {
-                rollBtn.textContent = '🎲 LANZAR DADOS';
+                rollBtn.textContent = ((typeof __ === 'function') ? ('🎲 ' + __('lanzar')) : '🎲 LANZAR DADOS');
                 setTimeout(finalizarPartida, 1200);
             } else {
                 rondaActual++;
                 document.getElementById('ronda-actual').textContent = rondaActual;
-                rollBtn.textContent = '🎲 LANZAR DADOS';
+                rollBtn.textContent = ((typeof __ === 'function') ? ('🎲 ' + __('lanzar')) : '🎲 LANZAR DADOS');
             }
         } catch (e) {
             console.error('Error en lanzarDados:', e);
@@ -260,7 +260,7 @@ function finalizarPartida() {
 
     if (gano) {
         if (typeof window.calcularGananciaConItems === 'function') gananciaNeta = window.calcularGananciaConItems(gananciaNeta, apuesta);
-        textoResultado.textContent = '🏆 ¡GANASTE EL DUELO! +' + gananciaNeta + ' 🪙';
+        textoResultado.textContent = (typeof __f === 'function') ? __f('dados_ganaste_duelo', { monedas: gananciaNeta }) : ('🏆 ¡GANASTE EL DUELO! +' + gananciaNeta + ' 🪙');
         textoResultado.style.color = 'gold';
         mostrarVictoria(gananciaNeta);
         for (let i = 0; i < 3; i++) {
@@ -272,19 +272,19 @@ function finalizarPartida() {
         if (bossActual < 5) {
             bossActual++;
             actualizarBossUI();
-            textoResultado.textContent = '👹 ¡BOSS DERROTADO! Pasa al ' + __(bossActual === 1 ? 'boss_1' : 'boss_' + bossActual) + ' 🚀';
+            textoResultado.textContent = (typeof __f === 'function') ? __f('dados_boss_derrotado', { boss: __('boss_' + bossActual) }) : ('👹 ¡BOSS DERROTADO! Pasa al ' + __('boss_' + bossActual) + ' 🚀');
         } else {
-            textoResultado.textContent = '👑 ¡FELICIDADES! Derrotaste a todos los jefes. Vuelves al principio. 🏆';
+            textoResultado.textContent = (typeof __ === 'function') ? __('dados_felicidades_todos') : '👑 ¡FELICIDADES! Derrotaste a todos los jefes. Vuelves al principio. 🏆';
             bossActual = 1;
             actualizarBossUI();
         }
     } else {
-        textoResultado.textContent = '💻 La máquina ganó el duelo. ¡Inténtalo de nuevo!';
+        textoResultado.textContent = (typeof __ === 'function') ? __('dados_maquina_gano_duelo') : '💻 La máquina ganó el duelo. ¡Inténtalo de nuevo!';
         textoResultado.style.color = '#ff4444';
         mostrarDerrota();
     }
 
-    rollBtn.textContent = '🎲 LANZAR DADOS';
+    rollBtn.textContent = ((typeof __ === 'function') ? ('🎲 ' + __('lanzar')) : '🎲 LANZAR DADOS');
     apuestaDeducida = false;
 
     // resultadoMonedas se calcula aquí (tras el posible bono de items aplicado
@@ -331,7 +331,7 @@ function reiniciarPartida() {
     document.getElementById('valor-jugador').textContent = '-';
     document.getElementById('valor-maquina').textContent = '-';
     const textoResultado = document.getElementById('result-text');
-    textoResultado.textContent = '¡Presiona Lanzar para empezar!';
+    textoResultado.textContent = (typeof __ === 'function') ? __('presiona_lanzar') : '¡Presiona Lanzar para empezar!';
     textoResultado.style.color = '#ddbbff';
     document.getElementById('roll-btn').disabled = false;
 
@@ -451,4 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarBotonFullscreen();
     setInterval(actualizarUI, 1000);
     if (typeof tutorialInit === 'function') tutorialInit();
+});
+
+// Refresca el nombre del jefe visible si el usuario cambia de idioma
+// (se genera dinámicamente y no pasa por data-i18n estático).
+window.addEventListener('idiomaAplicado', function () {
+    if (typeof actualizarBossUI === 'function') actualizarBossUI();
 });

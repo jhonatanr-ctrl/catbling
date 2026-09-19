@@ -19,6 +19,7 @@ let tipoSeleccion = 'none';
 let isSpinning = false;
 let apuesta = 6;
 let currentRotation = 0;
+let ultimoResultadoRuleta = null; // { tipo: 'gano'|'perdio', numero } para refrescar si cambia el idioma
 
 let canvas, ctx;
 
@@ -82,7 +83,7 @@ function highlightNumber(num, highlight) {
 
 function actualizarContadorSeleccion() {
     const el = document.getElementById('selected-count');
-    if (el) el.textContent = selectedNumbers.size + ' números seleccionados';
+    if (el) el.textContent = (typeof __f === 'function') ? __f('ruleta_numeros_seleccionados', { n: selectedNumbers.size }) : (selectedNumbers.size + ' números seleccionados');
 }
 
 function clearAllSelections() {
@@ -406,7 +407,7 @@ function spinRoulette() {
     if (selectedNumbers.size === 0) {
         const resultText = document.getElementById('result-text');
         if (resultText) {
-            resultText.textContent = '¡Selecciona al menos un número!';
+            resultText.textContent = (typeof __ === 'function') ? __('ruleta_selecciona_uno') : '¡Selecciona al menos un número!';
             resultText.className = '';
         }
         return;
@@ -427,7 +428,7 @@ function spinRoulette() {
 
     const resultText = document.getElementById('result-text');
     if (resultText) {
-        resultText.textContent = '¡Girando...!';
+        resultText.textContent = (typeof __ === 'function') ? __('ruleta_girando') : '¡Girando...!';
         resultText.className = '';
     }
 
@@ -507,11 +508,13 @@ function finishSpin() {
         if (gano) {
             var payout = calculatePayout(winningNumber, winType);
             if (typeof window.calcularGananciaConItems === 'function') payout = window.calcularGananciaConItems(payout, apuesta);
-            resultText.textContent = `¡GANASTE! Número: ${winningNumber}`;
+            resultText.textContent = (typeof __f === 'function') ? __f('ruleta_ganaste_numero', { n: winningNumber }) : `¡GANASTE! Número: ${winningNumber}`;
+            ultimoResultadoRuleta = { tipo: 'gano', numero: winningNumber };
             resultText.className = 'ganaste';
             setTimeout(() => showWinOverlay(payout), 500);
         } else {
-            resultText.textContent = `¡PERDISTE! Número: ${winningNumber}`;
+            resultText.textContent = (typeof __f === 'function') ? __f('ruleta_perdiste_numero', { n: winningNumber }) : `¡PERDISTE! Número: ${winningNumber}`;
+            ultimoResultadoRuleta = { tipo: 'perdio', numero: winningNumber };
             resultText.className = 'perdiste';
             setTimeout(() => showLoseOverlay(), 500);
         }
@@ -706,3 +709,20 @@ function initRouletteGame() {
 
 window.addEventListener('load', initRouletteGame);
 setTimeout(initRouletteGame, 1000);
+
+// Refresca el mensaje de resultado y el contador de selección si el
+// usuario cambia de idioma mientras están visibles, sin recargar la
+// página ni afectar la partida en curso.
+window.addEventListener('idiomaAplicado', function () {
+    actualizarContadorSeleccion();
+    if (isSpinning) return; // durante el giro el mensaje es transitorio, se refresca solo
+    const resultText = document.getElementById('result-text');
+    if (!resultText) return;
+    if (ultimoResultadoRuleta) {
+        resultText.textContent = (typeof __f === 'function')
+            ? __f(ultimoResultadoRuleta.tipo === 'gano' ? 'ruleta_ganaste_numero' : 'ruleta_perdiste_numero', { n: ultimoResultadoRuleta.numero })
+            : resultText.textContent;
+    } else if (selectedNumbers.size === 0) {
+        resultText.textContent = (typeof __ === 'function') ? __('ruleta_elige_numeros') : resultText.textContent;
+    }
+});

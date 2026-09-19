@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carreras de Caballos</title>
+    <link rel="stylesheet" href="../../resources/stylesheetglobal.css">
+    <link rel="stylesheet" href="../../resources/help.css">
+    <link rel="stylesheet" href="../../resources/tutorial.css">
+    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+<body data-page="carreras">
+
+  <audio id="bgMusic" loop autoplay>
+      <source src="../../resources/assets/sounds/Kubbi - Up In My Jam  NO COPYRIGHT 8-bit Music.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- ============ UI GLOBAL (se oculta durante la fase de carrera) ============ -->
+  <div class="menu-buttons-container">
+    <a href="../juegosprincipalpage.html" class="menu-button" id="menu-button-salida">
+      <img id="menu-img" src="../assets/salida1.png">
+    </a>
+  </div>
+
+  <div class="monedas-ui">
+      <img id="icono-monedasm"
+           src="../../resources/assets/yukonocoins.png"
+           data-src-vacio="../../resources/assets/yukonocoins.png"
+           data-src-lleno="../../resources/assets/yukocoins.png">
+      <p id="cantidad-monedasm">0</p>
+      <img src="../../resources/assets/bag.png" id="btn-bag">
+  </div>
+
+  <img src="../../resources/assets/settings.png" id="btn-opciones">
+  <div id="overlay-menu"></div>
+
+  <div id="bag-overlay">
+    <div id="bag-content">
+      <div id="bag-items-container"></div>
+    </div>
+  </div>
+  <div id="item-use-overlay">
+    <div id="item-use-content">
+      <p id="item-use-text"></p>
+      <button id="item-use-confirm" data-i18n="aceptar">ACEPTAR</button>
+      <button id="item-use-cancel" data-i18n="rechazar">RECHAZAR</button>
+    </div>
+  </div>
+
+  <div id="menu-opciones">
+    <div class="menu-box">
+      <h2 data-i18n="opciones">OPCIONES</h2>
+      <div class="menu-scroll">
+      <div class="opcion-item">
+        <span data-i18n="musica">Música</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarVolumen(-1)">-</button>
+          <span id="vol-musica"></span>
+          <button onclick="cambiarVolumen(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="efectos">Efectos</span>
+        <div class="grupo-botones">
+          <button onclick="cambiarEfectos(-1)">-</button>
+          <span id="vol-efectos"></span>
+          <button onclick="cambiarEfectos(1)">+</button>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="animaciones">Animaciones</span>
+        <div class="grupo-botones">
+          <button onclick="toggleAnimaciones()" id="animaciones-btn"></button>
+        </div>
+      </div>
+      <div class="opcion-item opcion-fullscreen">
+        <span data-i18n="pantalla_completa">Pantalla Completa</span>
+        <div class="grupo-botones">
+          <button onclick="window.toggleFullscreen()" id="fullscreen-btn">ON</button>
+        </div>
+      </div>
+      <div class="opcion-item opcion-item-idioma">
+        <span data-i18n="idioma">Idioma</span>
+        <div class="idioma-selector" id="idioma-selector">
+          <button type="button" class="idioma-selector-btn" id="idioma-selector-btn" onclick="toggleListaIdiomas(event)" aria-haspopup="listbox" aria-expanded="false">
+            <span class="idioma-selector-flag" id="idioma-selector-flag">🇪🇸</span>
+            <span class="idioma-selector-nombre" id="idioma-selector-nombre">Español</span>
+            <span class="idioma-selector-arrow">▾</span>
+          </button>
+          <ul class="idioma-selector-lista" id="idioma-selector-lista" role="listbox"></ul>
+        </div>
+      </div>
+      <div class="opcion-item">
+        <span data-i18n="config">Configuración</span>
+        <div class="grupo-botones">
+          <button onclick="resetear()">RESET</button>
+        </div>
+      </div>
+      <div class="opcion-item" id="opcion-cerrar-sesion">
+        <span data-i18n="cerrar_sesion">Cerrar Sesión</span>
+        <div class="grupo-botones">
+          <button onclick="mostrarConfirmacionCerrarSesion()">SALIR</button>
+        </div>
+      </div>
+      </div>
+      <img src="../../resources/assets/exit.png" id="cerrar-menu">
+    </div>
+  </div>
+  <!-- ============ FIN UI GLOBAL ============ -->
+
+
+  <main id="carreras-app">
+
+    <video
+      id="video-seleccion-hipodromos"
+      class="video-seleccion-hipodromos"
+      autoplay
+      muted
+      loop
+      playsinline>
+      <source src="./resources/assets/0831.mp4" type="video/mp4">
+    </video>
+
+    <!-- ===================== PANTALLA 1: SELECCIÓN DE HIPÓDROMO ===================== -->
+    <section id="pantalla-seleccion-hipodromo" class="pantalla activa">
+      <h1 class="titulo-carreras" data-i18n="juego_carreras_titulo">CARRERAS DE CABALLOS</h1>
+      <p class="subtitulo-carreras" data-i18n="carreras_subtitulo">Elige un hipódromo para ver sus 16 participantes</p>
+      <div id="lista-hipodromos" class="lista-hipodromos"></div>
+    </section>
+
+    <!-- ===================== PANTALLA 2: LISTA DE CABALLOS ===================== -->
+    <section id="pantalla-caballos" class="pantalla">
+      <div class="cabecera-caballos">
+        <button id="btn-volver-hipodromos" class="btn-volver" data-i18n="carreras_volver_hipodromos">← Volver a hipódromos</button>
+        <h2 id="titulo-hipodromo-elegido"></h2>
+      </div>
+      <div id="grid-caballos" class="grid-caballos"></div>
+    </section>
+
+    <!-- ===================== OVERLAY: PERFIL DE CABALLO ===================== -->
+    <div id="overlay-perfil-caballo" class="overlay-perfil">
+      <div class="perfil-contenido">
+        <button id="btn-volver-caballos" class="btn-volver" data-i18n="carreras_volver_caballos">← Volver a caballos</button>
+
+        <div class="perfil-cabecera">
+          <div id="perfil-sprite" class="perfil-sprite"></div>
+          <div class="perfil-cabecera-texto">
+            <h2 id="perfil-nombre"></h2>
+            <p id="perfil-cuota" class="perfil-cuota"></p>
+          </div>
+        </div>
+
+        <div class="perfil-seccion">
+          <h3 data-i18n="carreras_personalidad">Personalidad</h3>
+          <p id="perfil-personalidad"></p>
+        </div>
+
+        <div class="perfil-seccion">
+          <h3 data-i18n="carreras_historial">Historial</h3>
+          <p id="perfil-resumen-historial" class="perfil-resumen"></p>
+          <div id="perfil-historial-lista" class="perfil-historial-lista"></div>
+        </div>
+
+        <div class="perfil-seccion perfil-apuesta" id="perfil-apuesta-seccion">
+          <div class="modo-apuesta-tabs" id="modo-apuesta-tabs">
+            <button type="button" class="modo-apuesta-btn activo" id="btn-modo-simple" data-modo="simple" data-i18n="carreras_apuesta_simple">Apuesta simple</button>
+            <button type="button" class="modo-apuesta-btn" id="btn-modo-puesto" data-modo="puesto" data-i18n="carreras_apuesta_puesto">Apuesta por puesto</button>
+          </div>
+
+          <button id="btn-apostar" class="glow-button" data-i18n="carreras_apostar">APOSTAR</button>
+
+          <div id="perfil-bet-section" class="bet-section oculto">
+            <p class="apuesta-text"><span data-i18n="apuesta">Apuesta:</span> <span id="apuesta-actual">6</span> <span data-i18n="monedas">monedas</span></p>
+            <div class="apuesta-slider-wrapper">
+              <span class="apuesta-min">6</span>
+              <input type="number" class="bet-input" id="bet-input" value="6" min="6" max="500" step="1" inputmode="numeric">
+              <span class="apuesta-max">500</span>
+            </div>
+            <button id="btn-confirmar-apuesta" class="glow-button" data-i18n="carreras_confirmar_apuesta">CONFIRMAR APUESTA</button>
+          </div>
+
+          <div id="perfil-bet-puesto-section" class="bet-section bet-puesto-section oculto">
+            <p class="apuesta-text" data-i18n="carreras_elige_puestos">Elige hasta 5 puestos en los que apostar a este caballo</p>
+            <div id="grid-puestos" class="grid-puestos"></div>
+            <p class="apuesta-text"><span data-i18n="carreras_costo">Costo:</span> <span id="puesto-costo-actual">0</span> <span data-i18n="monedas">monedas</span> · <span data-i18n="carreras_multiplicador">Multiplicador:</span> <span id="puesto-multiplicador-actual">0</span>x</p>
+            <button id="btn-confirmar-apuesta-puesto" class="glow-button" disabled data-i18n="carreras_confirmar_apuesta_puesto">CONFIRMAR APUESTA POR PUESTO</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== PANTALLA 3: CARRERA ===================== -->
+    <section id="pantalla-carrera" class="pantalla">
+      <div id="borde-flash" class="borde-flash"></div>
+
+      <video id="video-carrera" muted playsinline class="video-carrera">
+        <source src="./resources/assets/0831.mp4" type="video/mp4">
+      </video>
+      <div id="fondo-pista-alterno" class="fondo-pista-alterno"></div>
+
+      <!-- Barra de posiciones (requisito original): el contenedor no
+           existía en el HTML aunque toda la lógica en ui-carrera.js ya
+           estaba escrita (construirBarraPosiciones/actualizarMarcadorBarra/
+           actualizarLiderBarra/mostrarClasificacionEnBarra) — esas
+           funciones se auto-protegían con "if (!DOM.barraPosicionesPista)
+           return;" así que nunca fallaban, pero tampoco dibujaban nada.
+           Se agrega aquí el contenedor real que faltaba. -->
+      <div id="barra-posiciones-pista" class="barra-posiciones-pista"></div>
+
+      <div id="pista-caballos" class="pista-caballos"></div>
+
+      <div id="contador-salida" class="contador-salida"></div>
+
+      <!-- Punto 5 de la revisión: etiqueta inferior central con el caballo
+           apostado. El CSS (.tu-caballo-indicador) ya existía pero este
+           contenedor nunca se había añadido al HTML, así que la etiqueta
+           jamás llegaba a mostrarse. El texto de la izquierda lo traduce
+           ui-carrera.js con la clave carreras_tu_caballo; el nombre del
+           caballo (#tu-caballo-nombre) NUNCA se traduce. -->
+      <div id="tu-caballo-indicador" class="tu-caballo-indicador">
+        <span id="tu-caballo-etiqueta" data-i18n="carreras_tu_caballo">Tu caballo:</span>
+        <span id="tu-caballo-nombre" class="tu-caballo-nombre"></span>
+      </div>
+
+      <div id="overlay-ganador" class="overlay-ganador">
+        <p id="texto-ganador"></p>
+      </div>
+
+      <div id="pantalla-resultado" class="pantalla-resultado">
+        <h2 id="resultado-apuesta-titulo"></h2>
+        <ol id="lista-clasificacion" class="lista-clasificacion"></ol>
+        <button id="btn-volver-menu-resultado" class="glow-button" data-i18n="carreras_volver_menu">VOLVER AL MENÚ PRINCIPAL</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ OVERLAYS COMPARTIDOS DE VICTORIA/DERROTA (mismo markup que el resto del casino) ============ -->
+  <div class="win-overlay" id="win-overlay">
+    <div class="win-lights" id="win-lights"></div>
+    <div class="win-content">
+      <h2 class="win-text" id="win-text" data-i18n="ganaste">¡GANASTE!</h2>
+      <p class="win-amount" id="win-amount">+0</p>
+    </div>
+  </div>
+
+  <div class="lose-overlay" id="lose-overlay">
+    <div class="lose-content">
+      <h2 class="lose-text" id="lose-text" data-i18n="perdiste">¡PERDISTE!</h2>
+    </div>
+  </div>
+
+  <div class="no-coins-overlay" id="no-coins-overlay">
+    <div class="no-coins-content">
+      <h2 data-i18n="sin_monedas">¡Sin monedas!</h2>
+      <p data-i18n="no_suf_mon">No tienes suficientes monedas para jugar.</p>
+      <p class="monedas-necesarias"><span data-i18n="monedas_neces">Monedas necesarias:</span> <span id="overlay-monedas-necesarias">6</span></p>
+      <p id="overlay-timer-text"></p>
+    </div>
+  </div>
+
+  <div id="tutorial-overlay" class="tutorial-overlay">
+    <div class="tutorial-container">
+      <div class="tutorial-character-wrapper">
+        <div class="tutorial-character" id="tutorial-character">
+          <img src="../../resources/assets/3.png" alt="Personaje" id="tutorial-img">
+        </div>
+      </div>
+      <div class="tutorial-speech">
+        <div class="speech-arrow"></div>
+        <div class="speech-bubble">
+          <p id="tutorial-text"></p>
+        </div>
+        <div class="speech-footer">
+          <span id="tutorial-step" class="tutorial-step">1/5</span>
+          <div class="speech-buttons">
+            <button id="tutorial-skip" class="speech-btn speech-btn-skip">SALTAR</button>
+            <button id="tutorial-next" class="speech-btn speech-btn-next">SIGUIENTE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCRIPTS: infraestructura compartida del casino ============ -->
+  <script src="../../resources/help.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../resources/supabase-client.js"></script>
+  <script src="../../resources/api.js"></script>
+  <script src="../../resources/guest.js?v=2"></script>
+  <script src="../../resources/coins.js"></script>
+  <script src="../../resources/tutorial.js"></script>
+
+  <!-- ============ SCRIPTS: propios del juego de Carreras ============ -->
+  <script src="./resources/config-carrera.js"></script>
+  <script src="./resources/data-hipodromos.js"></script>
+  <script src="./resources/data-caballos.js"></script>
+  <script src="./resources/historial.js"></script>
+  <script src="./resources/participantes.js"></script>
+  <script src="./resources/motor-carrera.js"></script>
+  <script src="./resources/sprites.js"></script>
+  <script src="./resources/animaciones.js"></script>
+  <script src="./resources/apuestas-carreras.js"></script>
+  <script src="./resources/ui-seleccion.js"></script>
+  <script src="./resources/ui-carrera.js"></script>
+  <script src="./resources/script.js"></script>
+  <script src="../../resources/config.js?v=2"></script>
+
+  <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
+  <div id="confirmacion-cerrar-sesion">
+      <div class="confirmacion-contenido">
+          <h2 class="confirmacion-titulo" data-i18n="confirmar_cerrar_titulo">¿CERRAR SESIÓN?</h2>
+          <p class="confirmacion-texto" data-i18n="confirmar_cerrar_texto">Toda su información será eliminada, ¿desea continuar?</p>
+          <div class="confirmacion-botones">
+              <button id="btn-confirmar-si" class="confirmacion-btn confirmacion-btn-si" data-i18n="si">SÍ</button>
+              <button id="btn-confirmar-no" class="confirmacion-btn confirmacion-btn-no" data-i18n="no">NO</button>
+          </div>
+      </div>
+  </div>
+
+</body>
+</html>
