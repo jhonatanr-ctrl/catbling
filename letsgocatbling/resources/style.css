@@ -1,0 +1,345 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&family=Sixtyfour&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+/* Evita seleccionar texto y elementos de la página */
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Evita que las imágenes puedan ser arrastradas */
+img {
+    user-drag: none;
+    -webkit-user-drag: none;
+    pointer-events: auto;
+}
+
+/* Evita el contorno de enfoque en algunos elementos */
+*:focus {
+    outline: none;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes flotar {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes flotar-central {
+    0% {
+        transform: translateY(0) scale(1.35);
+    }
+    50% {
+        transform: translateY(-12px) scale(1.35);
+    }
+    100% {
+        transform: translateY(0) scale(1.35);
+    }
+}
+
+@keyframes subir-central {
+    0% {
+        margin-top: 120px;
+        transform: scale(1.35);
+    }
+    100% {
+        margin-top: 0;
+        transform: scale(1.35);
+    }
+}
+
+.titulo-principal {
+  margin: 0;
+  padding: 0;
+}
+/*  font-family: "Bungee Spice", sans-serif;
+*/
+
+
+#subtitulo {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 40px;
+    color: white;
+    margin-top: 10px;
+    text-shadow: 2px 2px 5px black;
+}
+
+/* animación */
+.animar-texto {
+    animation: pulse 1.2s infinite;
+}
+
+.opcion:hover {
+    opacity: 1;
+}
+
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: black;
+}
+
+/* 🎥 VIDEO */
+#bg-video {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* 🌘 OVERLAY */
+.overlay {
+    position: fixed;
+    width: 102%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.9) 100%);
+    z-index: 0;
+}
+
+/* 🏆 TÍTULO */
+
+@keyframes bajar {
+    0% {
+        transform: translateY(-120px) scaleY(1.3);
+    }
+    100% {
+        transform: translateY(0) scaleY(1.3);
+    }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 40px #ffffff,
+      0 0 80px #ffffff;
+  }
+  20%, 24%, 55% {
+    opacity: 0.6;
+    text-shadow: none;
+  }
+}
+
+.titulo-principal h1 {
+  font-family: 'Sixtyfour', sans-serif;
+
+  font-size: clamp(1.6rem, 6vw, 3.2rem);
+  
+  transform: scaleY(2.0);
+  
+  letter-spacing: clamp(-2px, -0.3vw, -3px);
+  
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  padding-top: clamp(16px, 5vh, 45px);
+
+  color: #ffffff;
+
+  text-shadow: 
+    0 0 5px #ffffff,
+    0 0 10px #ffffff,
+    0 0 20px #ffffff,
+    0 0 40px #ffffff,
+    0 0 80px #ffffff;
+
+  animation:
+  neon-flicker 1.5s infinite alternate,
+  bajar 0.8s ease-out forwards;
+}
+
+.titulo-container {
+    position: absolute;
+    top: clamp(8%, 17vh, 17%);
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+@keyframes entrar-derecha {
+    0% {
+        transform: translateX(120px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+
+
+/* OPCIONES */
+.opciones {
+    position: absolute;
+    top: clamp(55%, 68.7vh, 68.7%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(10px, 3vw, 30px);
+    z-index: 20;
+}
+
+/* estructura */
+.opcion {
+    position: relative;
+    z-index: 30;
+}
+
+/* posiciones */
+.opcion:nth-child(1) .animacion {
+    animation-delay: 0s, 0.2s;
+}
+
+.opcion:nth-child(2) .animacion {
+    animation-delay: 0s, 0.6s;
+}
+
+.opcion:nth-child(3) .animacion {
+    animation-delay: 0s, 1s;
+}
+
+/* central */
+
+.opcion-central .animacion {
+    z-index: 10;
+
+    animation: 
+        subir-central 0.8s ease-out forwards,
+        flotar-central 2.5s ease-in-out infinite;
+}
+
+/* imágenes */
+.opcion img {
+    width: clamp(100px, 20vw, 190px);
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.opcion:hover img {
+    transform: scale(1.1);
+}
+
+/* ANIMACIÓN SUBIDA */
+@keyframes subir {
+    0% {
+        margin-top: 120px;;
+    }
+    100% {
+        margin-top: 0;
+    }
+}
+
+/* aplicar animación SIN romper layout */
+.animacion {
+    animation: 
+        subir 0.8s ease-out forwards,
+        flotar 3s ease-in-out infinite;
+}
+
+/* 🎰 RULETA */
+.contenedor-imagen-ruleta {
+    position: fixed;
+    left: 50%;
+    bottom: -68%;
+    width: min(100vw, 939px);
+    height: auto;
+    overflow: visible;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+/* animación de entrada */
+.ruleta-animacion {
+    animation: subir 1.2s ease-out;
+}
+
+/* imagen gira SIN conflicto */
+#imagen-giratoria {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.menu-box {
+    width: min(90vw, 583px);
+    max-width: min(95vw, 571px);
+    padding: clamp(20px, 5vw, 60px);
+    margin-top: clamp(-91px, -8vh, -40px);
+    background: url("./assets/optionsmenu.png") center / cover;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    max-height: 88vh;
+    overflow: hidden;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+    .opciones {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .titulo-principal h1 {
+        font-size: clamp(1.2rem, 5vw, 2rem);
+        padding-top: clamp(10px, 17vh, 24px);
+    }
+
+    #subtitulo {
+        font-size: clamp(26px, 3.5vw, 28px);
+        margin-top: 83px;
+    }
+
+    .contenedor-imagen-ruleta {
+        display: block;
+        width: min(169vw, 554px);
+        bottom: -225px;
+    }
+}
+
+@media (max-width: 480px) {
+    .opciones {
+        margin-top: 109px;
+        flex-direction: row;
+        gap: 12px;
+        top: clamp(50%, 60vh, 62%);
+    }
+
+    .opcion img {
+        width: clamp(70px, 30vw, 110px);
+    }
+
+    .titulo-principal h1 {
+        font-size: clamp(0.9rem, 17.5vw, 1.4rem);
+        letter-spacing: -1px;
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}

@@ -77,6 +77,11 @@ async function fetchMonedas() {
 async function _aplicarDelta(cantidad, positivo) {
   if (!await _isAuthenticated()) {
     // Fallback localStorage (modo invitado / sin Supabase)
+    // Un gasto mayor al saldo NO se procesa (antes se recortaba a 0 y la
+    // operación figuraba como exitosa, dejando gastar monedas inexistentes).
+    if (cantidad < 0 && (_getCache() || 0) < Math.abs(cantidad)) {
+      return { ok: false, error: 'saldo_insuficiente', nuevo_saldo: _getCache() || 0 };
+    }
     _setCache(Math.max(0, _getCache() + cantidad));
     actualizarUI();
     if (typeof mostrarAnimacionMonedas === 'function') {

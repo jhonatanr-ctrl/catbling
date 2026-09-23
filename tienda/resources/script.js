@@ -698,14 +698,67 @@ async function comprarItem() {
         }
         mostrarCompraExitosa(itemData);
     } else {
-        // Error: saldo insuficiente u otro
-        const monedasActuales = await apiIsAuthenticated() ? await window.coinsAPI.fetch() : (typeof getMonedas === 'function' ? getMonedas() : parseInt(localStorage.getItem('monedas')) || 0);
-        const deficit = itemData.precio - monedasActuales;
-        if (typeof window.mostrarOverlayTienda === 'function') {
-            window.mostrarOverlayTienda(deficit);
+        // CAUSA RAÍZ del "faltan -175": cualquier fallo (RPC caída, sesión
+        // vencida, perfil inexistente, inventario lleno…) caía aquí y se
+        // presentaba SIEMPRE como saldo insuficiente, calculando
+        // `precio - saldo` con un saldo local desactualizado (25 - 200 = -175).
+        // Ahora el overlay de saldo insuficiente sólo aparece cuando el
+        // servidor lo confirma, y el faltante se calcula con el saldo real que
+        // devuelve el propio servidor.
+        if (r.codigo === 'saldo_insuficiente') {
+            let saldoReal = r.saldo;
+            if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
+                const fresco = await window.coinsAPI.fetch();
+                if (typeof saldoReal !== 'number') saldoReal = fresco;
+            }
+            const deficit = itemData.precio - (saldoReal || 0);
+            if (deficit > 0 && typeof window.mostrarOverlayTienda === 'function') {
+                window.mostrarOverlayTienda(deficit);
+            }
+        } else if (r.codigo === 'inventario_lleno') {
+            // Ya se mostró el overlay de inventario lleno (config.js).
+        } else if (r.codigo === 'no_autenticado') {
+            // requerirAutenticacion() ya se invocó en comprarItemTienda().
+        } else {
+            const claveMsg = r.codigo === 'perfil_no_encontrado' ? 'perfil_no_encontrado' : 'tienda_error_desc';
+            mostrarErrorCompraTienda(__(claveMsg));
         }
-        if (r.error) console.error('[tienda] Error compra:', r.error);
+        if (r.error) console.error('[tienda] Error compra:', r.codigo, r.error);
     }
+}
+
+function mostrarErrorCompraTienda(mensaje) {
+    let overlay = document.getElementById('tienda-error-compra-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'tienda-error-compra-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 900;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        `;
+        overlay.innerHTML = `
+            <div style="text-align: center; padding: 20px; max-width: 80vw;">
+                <h2 style="font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff4444; margin: 0 0 15px 0; text-shadow: 0 0 20px rgba(255, 68, 68, 1);">${__("tienda_error_titulo")}</h2>
+                <p id="tienda-error-compra-msg" style="font-family: 'Pixelify Sans', sans-serif; font-size: 20px; color: white; margin: 8px 0;"></p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+    document.getElementById('tienda-error-compra-msg').textContent = mensaje;
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.opacity = '1';
+    setTimeout(() => {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+    }, 3500);
 }
 
 function mostrarOverlayTienda(cantidadNecesaria) {

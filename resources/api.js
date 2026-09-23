@@ -21,6 +21,58 @@ async function _supabaseRequest(fn, rpcName) {
   }
 }
 
+// ─── Política mínima de contraseña (registro y restablecimiento) ─────
+// Mínimo 8 caracteres, 1 mayúscula, 1 número y 1 símbolo. Esta validación en
+// cliente es sólo la primera barrera: debe existir la misma exigencia en
+// Supabase Auth (Authentication → Sign In / Providers → Email → longitud mínima
+// 8 y "Password requirements"); un cliente modificado puede saltarse el JS.
+const CATBLING_PASSWORD_MIN_LENGTH = 8;
+// Mismo conjunto de símbolos que usa Supabase Auth para "symbols".
+const CATBLING_PASSWORD_SYMBOLS = /[!@#$%^&*()_+\-=\[\]{};':"\\|<>?,.\/`~]/;
+
+function apiValidarPassword(password) {
+  const pw = typeof password === 'string' ? password : '';
+  const faltantes = [];
+  if (pw.length < CATBLING_PASSWORD_MIN_LENGTH) faltantes.push('longitud');
+  if (!/[A-Z]/.test(pw)) faltantes.push('mayuscula');
+  if (!/[0-9]/.test(pw)) faltantes.push('numero');
+  if (!CATBLING_PASSWORD_SYMBOLS.test(pw)) faltantes.push('simbolo');
+  return { ok: faltantes.length === 0, faltantes };
+}
+
+function apiMensajePasswordPolitica() {
+  return (typeof __ === 'function')
+    ? __('contrasena_politica')
+    : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo (por ejemplo: Catbling2026!).';
+}
+
+// getSession() sólo lee el almacenamiento local: una cuenta eliminada o
+// invalidada seguiría "autenticada" hasta que caduque el token. getUser()
+// consulta a Auth. Sólo se cierra la sesión local ante un rechazo real del
+// servidor (401/403/usuario inexistente); un fallo de red NO cierra la sesión.
+async function apiVerificarSesionServidor() {
+  try {
+    const { data: { session } } = await window.supabase.auth.getSession();
+    if (!session) return false;
+    const { data, error } = await window.supabase.auth.getUser();
+    if (error) {
+      const status = error.status;
+      const rechazada = status === 401 || status === 403 || status === 404 ||
+        /user.*not.*found|invalid jwt|session.*(missing|not found)/i.test(error.message || '');
+      if (rechazada) {
+        console.warn('[CATBLING][AUTH] Sesión local rechazada por el servidor; se cierra localmente.', error.message);
+        await window.supabase.auth.signOut({ scope: 'local' });
+        return false;
+      }
+      return true;
+    }
+    return !!data?.user;
+  } catch (e) {
+    console.warn('[CATBLING][AUTH] No se pudo verificar la sesión (red):', e.message);
+    return true;
+  }
+}
+
 // ─── Sesión / Autenticación ──────────────────────────────────────────
 async function apiGetToken() {
   const { data: { session } } = await window.supabase?.auth?.getSession?.() || { data: { session: null } };
@@ -46,6 +98,9 @@ async function apiLogout() {
 // ─── Auth ────────────────────────────────────────────────────
 async function apiRegister(username, email, password) {
   return _supabaseRequest(async () => {
+    if (!apiValidarPassword(password).ok) {
+      throw new Error(apiMensajePasswordPolitica());
+    }
     const { data, error } = await window.supabase.auth.signUp({
       email,
       password,
@@ -65,8 +120,8 @@ async function apiRegister(username, email, password) {
         errorMessage = (typeof __ === 'function') ? __('error_correo_ya_registrado') : 'Este correo ya está registrado. Inicia sesión en lugar de registrarte.';
       } else if (lowerMsg.includes('invalid email')) {
         errorMessage = (typeof __ === 'function') ? __('error_correo_invalido') : 'El correo electrónico no es válido.';
-      } else if (lowerMsg.includes('weak password') || lowerMsg.includes('password too weak') || lowerMsg.includes('password too short')) {
-        errorMessage = (typeof __ === 'function') ? __('error_contrasena_debil') : 'La contraseña es demasiado débil. Usa al menos 6 caracteres con mayúsculas, minúsculas y números.';
+      } else if (error.code === 'weak_password' || lowerMsg.includes('weak password') || lowerMsg.includes('password too weak') || lowerMsg.includes('password too short') || lowerMsg.includes('password should')) {
+        errorMessage = apiMensajePasswordPolitica();
       } else if (lowerMsg.includes('invalid credentials') || lowerMsg.includes('invalid login')) {
         errorMessage = (typeof __ === 'function') ? __('error_credenciales_invalidas') : 'Credenciales inválidas.';
       }
@@ -161,8 +216,23 @@ async function apiForgotPassword(email) {
 
 async function apiResetPassword(password) {
   return _supabaseRequest(async () => {
+    if (!apiValidarPassword(password).ok) {
+      throw new Error(apiMensajePasswordPolitica());
+    }
     const { error } = await window.supabase.auth.updateUser({ password });
-    if (error) throw error;
+    if (error) {
+      const lowerMsg = (error.message || '').toLowerCase();
+      if (error.code === 'weak_password' || lowerMsg.includes('password should')) {
+        throw new Error(apiMensajePasswordPolitica());
+      }
+      if (error.code === 'same_password' || lowerMsg.includes('different from the old')) {
+        throw new Error((typeof __ === 'function') ? __('error_misma_contrasena') : 'La nueva contraseña debe ser distinta de la anterior.');
+      }
+      if (lowerMsg.includes('session missing') || lowerMsg.includes('auth session')) {
+        throw new Error((typeof __ === 'function') ? __('error_enlace_recuperacion_invalido') : 'El enlace de recuperación ya se usó o expiró. Solicita uno nuevo.');
+      }
+      throw error;
+    }
     return { message: 'Contraseña actualizada' };
   });
 }
@@ -226,10 +296,13 @@ async function apiGetCoins() {
       .from('profiles')
       .select('monedas')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
-    return { monedas: data?.monedas ?? 0 };
+    // Cuenta de Auth sin fila en profiles: antes .single() lanzaba un error
+    // genérico (PGRST116) y el saldo local desactualizado seguía en pantalla.
+    if (!data) throw new Error('perfil_no_encontrado');
+    return { monedas: data.monedas ?? 0 };
   }, 'apiGetCoins (REST)');
 }
 
@@ -275,7 +348,18 @@ async function rpcComprarItem(itemId, cantidad = 1) {
       p_cantidad: cantidad
     });
     if (error) throw error;
-    return data[0];
+    const fila = data && data[0];
+    if (!fila) throw new Error('Respuesta vacía de comprar_item');
+    if (fila.codigo === undefined) {
+      // Compatibilidad con la versión previa de la RPC (sin columna `codigo`).
+      const m = String(fila.mensaje || '').toLowerCase();
+      fila.codigo = fila.ok ? 'ok'
+        : m.includes('saldo insuficiente') ? 'saldo_insuficiente'
+        : m.includes('no autenticado') ? 'no_autenticado'
+        : m.includes('perfil') ? 'perfil_no_encontrado'
+        : 'error';
+    }
+    return fila;
   }, 'comprar_item');
 }
 
@@ -369,7 +453,7 @@ async function rpcTransaccionMonedas(delta, motivo, ref) {
 }
 
 async function rpcRegistrarSesionCasino(juego, apuesta, resultadoMonedas, gano) {
-  return _supabaseRequest(async () => {
+  const resp = await _supabaseRequest(async () => {
     const { data, error } = await window.supabase.rpc('registrar_sesion_casino', {
       p_juego: juego,
       p_apuesta: apuesta,
@@ -379,6 +463,37 @@ async function rpcRegistrarSesionCasino(juego, apuesta, resultadoMonedas, gano) 
     if (error) throw error;
     return data[0];
   }, 'registrar_sesion_casino');
+
+  // CAUSA RAÍZ compartida por TODOS los juegos: _supabaseRequest devuelve
+  // success:true siempre que la llamada HTTP no falle, aunque el servidor
+  // haya respondido ok:false (saldo insuficiente, datos inválidos). Cada juego
+  // sólo comprobaba `r.success`, así que un rechazo del servidor pasaba por
+  // aceptado y la pantalla mostraba una victoria/pérdida que Supabase nunca
+  // registró. Se corrige en un único punto: ok:false ⇒ success:false, se
+  // resincroniza el saldo real y, si de verdad no alcanzaba, se muestra el
+  // overlay de saldo insuficiente ya existente.
+  if (resp.success && !(resp.data && resp.data.ok === true)) {
+    await _manejarRechazoEconomia(apuesta);
+    return { success: false, error: 'operacion_rechazada', data: resp.data };
+  }
+  return resp;
+}
+
+async function _manejarRechazoEconomia(cantidadNecesaria) {
+  try {
+    let saldo = null;
+    if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
+      saldo = await window.coinsAPI.fetch();
+    }
+    if (typeof saldo === 'number' && saldo < cantidadNecesaria &&
+        typeof mostrarOverlayGlobal === 'function') {
+      mostrarOverlayGlobal(cantidadNecesaria);
+    } else {
+      console.warn('[CATBLING][ECONOMIA] Operación rechazada por el servidor (saldo real:', saldo, ', requerido:', cantidadNecesaria, ')');
+    }
+  } catch (e) {
+    console.warn('[CATBLING][ECONOMIA] No se pudo resincronizar tras un rechazo:', e);
+  }
 }
 
 async function rpcGetMonedas() {

@@ -357,8 +357,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const successEl = document.getElementById("reset-success");
       errorEl.textContent = "";
 
-      if (password.length < 6) {
-        errorEl.textContent = __("contrasena_min");
+      if (!apiValidarPassword(password).ok) {
+        errorEl.textContent = apiMensajePasswordPolitica();
         return;
       }
       if (password !== confirm) {
@@ -451,8 +451,8 @@ document.addEventListener("DOMContentLoaded", function() {
         errorEl.textContent = __("contrasenas_no_coinciden");
         return;
       }
-      if (password.length < 6) {
-        errorEl.textContent = __("contrasena_min");
+      if (!apiValidarPassword(password).ok) {
+        errorEl.textContent = apiMensajePasswordPolitica();
         return;
       }
       errorEl.textContent = "";
@@ -463,11 +463,21 @@ document.addEventListener("DOMContentLoaded", function() {
       var result = await window.registrarUsuarioPHP(username, email, password);
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
+      // BUG encontrado en la auditoría (confirmado con pruebas): registrarUsuarioPHP
+      // devuelve { success, data }, igual que iniciarSesionPHP. `success` sí vive en
+      // la raíz (por eso el login funcionaba), pero `needsEmailConfirmation` y `email`
+      // están dentro de `data`. Al leerlos directamente de `result` siempre eran
+      // undefined, así que TODO registro exitoso caía en la rama de "sesión iniciada":
+      // nunca se mostraba el aviso de confirmar el correo y el modal se cerraba dando
+      // a entender que había sesión, cuando Supabase exige confirmación (email_confirmed_at
+      // queda null hasta que el usuario abre el enlace). El usuario creía estar
+      // autenticado sin estarlo.
+      var datosResultado = result.data || {};
       if (result.success) {
-        if (result.needsEmailConfirmation) {
+        if (datosResultado.needsEmailConfirmation) {
           // Registro exitoso pero requiere confirmación por email
           errorEl.style.color = "#4CAF50";
-          var userEmail = result.email || email;
+          var userEmail = datosResultado.email || email;
           errorEl.textContent = __f("registro_email_confirmacion", { email: userEmail });
           // No cerrar el overlay, el usuario debe ver el mensaje
         } else {
@@ -632,6 +642,10 @@ const TRADUCCIONES = {
   campos_incompletos: { es: "Completa todos los campos", en: "Fill in all the fields", ru: "Заполните все поля", ja: "すべての項目を入力してください", zh: "请填写所有字段", de: "Bitte fülle alle Felder aus" },
   contrasenas_no_coinciden: { es: "Las contraseñas no coinciden", en: "Passwords don't match", ru: "Пароли не совпадают", ja: "パスワードが一致しません", zh: "两次密码不一致", de: "Die Passwörter stimmen nicht überein" },
   contrasena_min: { es: "La contraseña debe tener al menos 6 caracteres", en: "The password must be at least 6 characters long", ru: "Пароль должен содержать не менее 6 символов", ja: "パスワードは6文字以上で入力してください", zh: "密码至少需要6个字符", de: "Das Passwort muss mindestens 6 Zeichen lang sein" },
+  contrasena_politica: { es: "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo (por ejemplo: Catbling2026!).", en: "The password must have at least 8 characters, an uppercase letter, a number and a symbol (for example: Catbling2026!).", ru: "Пароль должен содержать не менее 8 символов, заглавную букву, цифру и специальный символ (например: Catbling2026!).", ja: "パスワードは8文字以上で、大文字・数字・記号を1つ以上含めてください（例：Catbling2026!）。", zh: "密码至少需要8个字符，并包含一个大写字母、一个数字和一个符号（例如：Catbling2026!）。", de: "Das Passwort muss mindestens 8 Zeichen lang sein und einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten (z. B. Catbling2026!)." },
+  error_misma_contrasena: { es: "La nueva contraseña debe ser distinta de la anterior.", en: "The new password must be different from the old one.", ru: "Новый пароль должен отличаться от прежнего.", ja: "新しいパスワードは以前のものと異なる必要があります。", zh: "新密码必须与旧密码不同。", de: "Das neue Passwort muss sich vom alten unterscheiden." },
+  error_enlace_recuperacion_invalido: { es: "El enlace de recuperación ya se usó o expiró. Solicita uno nuevo.", en: "The recovery link has already been used or has expired. Request a new one.", ru: "Ссылка для восстановления уже использована или истекла. Запросите новую.", ja: "回復リンクは使用済みか、有効期限が切れています。新しいリンクをリクエストしてください。", zh: "恢复链接已被使用或已过期，请重新申请。", de: "Der Wiederherstellungslink wurde bereits verwendet oder ist abgelaufen. Fordere einen neuen an." },
+  perfil_no_encontrado: { es: "No se encontró tu perfil de jugador. Cierra sesión y vuelve a entrar, o avisa al equipo.", en: "Your player profile was not found. Sign out and sign in again, or tell the team.", ru: "Профиль игрока не найден. Выйдите и войдите снова или сообщите команде.", ja: "プレイヤープロフィールが見つかりません。ログアウトして再度ログインするか、チームに連絡してください。", zh: "未找到你的玩家资料。请退出后重新登录，或联系团队。", de: "Dein Spielerprofil wurde nicht gefunden. Melde dich ab und wieder an oder informiere das Team." },
   correo_requerido: { es: "Ingresa un correo electrónico", en: "Enter an email address", ru: "Введите адрес электронной почты", ja: "メールアドレスを入力してください", zh: "请输入电子邮箱", de: "Gib eine E-Mail-Adresse ein" },
   token_invalido: { es: "Token de recuperación no válido", en: "Invalid recovery token", ru: "Недействительный токен восстановления", ja: "無効な回復トークンです", zh: "无效的恢复令牌", de: "Ungültiges Wiederherstellungstoken" },
   error_login:    { es: "Error al iniciar sesión", en: "Error logging in", ru: "Ошибка входа", ja: "ログインエラー", zh: "登录出错", de: "Fehler beim Anmelden" },
@@ -989,6 +1003,8 @@ const TRADUCCIONES = {
   monedas_necesarias: { es: "Monedas necesarias:", en: "Coins needed:", ru: "Нужно монет:", ja: "必要コイン数:", zh: "所需金币：", de: "Benötigte Münzen:" },
   tienda_sin_monedas_titulo: { es: "¡Sin monedas!", en: "No coins!", ru: "Нет монет!", ja: "コインがありません！", zh: "金币不足！", de: "Keine Münzen!" },
   tienda_sin_monedas_desc: { es: "No tienes suficientes monedas para comprarlo.", en: "You don't have enough coins to buy it.", ru: "У вас недостаточно монет, чтобы это купить.", ja: "購入するのに十分なコインがありません。", zh: "你的金币不足以购买它。", de: "Du hast nicht genug Münzen, um es zu kaufen." },
+  tienda_error_titulo: { es: "No se pudo comprar", en: "Purchase failed", ru: "Не удалось купить", ja: "購入できませんでした", zh: "购买失败", de: "Kauf fehlgeschlagen" },
+  tienda_error_desc: { es: "Ocurrió un problema al procesar la compra. Revisa tu saldo e inténtalo de nuevo.", en: "There was a problem processing the purchase. Check your balance and try again.", ru: "При обработке покупки возникла проблема. Проверьте баланс и попробуйте снова.", ja: "購入の処理中に問題が発生しました。残高を確認して、もう一度お試しください。", zh: "处理购买时出现问题。请检查余额后重试。", de: "Beim Verarbeiten des Kaufs ist ein Problem aufgetreten. Prüfe dein Guthaben und versuche es erneut." },
   tienda_guardado_inventario: { es: "¡Guardado en tu inventario!", en: "Saved to your inventory!", ru: "Сохранено в вашем инвентаре!", ja: "インベントリに保存されました！", zh: "已保存到你的背包！", de: "In deinem Inventar gespeichert!" },
   item_alt: { es: "Objeto", en: "Item", ru: "Предмет", ja: "アイテム", zh: "物品", de: "Gegenstand" },
 
@@ -1420,17 +1436,20 @@ window.tieneEspacioInventario = function() {
   return inventario.length < MAX_ITEMS_INVENTARIO;
 };
 
+// Todas las rutas de imagen del inventario/UI se guardan RELATIVAS A LA RAÍZ
+// del sitio (p. ej. './tienda/resources/assets/pista.png' o
+// 'resources/assets/bag.png'). CAUSA RAÍZ del "la imagen sólo se ve en la
+// página principal y en la tienda": la versión anterior calculaba el prefijo
+// con la profundidad de window.location.pathname asumiendo que el sitio vivía
+// dentro de una carpeta (http://localhost/Catbling/...). En Vercel/localhost:3000
+// el sitio está en la raíz, así que en /juegos/<juego>/<pagina>.html el prefijo
+// quedaba un nivel corto y la imagen apuntaba a /juegos/tienda/... (404).
+// CATBLING_CONFIG_ROOT (derivado de la URL real de config.js) resuelve la raíz
+// correcta en cualquier página y en cualquier hosting.
 window.normalizarPathImagen = function(path) {
-  if (!path) return './resources/assets/yukocoins.png';
-  if (path.startsWith('http') || path.startsWith('/')) return path;
-  const cleanPath = path.replace(/^\.\//, '');
-  const segments = window.location.pathname.replace(/\\/g, '/').split('/').filter(function(s) { return s.length > 0; });
-  var last = segments[segments.length - 1] || '';
-  var isFile = /\.[a-z]+$/i.test(last);
-  var folderDepth = isFile ? segments.length - 1 : segments.length;
-  var prefixLevels = Math.max(0, folderDepth - 1);
-  var prefix = prefixLevels === 0 ? './' : '../'.repeat(prefixLevels);
-  return prefix + cleanPath;
+  if (!path) return new URL('resources/assets/yukocoins.png', CATBLING_CONFIG_ROOT).href;
+  if (/^(https?:|data:|blob:)/i.test(path) || path.startsWith('/')) return path;
+  return new URL(String(path).replace(/^\.\//, ''), CATBLING_CONFIG_ROOT).href;
 };
 
 window.actualizarInventarioUI = function() {
@@ -1750,12 +1769,49 @@ window.usarItem = async function() {
   }, 2500);
 };
 
+// CAUSA RAÍZ del botón de cerrar ausente: el markup de la bolsa está copiado en
+// el HTML de cada página, y en carreras, cartas retro, dados, memoria y ruleta
+// se copió SIN <img id="bag-close-btn">. La lógica ya es central (cerrarBolsa);
+// aquí se garantiza el botón en cualquier página que tenga #bag-overlay, en vez
+// de duplicar el elemento a mano en cada HTML.
+// CAUSA RAÍZ ampliada: en ruleta.html y memoria.html el markup del inventario
+// no tiene NI #btn-bag (botón para abrirlo) ni #bag-close-btn (para cerrarlo);
+// en carreras, dados y cartas retro falta sólo el de cerrar. Es una copia
+// manual inconsistente del mismo bloque HTML en cada página, no un problema
+// del sistema central (que sí es uno solo: mostrarBolsa/cerrarBolsa en este
+// archivo). Se repara sin duplicar el sistema: si #bag-overlay existe en la
+// página pero falta alguno de los dos botones, config.js los crea con el
+// mismo aspecto y comportamiento que en las páginas donde sí están.
+window.asegurarBotonAbrirBolsa = function() {
+  if (document.getElementById('btn-bag')) return document.getElementById('btn-bag');
+  const btn = document.createElement('img');
+  btn.id = 'btn-bag';
+  btn.src = new URL('resources/assets/bag.png', CATBLING_CONFIG_ROOT).href;
+  btn.alt = 'Inventario';
+  document.body.appendChild(btn); // #btn-bag es position:fixed; la posición en el DOM no afecta su ubicación en pantalla.
+  return btn;
+};
+
+window.asegurarBotonCerrarBolsa = function(overlay) {
+  if (!overlay || document.getElementById('bag-close-btn')) return;
+  const contenedor = document.getElementById('bag-content') || overlay;
+  const btn = document.createElement('img');
+  btn.id = 'bag-close-btn';
+  btn.src = new URL('resources/assets/exit.png', CATBLING_CONFIG_ROOT).href;
+  btn.alt = 'Cerrar';
+  btn.addEventListener('click', window.cerrarBolsa);
+  contenedor.appendChild(btn);
+};
+
 window.inicializarBolsa = function() {
-  const btnBag = document.getElementById('btn-bag');
   const overlay = document.getElementById('bag-overlay');
   const itemOverlay = document.getElementById('item-use-overlay');
-  if (btnBag) btnBag.addEventListener('click', window.mostrarBolsa);
+  const btnBag = overlay ? window.asegurarBotonAbrirBolsa() : document.getElementById('btn-bag');
+  // Si el botón ya abre la bolsa por onclick (inline o asignado), no añadir un
+  // segundo manejador: mostrarBolsa() se ejecutaba dos veces por clic.
+  if (btnBag && !btnBag.onclick && !btnBag.getAttribute('onclick')) btnBag.addEventListener('click', window.mostrarBolsa);
   if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) window.cerrarBolsa(); });
+  window.asegurarBotonCerrarBolsa(overlay);
   if (itemOverlay) itemOverlay.addEventListener('click', (e) => { if (e.target === itemOverlay) window.cerrarConfirmacion(); });
 };
 
@@ -1818,6 +1874,29 @@ window.addEventListener("storage", () => {
 const _URL_ERA_RECOVERY_AL_CARGAR = window.location.hash.includes('type=recovery');
 function _esRecoveryEnURL() {
   return _URL_ERA_RECOVERY_AL_CARGAR;
+}
+
+// Enlace de recuperación ya usado/expirado: Supabase redirige a
+// #error=access_denied&error_code=otp_expired&error_description=... y antes la
+// app lo ignoraba en silencio (la página cargaba como una visita normal).
+// Se captura al parsear (igual que el hash de recuperación, porque supabase-js
+// puede limpiar la URL) y se muestra el formulario "olvidé mi contraseña" con
+// el aviso, reutilizando el overlay de autenticación existente.
+const _ERROR_ENLACE_OTP_AL_CARGAR = (function() {
+  try {
+    const p = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+    return p.get('error_code') === 'otp_expired';
+  } catch (e) { return false; }
+})();
+
+function mostrarErrorEnlaceRecuperacion() {
+  if (typeof reiniciarFormulariosAuth === 'function') reiniciarFormulariosAuth();
+  toggleAuthOverlay(true);
+  if (document.getElementById('forgot-password-form')) {
+    mostrarForgotPassword();
+    const errEl = document.getElementById('forgot-error');
+    if (errEl) errEl.textContent = __('error_enlace_recuperacion_invalido');
+  }
 }
 
 function mostrarFormularioResetPassword() {
@@ -1936,7 +2015,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // initAuth() eliminado - inicialización directa de Supabase Auth
   if (typeof apiIsAuthenticated === 'function') {
-    const autenticado = await apiIsAuthenticated();
+    let autenticado = await apiIsAuthenticated();
+    // getSession() sólo lee el almacenamiento local: se valida contra Auth para
+    // no tratar como "con sesión" a una cuenta eliminada/invalidada. No se hace
+    // durante un enlace de recuperación (la sesión se está estableciendo).
+    if (autenticado && !_esRecoveryEnURL() && typeof apiVerificarSesionServidor === 'function') {
+      autenticado = await apiVerificarSesionServidor();
+    }
+    if (_ERROR_ENLACE_OTP_AL_CARGAR && window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
     if (autenticado && typeof _esRecoveryEnURL === 'function' && _esRecoveryEnURL()) {
       // Ver nota en inicializarAuthStateListener(): si el hash de la URL
       // es un enlace de recuperación, se prioriza siempre el formulario
@@ -1963,7 +2051,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       // consumidos de un invitado que vuelve a entrar.
       if (typeof iniciarModoInvitado === 'function') iniciarModoInvitado();
 
-      if (forzarAuthOverlayPorLimite) {
+      if (_ERROR_ENLACE_OTP_AL_CARGAR) {
+        mostrarErrorEnlaceRecuperacion();
+      } else if (forzarAuthOverlayPorLimite) {
         // Límite de invitado alcanzado: mostrar SIEMPRE el overlay de
         // autenticación, aunque el invitado siga técnicamente en
         // "guestMode" (por eso no basta con la rama de esModoInvitado()
@@ -2098,13 +2188,16 @@ window.handleGoogleCredentialResponse = async function(response) {
 // ═════════════════════════════════════════════════════════════════════════════
 
 window.comprarItemTienda = async function(itemId, itemData) {
+  // Devuelve siempre { success, codigo, error, saldo? }. `codigo` permite a la
+  // tienda distinguir "saldo insuficiente" (confirmado por el servidor) de
+  // cualquier otro fallo, en lugar de tratar todo como falta de monedas.
   if (!window.apiRpc || !window.apiRpc.comprarItem) {
     console.warn('[config] comprarItemTienda: apiRpc no disponible');
-    return { success: false, error: 'RPC no disponible' };
+    return { success: false, codigo: 'error', error: 'RPC no disponible' };
   }
   if (!(await apiIsAuthenticated())) {
     if (typeof requerirAutenticacion === 'function') requerirAutenticacion();
-    return { success: false, error: 'No autenticado' };
+    return { success: false, codigo: 'no_autenticado', error: 'No autenticado' };
   }
 
   // Verificar espacio en inventario ANTES de comprar
@@ -2112,33 +2205,34 @@ window.comprarItemTienda = async function(itemId, itemData) {
     if (typeof window.mostrarInventarioLleno === 'function') {
       window.mostrarInventarioLleno();
     }
-    return { success: false, error: 'Inventario lleno' };
+    return { success: false, codigo: 'inventario_lleno', error: 'Inventario lleno' };
   }
 
   try {
     const r = await window.apiRpc.comprarItem(itemId, 1);
     if (r.success && r.data?.ok) {
-      // RPC ya actualizó BD y devolvió nuevo_saldo.
-      // Se refresca el saldo vía coinsAPI.fetch() (coins.js), que consulta
-      // Supabase de nuevo y actualiza caché + UI correctamente. Antes se
-      // llamaba a _setCacheMonedas(), inexistente en todo el proyecto: el
-      // ReferenceError caía en el catch de abajo, la compra en Supabase ya
-      // se había realizado, pero el item nunca llegaba a agregarse al
-      // inventario y el frontend devolvía success:false.
+      // La RPC ya actualizó BD (saldo + inventario) y devolvió nuevo_saldo.
+      // Se refresca el saldo vía coinsAPI.fetch() (coins.js).
       if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
         await window.coinsAPI.fetch();
       }
-      // Agregar al inventario sessionStorage
+      // Agregar al inventario sessionStorage (ruta relativa a la raíz del sitio)
       const itemToStore = Object.assign({}, itemData);
       itemToStore.imagen = './tienda/' + itemData.imagen.replace('./', '');
       window.agregarItemInventario(itemToStore);
-      return { success: true, nuevo_saldo: r.data.nuevo_saldo };
-    } else {
-      return { success: false, error: r.data?.mensaje || r.error || 'Error en compra' };
+      return { success: true, codigo: 'ok', nuevo_saldo: r.data.nuevo_saldo };
     }
+    const d = r.data || {};
+    return {
+      success: false,
+      codigo: r.success ? (d.codigo || 'error') : 'error',
+      saldo: (r.success && d.codigo === 'saldo_insuficiente' && d.nuevo_saldo !== undefined && d.nuevo_saldo !== null)
+        ? Number(d.nuevo_saldo) : undefined,
+      error: d.mensaje || r.error || 'Error en compra'
+    };
   } catch (e) {
     console.error('[config] comprarItemTienda error:', e);
-    return { success: false, error: e.message };
+    return { success: false, codigo: 'error', error: e.message };
   }
 };
 
