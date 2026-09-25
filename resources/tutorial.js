@@ -32,6 +32,7 @@ var TUTORIAL_ICON_SRC = null;
     else if (path.indexOf('ruleta') !== -1) TUTORIAL_PAGE = 'ruleta';
     else if (path.indexOf('preguntas') !== -1) TUTORIAL_PAGE = 'preguntas';
     else if (path.indexOf('tienda') !== -1) TUTORIAL_PAGE = 'tienda';
+    else if (path.indexOf('carreras') !== -1) TUTORIAL_PAGE = 'carreras';
     else if (path.indexOf('juegosprincipal') !== -1 || (path.indexOf('juegos') !== -1 && path.indexOf('.html') !== -1)) TUTORIAL_PAGE = 'juegos';
     else if (path.indexOf('principalpage') !== -1 || path.indexOf('index') !== -1 || path === '' || path === '/' || path.indexOf('let\'s go') !== -1) TUTORIAL_PAGE = 'principal';
 
