@@ -35,7 +35,7 @@ body {
     margin: 0;
     overflow: hidden;
     background: black;
-    background-image: url("./assets/fondo.png");
+    background-image: url("./assets/fondo.webp");
     background-size: 101% auto;
     background-position: center -53px;
     background-repeat: no-repeat;
@@ -43,7 +43,7 @@ body {
 }
 
 body.categorias-mode {
-    background-image: url("./assets/fondo1.png");
+    background-image: url("./assets/fondo1.webp");
     background-size: cover;
     background-position: center;
 }

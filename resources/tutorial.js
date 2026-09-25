@@ -134,6 +134,8 @@ var TUTORIAL_ICON_SRC = null;
         var overlay = document.getElementById('tutorial-overlay');
         if (!overlay || !tutSteps) return;
 
+        // No tapar el formulario de nueva contraseña cuando se llega desde el correo de recuperación.
+        if (window._tutorialSuprimido || /type=recovery/.test(window.location.hash || '')) return;
         if (!window.tutorialDeberiaMostrarse()) return;
 
         if (document.getElementById('tut-no-mostrar')) document.getElementById('tut-no-mostrar').remove();

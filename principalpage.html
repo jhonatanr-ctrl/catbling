@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="./resources/tutorial.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=Sixtyfour&display=swap" rel="stylesheet">
 </head>
 
 <body data-page="principal">
@@ -20,8 +19,8 @@
         <source src="./resources/assets/Casino poker playing cards suits icons diamonds, clovers, hearts, spades template 4K 60_00_Min_ Free.mp4" type="video/mp4">
     </video>
 
-    <audio id="bgMusic" loop muted>
-      <source src="./resources/assets/sounds/Epic 8-bit Electro Gaming Music Mix  Royalty Free Chiptune Music.mp3" type="audio/mpeg">
+    <audio id="bgMusic" preload="metadata" loop muted>
+      <source src="./resources/assets/sounds/Epic 8-bit Electro Gaming Music Mix Royalty Free Chiptune Music.mp3" type="audio/mpeg">
       Tu navegador no soporta audio.
     </audio>
 
@@ -150,7 +149,7 @@
     <!-- RULETA -->
     <div class="contenedor-imagen-ruleta">
         <div class="ruleta-animacion">
-            <img src="./resources/assets/ruleta.png" id="imagen-giratoria">
+            <img src="./resources/assets/ruleta.webp" id="imagen-giratoria">
         </div>
     </div>
 
@@ -198,6 +197,16 @@
                 <div class="auth-error" id="register-error"></div>
                 <button type="submit" data-i18n="registrarse">REGISTRARSE</button>
             </form>
+
+            <!-- Continuar con Google (Supabase Auth OAuth) -->
+            <div class="auth-google">
+                <div class="auth-divider"><span data-i18n="o_divisor">o</span></div>
+                <button type="button" id="google-login-btn" aria-label="Continuar con Google">
+                    <svg class="google-logo" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                    <span id="google-login-label" data-i18n="continuar_google">Continuar con Google</span>
+                </button>
+                <div class="auth-error" id="google-error"></div>
+            </div>
 
             <!-- ðŸ”‘ RECUPERAR CONTRASEÑA -->
             <div id="forgot-password-form" style="display:none;">
@@ -268,7 +277,7 @@
     </div>
 
     <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./resources/vendor/supabase-2.117.1.js"></script>
     <script src="resources/supabase-client.js"></script>
     <script src="resources/api.js"></script>
     <script src="resources/guest.js?v=2"></script>

@@ -99,9 +99,9 @@
   // para mostrar una vista previa en la UI (igual que el catálogo de la
   // tienda, que también está duplicado en cliente solo para mostrarlo).
   const dificultades = [
-      { nombre: "FÁCIL",   labelKey: "nivel_facil",   img: "./assets/dificultades/facil.png",   tiempo: 10, costo: 5 },
-      { nombre: "NORMAL",  labelKey: "nivel_normal",  img: "./assets/dificultades/normal.png",  tiempo: 15, costo: 10 },
-      { nombre: "DIFÍCIL", labelKey: "nivel_dificil", img: "./assets/dificultades/difícil.png", tiempo: 25, costo: 15 },
+      { nombre: "FÁCIL",   labelKey: "nivel_facil",   img: "./assets/dificultades/facil.webp",   tiempo: 10, costo: 5 },
+      { nombre: "NORMAL",  labelKey: "nivel_normal",  img: "./assets/dificultades/normal.webp",  tiempo: 15, costo: 10 },
+      { nombre: "DIFÍCIL", labelKey: "nivel_dificil", img: "./assets/dificultades/difícil.webp", tiempo: 25, costo: 15 },
   ];
 
   // Espejo de supabase/migrations/003_recompensas_dinamicas_antifarming.sql

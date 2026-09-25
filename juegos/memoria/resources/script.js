@@ -17,7 +17,7 @@ const ICONS = [
   "./resources/assets/numero7.png",
   "./resources/assets/tanque-removebg-preview.png",
   "./resources/assets/moneybag.png",
-  "./resources/assets/diceicon.png",
+  "./resources/assets/diceicon.webp",
   "./resources/assets/bag.png",
   "./resources/assets/playcoinicon.png"
 ];

@@ -4,6 +4,18 @@
 (function () {
   'use strict';
 
+  // CAUSA RAÍZ de la intermitencia en la recuperación de contraseña: supabase-js, con
+  // detectSessionInUrl:true, empieza a procesar y LIMPIA (history.replaceState) el hash de
+  // la URL (#access_token=...&type=recovery...) en cuanto se llama a createClient(), más
+  // abajo en este mismo script — que es el PRIMERO en cargar. config.js (que decide si
+  // mostrar el formulario de nueva contraseña) se carga después y a veces alcanza a leer
+  // window.location.hash antes de que se limpie y a veces no: de ahí que el formulario
+  // apareciera solo en algunos intentos. Se captura el hash y la query AQUÍ, antes de
+  // createClient(), en variables que no cambian, para que el resto del sitio deje de
+  // depender de esa carrera.
+  window.CATBLING_URL_HASH_INICIAL = window.location.hash || '';
+  window.CATBLING_URL_SEARCH_INICIAL = window.location.search || '';
+
   // En producción (Vercel): las vars vienen inyectadas en el HTML via <script>window.__ENV__ = {...}</script>
   // En desarrollo local: se pueden definir en un archivo .env.local.js o aquí mismo como fallback
   const env = (typeof window !== 'undefined' && window.__ENV__) || {

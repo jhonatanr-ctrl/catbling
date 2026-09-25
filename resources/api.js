@@ -73,6 +73,19 @@ async function apiVerificarSesionServidor() {
   }
 }
 
+// URL de retorno para correos de Auth (confirmación, recuperación) y OAuth (Google).
+// Siempre la principalpage.html de ESTE despliegue (Vercel, localhost, subcarpeta),
+// nunca una URL fija. Debe estar permitida en Supabase → Authentication → URL Configuration
+// → Redirect URLs (p. ej. https://TU-DOMINIO/** y http://localhost:3000/**).
+function apiRedirectUrl() {
+  try {
+    if (typeof CATBLING_CONFIG_ROOT !== 'undefined') {
+      return new URL('principalpage.html', CATBLING_CONFIG_ROOT).href;
+    }
+  } catch (e) { /* cae al origen */ }
+  return window.location.origin + '/principalpage.html';
+}
+
 // ─── Sesión / Autenticación ──────────────────────────────────────────
 async function apiGetToken() {
   const { data: { session } } = await window.supabase?.auth?.getSession?.() || { data: { session: null } };
@@ -106,7 +119,7 @@ async function apiRegister(username, email, password) {
       password,
       options: {
         data: { nombre: username },
-        emailRedirectTo: window.location.origin
+        emailRedirectTo: apiRedirectUrl()
       }
     });
     if (error) {
@@ -204,10 +217,42 @@ async function apiLoginWithOAuth(provider, redirectTo) {
   });
 }
 
+// Inicio de sesión / registro con Google mediante Supabase Auth (OAuth). Es el mismo
+// flujo para usuarios nuevos y existentes: si el correo de Google ya pertenece a una
+// cuenta, Supabase enlaza la identidad al MISMO usuario (mismo auth.users.id, mismo
+// perfil, monedas e inventario); si no existe, crea el usuario y el trigger
+// handle_new_user crea su perfil. No se consulta ni expone si un correo está registrado.
+async function apiLoginWithGoogle() {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: apiRedirectUrl(),
+        queryParams: { prompt: 'select_account' }
+      }
+    });
+    if (error) throw error;
+    return { url: data && data.url };
+  }, 'signInWithOAuth(google)');
+}
+
+// Garantiza que el usuario autenticado tenga fila en profiles (idempotente).
+async function apiAsegurarPerfil() {
+  try {
+    const { data, error } = await window.supabase.rpc('ensure_profile');
+    if (error) throw error;
+    const fila = data && data[0];
+    return !!(fila && fila.ok);
+  } catch (e) {
+    console.warn('[CATBLING][AUTH] ensure_profile falló:', e && e.message);
+    return false;
+  }
+}
+
 async function apiForgotPassword(email) {
   return _supabaseRequest(async () => {
     const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/principalpage.html'
+      redirectTo: apiRedirectUrl()
     });
     if (error) throw error;
     return { message: 'Email de recuperación enviado' };
@@ -299,9 +344,16 @@ async function apiGetCoins() {
       .maybeSingle();
 
     if (error) throw error;
-    // Cuenta de Auth sin fila en profiles: antes .single() lanzaba un error
-    // genérico (PGRST116) y el saldo local desactualizado seguía en pantalla.
-    if (!data) throw new Error('perfil_no_encontrado');
+    // Cuenta de Auth sin fila en profiles: se intenta crear el perfil (ensure_profile,
+    // idempotente) una vez; si aun así no existe, se informa. Antes .single() lanzaba
+    // un error genérico (PGRST116) y el saldo local desactualizado seguía en pantalla.
+    if (!data) {
+      if (await apiAsegurarPerfil()) {
+        const r2 = await window.supabase.from('profiles').select('monedas').eq('id', user.id).maybeSingle();
+        if (r2.data) return { monedas: r2.data.monedas ?? 0 };
+      }
+      throw new Error('perfil_no_encontrado');
+    }
     return { monedas: data.monedas ?? 0 };
   }, 'apiGetCoins (REST)');
 }
@@ -361,6 +413,33 @@ async function rpcComprarItem(itemId, cantidad = 1) {
     }
     return fila;
   }, 'comprar_item');
+}
+
+// Inventario real del usuario (fuente de verdad: inventario_items en Supabase).
+// Devuelve [{ item_id, cantidad }].
+async function apiGetInventario() {
+  return _supabaseRequest(async () => {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+    const { data, error } = await window.supabase
+      .from('inventario_items')
+      .select('item_id, cantidad')
+      .eq('user_id', user.id)
+      .order('item_id', { ascending: true });
+    if (error) throw error;
+    return { items: data || [] };
+  }, 'inventario_items (select)');
+}
+
+// Consumo de UNA unidad en el servidor (RPC usar_item). Sin unidades => ok:false.
+async function rpcUsarItem(itemId) {
+  return _supabaseRequest(async () => {
+    const { data, error } = await window.supabase.rpc('usar_item', { p_item_id: itemId });
+    if (error) throw error;
+    const fila = data && data[0];
+    if (!fila) throw new Error('Respuesta vacía de usar_item');
+    return fila;
+  }, 'usar_item');
 }
 
 async function rpcRegistrarRondaPreguntas(nivelAcademico, dificultad, area, preguntasTotal, correctas, monedasGanadas) {
@@ -476,6 +555,11 @@ async function rpcRegistrarSesionCasino(juego, apuesta, resultadoMonedas, gano) 
     await _manejarRechazoEconomia(apuesta);
     return { success: false, error: 'operacion_rechazada', data: resp.data };
   }
+  if (!resp.success) {
+    // Fallo de red / excepción: tampoco se registró nada. No se deja en pantalla un
+    // resultado como si estuviera guardado.
+    await _manejarRechazoEconomia(apuesta);
+  }
   return resp;
 }
 
@@ -485,9 +569,17 @@ async function _manejarRechazoEconomia(cantidadNecesaria) {
     if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
       saldo = await window.coinsAPI.fetch();
     }
+    // El resultado que el juego ya mostró NO quedó registrado: se retira el overlay de
+    // victoria/derrota y se informa (el saldo mostrado es el real, ya resincronizado).
+    ['win-overlay', 'lose-overlay'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('active', 'visible', 'show');
+    });
     if (typeof saldo === 'number' && saldo < cantidadNecesaria &&
         typeof mostrarOverlayGlobal === 'function') {
       mostrarOverlayGlobal(cantidadNecesaria);
+    } else if (typeof window.mostrarPartidaNoRegistrada === 'function') {
+      window.mostrarPartidaNoRegistrada();
     } else {
       console.warn('[CATBLING][ECONOMIA] Operación rechazada por el servidor (saldo real:', saldo, ', requerido:', cantidadNecesaria, ')');
     }
@@ -545,6 +637,9 @@ window.apiRpc = {
   transaccionMonedas: rpcTransaccionMonedas,
   registrarSesionCasino: rpcRegistrarSesionCasino,
   getMonedas: rpcGetMonedas,
+  usarItem: rpcUsarItem,
+  getInventario: apiGetInventario,
+  asegurarPerfil: apiAsegurarPerfil,
   registrarResultadoCarrera: rpcRegistrarResultadoCarrera,
   liquidarApuestaPuestoCarrera: rpcLiquidarApuestaPuestoCarrera
 };

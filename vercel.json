@@ -1,0 +1,12 @@
+{
+  "headers": [
+    {
+      "source": "/resources/vendor/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*)\\.(png|jpg|jpeg|webp|gif|svg|ico|mp4|mp3|wav|ogg|woff|woff2)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }]
+    }
+  ]
+}

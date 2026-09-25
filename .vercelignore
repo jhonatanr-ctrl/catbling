@@ -1,0 +1,5 @@
+# No hace falta desplegar esto (no lo carga ninguna página)
+supabase/
+logs/
+/letsgocatbling/
+*.md

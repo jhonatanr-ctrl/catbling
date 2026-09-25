@@ -274,6 +274,8 @@ function mostrarForgotPassword() {
 }
 
 function mostrarLoginDesdeForgot() {
+  window._recuperacionResuelta = true;
+  window._modoRecuperacion = false;
   document.getElementById("forgot-password-form").style.display = "none";
   document.getElementById("reset-password-form").style.display = "none";
   document.querySelectorAll(".auth-tab").forEach(t => t.style.display = "");
@@ -1069,6 +1071,14 @@ const TRADUCCIONES = {
   item_24_descripcion: { es: "Respuesta correcta automática.", en: "Automatic correct answer.", ru: "Автоматически правильный ответ.", ja: "自動的に正解になります。", zh: "自动获得正确答案。", de: "Automatisch richtige Antwort." },
   item_24_mejora: { es: "Victoria garantizada", en: "Guaranteed win", ru: "Гарантированная победа", ja: "勝利確定", zh: "必胜保证", de: "Garantierter Sieg" },
 
+  // ── Google / partida no registrada / uso de objetos (auditoría 2) ──
+  continuar_google: { es: "Continuar con Google", en: "Continue with Google", ru: "Продолжить через Google", ja: "Googleで続行", zh: "使用 Google 继续", de: "Weiter mit Google" },
+  o_divisor: { es: "o", en: "or", ru: "или", ja: "または", zh: "或", de: "oder" },
+  error_google: { es: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.", en: "Could not sign in with Google. Please try again.", ru: "Не удалось войти через Google. Попробуйте ещё раз.", ja: "Googleでログインできませんでした。もう一度お試しください。", zh: "无法使用 Google 登录，请重试。", de: "Anmeldung mit Google fehlgeschlagen. Bitte versuche es erneut." },
+  partida_no_registrada_titulo: { es: "¡Partida no registrada!", en: "Game not recorded!", ru: "Игра не записана!", ja: "ゲームが記録されませんでした！", zh: "本局未被记录！", de: "Spiel nicht erfasst!" },
+  partida_no_registrada_desc: { es: "El servidor no registró este resultado y tu saldo no cambió. Inténtalo de nuevo.", en: "The server did not record this result and your balance did not change. Please try again.", ru: "Сервер не записал этот результат, ваш баланс не изменился. Попробуйте ещё раз.", ja: "サーバーがこの結果を記録せず、残高は変わっていません。もう一度お試しください。", zh: "服务器未记录此结果，你的余额没有变化。请重试。", de: "Der Server hat dieses Ergebnis nicht erfasst und dein Guthaben hat sich nicht geändert. Bitte versuche es erneut." },
+  item_no_disponible: { es: "No se pudo usar el objeto: no lo tienes en tu inventario.", en: "The item could not be used: it is not in your inventory.", ru: "Не удалось использовать предмет: его нет в вашем инвентаре.", ja: "アイテムを使用できませんでした：インベントリにありません。", zh: "无法使用该物品：它不在你的背包中。", de: "Gegenstand konnte nicht benutzt werden: Er ist nicht in deinem Inventar." },
+
   // ── Confirmación de cierre de sesión ──────────────────────────────
   confirmar_cerrar_titulo: { es: "¿CERRAR SESIÓN?", en: "LOG OUT?", ru: "ВЫЙТИ ИЗ АККАУНТА?", ja: "ログアウトしますか？", zh: "要退出登录吗？", de: "ABMELDEN?" },
   ingresa_nueva_contrasena: { es: "Ingresa tu nueva contraseña.", en: "Enter your new password.", ru: "Введите новый пароль.", ja: "新しいパスワードを入力してください。", zh: "请输入你的新密码。", de: "Gib dein neues Passwort ein." },
@@ -1089,6 +1099,13 @@ const TRADUCCIONES = {
   placeholder_confirmar_nueva_contrasena: { es: "Confirmar nueva contraseña", en: "Confirm new password", ru: "Подтвердите новый пароль", ja: "新しいパスワードの確認", zh: "确认新密码", de: "Neues Passwort bestätigen" },
   confirmar_cerrar_texto: { es: "Toda su información será eliminada, ¿desea continuar?", en: "All your information will be deleted, do you want to continue?", ru: "Вся ваша информация будет удалена. Продолжить?", ja: "すべての情報が削除されます。続けますか？", zh: "你的所有信息都将被删除，是否继续？", de: "Alle deine Informationen werden gelöscht. Möchtest du fortfahren?" },
 };
+
+// Los mensajes antiguos de contraseña débil decían "al menos 6 caracteres". La política
+// vigente (api.js → apiValidarPassword) es 8 caracteres + mayúscula + número + símbolo:
+// se reutiliza el texto único de la política para no tener dos versiones.
+['contrasena_min', 'error_password_debil', 'error_contrasena_debil'].forEach(function (k) {
+  TRADUCCIONES[k] = TRADUCCIONES.contrasena_politica;
+});
 
 // Reemplazo simple de {placeholders} dentro de una traducción, por ejemplo:
 // __f("registro_email_confirmacion", { email: "a@b.com" })
@@ -1452,6 +1469,180 @@ window.normalizarPathImagen = function(path) {
   return new URL(String(path).replace(/^\.\//, ''), CATBLING_CONFIG_ROOT).href;
 };
 
+// Catálogo compartido de objetos (id de tienda_items -> datos de UI). Es la MISMA información
+// que tienda/resources/script.js; vive aquí para que cualquier página pueda dibujar la bolsa
+// a partir del inventario real del servidor. Las rutas de imagen son relativas a la raíz del
+// sitio (se resuelven con normalizarPathImagen).
+window.CATBLING_ITEMS = {
+ "1": {
+  "dbId": 1,
+  "nombre": "Pista",
+  "descripcion": "Obtén una palabra clave que te acerque a la respuesta correcta.",
+  "mejora": "Ayuda rápida",
+  "imagen": "./tienda/resources/assets/pista.png",
+  "tipo": "pregunta",
+  "precio": 25
+ },
+ "2": {
+  "dbId": 2,
+  "nombre": "Eliminar",
+  "descripcion": "Elimina 1 opción incorrecta.",
+  "mejora": "Reduce dificultad",
+  "imagen": "./tienda/resources/assets/eliminar.png",
+  "tipo": "pregunta",
+  "precio": 30
+ },
+ "3": {
+  "dbId": 3,
+  "nombre": "Congelar",
+  "descripcion": "Detiene el contador durante 3 segundos.",
+  "mejora": "Control del tiempo",
+  "imagen": "./tienda/resources/assets/congelar.png",
+  "tipo": "pregunta",
+  "precio": 25
+ },
+ "4": {
+  "dbId": 4,
+  "nombre": "Cambiar",
+  "descripcion": "Cambia la pregunta actual por una nueva.",
+  "mejora": "Evita preguntas difíciles",
+  "imagen": "./tienda/resources/assets/cambiar.png",
+  "tipo": "pregunta",
+  "precio": 35
+ },
+ "5": {
+  "dbId": 5,
+  "nombre": "Popular",
+  "descripcion": "Muestra la opción más elegida (puede fallar).",
+  "mejora": "Ayuda incierta",
+  "imagen": "./tienda/resources/assets/popular.png",
+  "tipo": "pregunta",
+  "precio": 40
+ },
+ "6": {
+  "dbId": 6,
+  "nombre": "Reintentar",
+  "descripcion": "Permite intentar responder otra vez.",
+  "mejora": "Segunda oportunidad",
+  "imagen": "./tienda/resources/assets/retry.png",
+  "tipo": "pregunta",
+  "precio": 60
+ },
+ "7": {
+  "dbId": 7,
+  "nombre": "Infinito",
+  "descripcion": "Elimina el límite de tiempo.",
+  "mejora": "Sin presión",
+  "imagen": "./tienda/resources/assets/infinito.png",
+  "tipo": "pregunta",
+  "precio": 70
+ },
+ "10": {
+  "dbId": 10,
+  "nombre": "Seguro",
+  "descripcion": "Reduce la pérdida si fallas.",
+  "mejora": "Mitiga riesgo",
+  "imagen": "./tienda/resources/assets/parcial.png",
+  "tipo": "juego",
+  "precio": 80
+ },
+ "11": {
+  "dbId": 11,
+  "nombre": "Escudo",
+  "descripcion": "No pierdes tu apuesta si fallas.",
+  "mejora": "Protección total",
+  "imagen": "./tienda/resources/assets/escudo.png",
+  "tipo": "juego",
+  "precio": 100
+ },
+ "12": {
+  "dbId": 12,
+  "nombre": "Duplicar",
+  "descripcion": "Duplica el efecto del último comodín.",
+  "mejora": "Combo",
+  "imagen": "./tienda/resources/assets/x2.png",
+  "tipo": "juego",
+  "precio": 80
+ },
+ "13": {
+  "dbId": 13,
+  "nombre": "Ajuste",
+  "descripcion": "Mejora ligeramente las probabilidades en minijuegos.",
+  "mejora": "Ventaja oculta",
+  "imagen": "./tienda/resources/assets/ajuste.png",
+  "tipo": "juego",
+  "precio": 30
+ },
+ "14": {
+  "dbId": 14,
+  "nombre": "X4",
+  "descripcion": "Multiplica ganancias x4.",
+  "mejora": "Alto riesgo",
+  "imagen": "./tienda/resources/assets/x4.png",
+  "tipo": "juego",
+  "precio": 140
+ },
+ "15": {
+  "dbId": 15,
+  "nombre": "Credito",
+  "descripcion": "Permite jugar sin saldo actual.",
+  "mejora": "Deuda estratégica",
+  "imagen": "./tienda/resources/assets/credito.png",
+  "tipo": "juego",
+  "precio": 150
+ },
+ "16": {
+  "dbId": 16,
+  "nombre": "Jackpot",
+  "descripcion": "Multiplicador x8 si aciertas.",
+  "mejora": "Recompensa máxima",
+  "imagen": "./tienda/resources/assets/jackpot.png",
+  "tipo": "juego",
+  "precio": 280
+ },
+ "24": {
+  "dbId": 24,
+  "nombre": "Dorado",
+  "descripcion": "Respuesta correcta automática.",
+  "mejora": "Victoria garantizada",
+  "imagen": "./tienda/resources/assets/dorado.png",
+  "tipo": "pregunta",
+  "precio": 200
+ }
+};
+
+// El inventario REAL vive en Supabase (inventario_items: la compra lo escribe, usar_item lo
+// consume). sessionStorage['inventarioSession'] es sólo su copia de trabajo para dibujar la
+// bolsa: se rehace desde el servidor al iniciar sesión, en cada carga de página, tras
+// comprar y tras usar un objeto. Antes el inventario sólo existía en sessionStorage y se
+// perdía al cerrar la pestaña aunque las monedas ya estuvieran cobradas.
+window.hidratarInventarioDesdeServidor = function() {
+  if (window._hidratandoInventario) return window._hidratandoInventario;
+  window._hidratandoInventario = (async function() {
+    try {
+      if (!(await apiIsAuthenticated()) || typeof apiGetInventario !== 'function') return false;
+      const r = await apiGetInventario();
+      if (!r.success) return false;
+      const lista = [];
+      ((r.data && r.data.items) || []).forEach(function(fila) {
+        const def = window.CATBLING_ITEMS[fila.item_id];
+        if (!def) return; // objeto sin definición de UI (p. ej. desactivado)
+        for (let i = 0; i < fila.cantidad; i++) lista.push(Object.assign({}, def));
+      });
+      window.setInventarioSession(lista);
+      const bag = document.getElementById('bag-overlay');
+      if (bag && bag.classList.contains('active') && typeof window.mostrarBolsa === 'function') window.mostrarBolsa();
+      return true;
+    } catch (e) {
+      console.warn('[config] hidratarInventarioDesdeServidor error:', e);
+      return false;
+    } finally {
+      window._hidratandoInventario = null;
+    }
+  })();
+  return window._hidratandoInventario;
+};
+
 window.actualizarInventarioUI = function() {
 };
 
@@ -1516,6 +1707,23 @@ window.cerrarBolsa = function() {
   const overlay = document.getElementById('bag-overlay');
   if (overlay) overlay.classList.remove('active');
   if (typeof window.reanudarTimerPregunta === 'function') window.reanudarTimerPregunta();
+};
+
+window.mostrarPartidaNoRegistrada = function() {
+  let overlay = document.getElementById('partida-no-registrada-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'partida-no-registrada-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;justify-content:center;align-items:center;z-index:100000;cursor:pointer;text-align:center;padding:20px;';
+    overlay.innerHTML = '<div><h2 data-i18n="partida_no_registrada_titulo" style="font-family:\'Press Start 2P\',cursive;font-size:24px;color:#ff4444;margin:0 0 15px;text-shadow:0 0 20px rgba(255,68,68,1);"></h2>' +
+      '<p data-i18n="partida_no_registrada_desc" style="font-family:\'Pixelify Sans\',sans-serif;font-size:22px;color:#fff;margin:8px 0;"></p>' +
+      '<p data-i18n="restriccion_cerrar" style="font-family:\'Pixelify Sans\',sans-serif;font-size:16px;color:#ffd700;"></p></div>';
+    overlay.addEventListener('click', function() { overlay.style.display = 'none'; });
+    document.body.appendChild(overlay);
+  }
+  overlay.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = __(el.getAttribute('data-i18n')); });
+  overlay.style.display = 'flex';
+  setTimeout(function() { overlay.style.display = 'none'; }, 6000);
 };
 
 window.mostrarRestriccionUso = function(mensajePersonalizado) {
@@ -1756,16 +1964,52 @@ window.usarItem = async function() {
     }
   }
 
+  if (window._usandoItem) return; // evita doble clic = doble consumo
+  window._usandoItem = true;
+
+  // Usuarios autenticados: el objeto se consume PRIMERO en el servidor (RPC usar_item).
+  // Si el servidor no lo tiene en el inventario, no se activa ningún efecto.
+  let consumidoEnServidor = false;
+  try {
+    if (await apiIsAuthenticated()) {
+      const dbId = item.dbId;
+      const r = (dbId && window.apiRpc && window.apiRpc.usarItem) ? await window.apiRpc.usarItem(dbId) : { success: false };
+      if (!(r.success && r.data && r.data.ok)) {
+        window.cerrarConfirmacion();
+        window.cerrarBolsa();
+        window.itemSeleccionado = null;
+        window.itemSeleccionadoIndex = undefined;
+        window._usandoItem = false;
+        window.mostrarRestriccionUso(__("item_no_disponible"));
+        window.hidratarInventarioDesdeServidor();
+        return;
+      }
+      consumidoEnServidor = true;
+      const inv = window.getInventarioSession();
+      const pos = (inv[index] && inv[index].dbId === dbId) ? index : inv.findIndex(function(x) { return x.dbId === dbId; });
+      if (pos >= 0) { inv.splice(pos, 1); window.setInventarioSession(inv); }
+    }
+  } catch (e) {
+    console.warn('[config] usarItem error:', e);
+    window.cerrarConfirmacion();
+    window._usandoItem = false;
+    return;
+  }
+
   window.mostrarAnimacionUsoItem(item);
 
   setTimeout(() => {
-    const inventario = window.getInventarioSession();
-    if (index >= inventario.length) return;
-    inventario.splice(index, 1);
-    window.setInventarioSession(inventario);
+    if (!consumidoEnServidor) {
+      const inventario = window.getInventarioSession();
+      if (index >= inventario.length) { window._usandoItem = false; return; }
+      inventario.splice(index, 1);
+      window.setInventarioSession(inventario);
+    }
     window.cerrarConfirmacion();
     window.cerrarBolsa();
+    window._usandoItem = false;
     window.aplicarEfectoItem(item, index);
+    if (consumidoEnServidor) window.hidratarInventarioDesdeServidor();
   }, 2500);
 };
 
@@ -1871,9 +2115,11 @@ window.addEventListener("storage", () => {
 // no encontrar el hash — dependiendo de qué código gane la carrera con
 // el evento onAuthStateChange — y tratar por error la recuperación como
 // un login normal.
-const _URL_ERA_RECOVERY_AL_CARGAR = window.location.hash.includes('type=recovery');
+const _URL_ERA_RECOVERY_AL_CARGAR = (window.CATBLING_URL_HASH_INICIAL || window.location.hash).includes('type=recovery');
 function _esRecoveryEnURL() {
-  return _URL_ERA_RECOVERY_AL_CARGAR;
+  // Una vez restablecida la contraseña (o descartado el formulario) el enlace deja de
+  // contar: un login posterior en la misma carga de página es un login normal.
+  return _URL_ERA_RECOVERY_AL_CARGAR && !window._recuperacionResuelta;
 }
 
 // Enlace de recuperación ya usado/expirado: Supabase redirige a
@@ -1884,8 +2130,21 @@ function _esRecoveryEnURL() {
 // el aviso, reutilizando el overlay de autenticación existente.
 const _ERROR_ENLACE_OTP_AL_CARGAR = (function() {
   try {
-    const p = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+    const p = new URLSearchParams((window.CATBLING_URL_HASH_INICIAL || window.location.hash || '').replace(/^#/, ''));
     return p.get('error_code') === 'otp_expired';
+  } catch (e) { return false; }
+})();
+
+// Retorno de OAuth con error: Supabase añade error / error_code / error_description al
+// hash (flujo implícito) o a la query (PKCE). Se excluye el caso del enlace de
+// recuperación caducado (otp_expired), que ya tiene su propio manejo.
+const _ERROR_OAUTH_AL_CARGAR = (function() {
+  try {
+    const h = new URLSearchParams((window.CATBLING_URL_HASH_INICIAL || window.location.hash || '').replace(/^#/, ''));
+    const q = new URLSearchParams(window.CATBLING_URL_SEARCH_INICIAL || window.location.search || '');
+    const err = h.get('error') || q.get('error');
+    const code = h.get('error_code') || q.get('error_code');
+    return !!err && code !== 'otp_expired';
   } catch (e) { return false; }
 })();
 
@@ -1902,6 +2161,11 @@ function mostrarErrorEnlaceRecuperacion() {
 function mostrarFormularioResetPassword() {
   const overlay = document.getElementById('auth-overlay');
   if (!overlay) return;
+  // Mientras este formulario esté abierto, ningún otro evento de sesión (INITIAL_SESSION,
+  // SIGNED_IN, TOKEN_REFRESHED) puede volver a ocultar el overlay. Antes, INITIAL_SESSION
+  // llegaba primero, esperaba (await) la carga de monedas/config y DESPUÉS ejecutaba
+  // toggleAuthOverlay(false), tapando el formulario que PASSWORD_RECOVERY acababa de abrir.
+  window._modoRecuperacion = true;
   // Limpiar el hash (#access_token=...&type=recovery&...) de la barra de
   // direcciones una vez detectado: los tokens ya fueron consumidos por
   // supabase-js (detectSessionInUrl) y quedan en la sesión persistida;
@@ -1912,6 +2176,14 @@ function mostrarFormularioResetPassword() {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
   }
   overlay.classList.remove('hidden');
+  // El tutorial de bienvenida (primera visita) se dibuja ENCIMA del modal y captura los
+  // clics: quien llega desde el correo de recuperación en un navegador nuevo no podía
+  // pulsar "RESTABLECER". Se retira mientras dure la recuperación.
+  (function quitarTutorial() {
+    const tut = document.getElementById('tutorial-overlay');
+    if (tut) tut.classList.remove('active');
+    window._tutorialSuprimido = true;
+  })();
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
   const forgotForm = document.getElementById('forgot-password-form');
@@ -1961,23 +2233,30 @@ function inicializarAuthStateListener() {
       // el formulario de "nueva contraseña" nunca llegaba a abrirse.
       mostrarFormularioResetPassword();
     } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-      if (event === 'SIGNED_IN' && _esRecoveryEnURL()) {
-        // Red de seguridad: si por la versión de supabase-js sólo llega
-        // 'SIGNED_IN' (sin 'PASSWORD_RECOVERY') pero la URL es
-        // claramente un enlace de recuperación, se trata igual como
-        // recuperación en vez de como login normal.
-        mostrarFormularioResetPassword();
+      if (window._modoRecuperacion || (event !== 'TOKEN_REFRESHED' && _esRecoveryEnURL())) {
+        // Red de seguridad: si por la versión de supabase-js llega 'SIGNED_IN' o
+        // 'INITIAL_SESSION' (con o sin 'PASSWORD_RECOVERY') pero la URL es
+        // claramente un enlace de recuperación, se trata como recuperación en vez
+        // de como login normal.
+        if (!window._modoRecuperacion) mostrarFormularioResetPassword();
         return;
       }
       // Sesión iniciada o restaurada
       if (session) {
+        // Login por Google (o por correo): se cierra el modo invitado y se carga el
+        // estado REAL del usuario (saldo, preferencias, inventario). El perfil lo crea el
+        // trigger handle_new_user (o ensure_profile si faltara).
+        if (typeof finalizarModoInvitado === 'function') finalizarModoInvitado();
         await window.cargarMonedasDeUsuario();
         await window.cargarConfigDeUsuario();
+        if (window._modoRecuperacion) return; // se abrió el formulario de nueva contraseña mientras esperábamos
         toggleAuthOverlay(false);
         actualizarCerrarSesionUI();
+        if (event !== 'TOKEN_REFRESHED') window.hidratarInventarioDesdeServidor();
       }
     } else if (event === 'SIGNED_OUT') {
       // Sesión cerrada
+      window.setInventarioSession([]);
       toggleAuthOverlay(true);
       actualizarCerrarSesionUI();
       // Limpiar monedas localStorage para invitado
@@ -2022,19 +2301,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (autenticado && !_esRecoveryEnURL() && typeof apiVerificarSesionServidor === 'function') {
       autenticado = await apiVerificarSesionServidor();
     }
-    if (_ERROR_ENLACE_OTP_AL_CARGAR && window.history && window.history.replaceState) {
+    if ((_ERROR_ENLACE_OTP_AL_CARGAR || _ERROR_OAUTH_AL_CARGAR) && window.history && window.history.replaceState) {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
-    if (autenticado && typeof _esRecoveryEnURL === 'function' && _esRecoveryEnURL()) {
-      // Ver nota en inicializarAuthStateListener(): si el hash de la URL
-      // es un enlace de recuperación, se prioriza siempre el formulario
-      // de nueva contraseña sobre el flujo normal de "ya hay sesión",
-      // sin importar si el evento correspondiente llegó a tiempo o no.
+    if (typeof _esRecoveryEnURL === 'function' && _esRecoveryEnURL()) {
+      // CAUSA RAÍZ de la intermitencia: este chequeo antes exigía
+      // `autenticado` (getSession()) además del hash de recuperación.
+      // Pero supabase-js procesa el hash de forma asíncrona
+      // (detectSessionInUrl); en la primera carga de la página, en el
+      // momento en que se llega aquí, la sesión de recuperación puede
+      // no estar establecida TODAVÍA aunque el enlace sea válido — el
+      // hash sí lo dice con certeza, sin depender de esa carrera. Se
+      // prioriza siempre el formulario de nueva contraseña usando SÓLO
+      // el hash, sin importar si la sesión (o el evento
+      // PASSWORD_RECOVERY/INITIAL_SESSION correspondiente) ya llegó o
+      // no; el botón "Restablecer" espera a que la sesión exista antes
+      // de llamar a apiResetPassword().
+      if (typeof iniciarModoInvitado === 'function') iniciarModoInvitado();
       if (typeof mostrarFormularioResetPassword === 'function') mostrarFormularioResetPassword();
     } else if (autenticado) {
       await window.cargarMonedasDeUsuario();
       await window.cargarConfigDeUsuario();
       toggleAuthOverlay(false);
+      window.hidratarInventarioDesdeServidor();
     } else {
       // CAUSA RAÍZ (sistema de invitado): iniciarModoInvitado() (guest.js)
       // nunca se llamaba desde ningún archivo del proyecto. Sin esta
@@ -2053,6 +2342,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (_ERROR_ENLACE_OTP_AL_CARGAR) {
         mostrarErrorEnlaceRecuperacion();
+      } else if (_ERROR_OAUTH_AL_CARGAR) {
+        // Volvimos de Google con un error (cuenta no autorizada, usuario canceló, etc.).
+        if (typeof reiniciarFormulariosAuth === 'function') reiniciarFormulariosAuth();
+        toggleAuthOverlay(true);
+        const errG = document.getElementById('google-error');
+        if (errG) errG.textContent = __('error_google');
       } else if (forzarAuthOverlayPorLimite) {
         // Límite de invitado alcanzado: mostrar SIEMPRE el overlay de
         // autenticación, aunque el invitado siga técnicamente en
@@ -2155,33 +2450,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   }, true);
 });
 
-// Google Login callback (usando Supabase OAuth)
-window.handleGoogleCredentialResponse = async function(response) {
-  if (!window.apiRpc) return;
-  
-  try {
-    // Usar Supabase OAuth en lugar del endpoint PHP legacy
-    const { data, error } = await window.supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/principalpage.html'
-      }
-    });
-    
-    if (error) throw error;
-    
-    // El flujo OAuth de Supabase maneja la redirección automáticamente
-    // Si llegamos aquí, la sesión se establecerá automáticamente
-    if (typeof finalizarModoInvitado === 'function') finalizarModoInvitado();
-    await window.cargarMonedasDeUsuario();
-    await window.cargarConfigDeUsuario();
-    actualizarCerrarSesionUI();
-  } catch (e) {
-    console.error('[config] Google OAuth error:', e);
-    const errorEl = document.getElementById('login-error');
-    if (errorEl) errorEl.textContent = __("error_login");
-  }
-};
+// Continuar con Google (Supabase Auth OAuth). El mismo botón sirve en las pestañas de
+// inicio de sesión y de registro: Supabase decide si entra a una cuenta existente (mismo
+// usuario, mismo perfil) o crea la cuenta nueva sin pedir contraseña. La sesión se
+// establece al volver de Google; onAuthStateChange carga saldo, preferencias e inventario.
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('google-login-btn');
+  if (!btn) return;
+  btn.addEventListener('click', async function() {
+    const errEl = document.getElementById('google-error');
+    if (errEl) errEl.textContent = '';
+    if (typeof apiLoginWithGoogle !== 'function') {
+      if (errEl) errEl.textContent = __('error_google');
+      return;
+    }
+    btn.disabled = true;
+    const r = await apiLoginWithGoogle();
+    if (!r.success) {
+      btn.disabled = false;
+      console.warn('[config] Google OAuth error:', r.error);
+      if (errEl) errEl.textContent = __('error_google');
+    }
+    // Si success, el navegador ya está siendo redirigido a Google.
+  });
+  // Volver con "atrás" desde Google restaura la página (bfcache) con el botón bloqueado.
+  window.addEventListener('pageshow', function() { btn.disabled = false; });
+});
 
 // ═════════════════════════════════════════════════════════════════════════════
 // 🛒 COMPRA TIENDA (delegado a RPC comprar_item)
@@ -2216,10 +2510,14 @@ window.comprarItemTienda = async function(itemId, itemData) {
       if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
         await window.coinsAPI.fetch();
       }
-      // Agregar al inventario sessionStorage (ruta relativa a la raíz del sitio)
-      const itemToStore = Object.assign({}, itemData);
-      itemToStore.imagen = './tienda/' + itemData.imagen.replace('./', '');
-      window.agregarItemInventario(itemToStore);
+      // El inventario real ya quedó guardado por la RPC: se recarga desde el servidor.
+      // Sólo si esa recarga falla se añade localmente (ruta relativa a la raíz del sitio).
+      const hidratado = await window.hidratarInventarioDesdeServidor();
+      if (!hidratado) {
+        const itemToStore = Object.assign({}, itemData);
+        itemToStore.imagen = './tienda/' + itemData.imagen.replace('./', '');
+        window.agregarItemInventario(itemToStore);
+      }
       return { success: true, codigo: 'ok', nuevo_saldo: r.data.nuevo_saldo };
     }
     const d = r.data || {};

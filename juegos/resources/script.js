@@ -3,49 +3,49 @@ const juegos = [
         id: "tragamonedas",
         titulo: "TRAGAMONEDAS",
         subtitulo: "¡Prueba tu suerte con el gran tragamonedas!",
-        imagen: "./assets/slotmachineicon.png",
+        imagen: "./assets/slotmachineicon.webp",
         pagina: "./tragamonedasm/tragamonedaindex.html"
     },
     {
         id: "memoria",
         titulo: "MEMORIA",
         subtitulo: "¡Encuentra los pares en la menor cantidad de movimientos!",
-        imagen: "./assets/fichasicon.png",
+        imagen: "./assets/fichasicon.webp",
         pagina: "./memoria/memoria.html"
     },
     {
         id: "dados",
         titulo: "DUELO DE DADOS",
         subtitulo: "¡Lanza los dados y compite contra los locales!",
-        imagen: "./assets/diceicon.png",
+        imagen: "./assets/diceicon.webp",
         pagina: "./dados/dadosindex.html"
     },
     {
         id: "ruleta",
         titulo: "RULETA",
         subtitulo: "¿Serás capaz de acertar el próximo número de la ruleta?",
-        imagen: "./assets/ruleta2.png",
+        imagen: "./assets/ruleta2.webp",
         pagina: "./ruleta/ruleta.html"
     },
     {
         id: "cartas",
         titulo: "CARTAS RETRO",
         subtitulo: "¡Consigue la mejor mano de póker y gana premios!",
-        imagen: "./assets/card-icon.png",
+        imagen: "./assets/card-icon.webp",
         pagina: "./cartas retro/cartas retro.html"
     },
     {
         id: "casinoroyale",
         titulo: "CASINO ROYALE",
         subtitulo: "¡Lanza los dados y consigue grandes multiplicadores!",
-        imagen: "./assets/casinoroyaleicon.png",
+        imagen: "./assets/casinoroyaleicon.webp",
         pagina: "./casinoroyale/casinoroyale.html"
     },
     {
         id: "carreras",
         titulo: "CARRERAS DE CABALLOS",
         subtitulo: "¡Elige tu hipódromo, estudia a los caballos y apuesta por el ganador!",
-        imagen: "./assets/horseraceicon.png",
+        imagen: "./assets/horseraceicon.webp",
         pagina: "./carreras/carreras.html"
     }
 ];

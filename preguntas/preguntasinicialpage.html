@@ -11,17 +11,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist+Pixel&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee+Tint&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=Sixtyfour&display=swap" rel="stylesheet">
 </head>
 
 <body data-page="preguntas">
 
-  <video class="video-bg" autoplay muted loop>
+  <video class="video-bg" autoplay muted loop playsinline>
       <source src="./assets/Particles gold event awards trailer titles cinematic concert stage background loop.mp4" type="video/mp4">
   </video>
 
-  <audio id="bgMusic" loop muted>
+  <audio id="bgMusic" preload="metadata" loop muted>
     <source src="assets/sound/Density & Time - MAZE  NO COPYRIGHT 8-bit Music.mp3" type="audio/mpeg">
   </audio>
 
@@ -136,7 +135,7 @@
           </button>
           <div class="dificultad-display">
             <p class="dificultad-nombre" id="dificultad-nombre" data-i18n="nivel_facil">FÁCIL</p>
-            <img class="dificultad-img" id="dificultad-img" src="./assets/dificultades/facil.png">
+            <img class="dificultad-img" id="dificultad-img" src="./assets/dificultades/facil.webp">
           </div>
           <button class="flecha-dif" id="flecha-der">
               <img src="./assets/arrowder.png" alt="▶">
@@ -188,7 +187,7 @@
   <script src="../resources/api.js"></script>
   <script src="../resources/guest.js?v=2"></script>
   <script src="../resources/coins.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../resources/vendor/supabase-2.117.1.js"></script>
   <script src="../resources/supabase-client.js"></script>
   <script src="../resources/config.js?v=2"></script>
   <script src="../resources/script.js"></script>
