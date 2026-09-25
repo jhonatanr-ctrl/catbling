@@ -21,7 +21,7 @@
     return copia;
   }
 
-  // Peso compartido por cuotas y por la selección preliminar del ganador.
+  // Peso compartido por probabilidades y por la selección preliminar del ganador.
   // Combina stats internos con el historial visible del participante.
   function ratingCaballo(c) {
     const s = c.stats;
@@ -42,9 +42,12 @@
     const total = ratings.reduce((a, b) => a + b, 0);
     return participantes.map((c, i) => {
       const probabilidad = ratings[i] / total;
-      let cuota = (1 / probabilidad) * (1 - cfg.MARGEN_CASA);
-      cuota = Math.max(cfg.MIN, Math.min(cfg.MAX, cuota));
-      return Math.round(cuota * 10) / 10;
+      let multiplicadorPago = (1 / probabilidad) * (1 - cfg.MARGEN_CASA);
+      multiplicadorPago = Math.max(cfg.MIN, Math.min(cfg.MAX, multiplicadorPago));
+      return {
+        cuota: Math.round(probabilidad * 1000) / 10,
+        multiplicadorPago: Math.round(multiplicadorPago * 10) / 10
+      };
     });
   }
 
@@ -80,17 +83,18 @@
         spriteCarrera2: base.spriteCarrera2,
         spriteCarrera3: base.spriteCarrera3,
         historial: Object.freeze(historial),
-        cuota: 0
+        cuota: 0,
+        multiplicadorPago: 0
       };
     });
     const cuotas = calcularCuotas(participantes);
     return Object.freeze(participantes.map(function (participante, i) {
-      return Object.freeze(Object.assign({}, participante, { cuota: cuotas[i] }));
+      return Object.freeze(Object.assign({}, participante, cuotas[i]));
     }));
   }
 
   window.generarParticipantes = generarParticipantes;
-  // Se expone también el rating (misma fórmula que calcula las cuotas)
+  // Se expone también el rating (misma fórmula que calcula las probabilidades)
   // para que motor-carrera.js pueda pre-elegir al ganador con una
   // probabilidad proporcional a su fuerza real, en vez de un sorteo
   // ciego uniforme — así el caballo pre-elegido sigue correlacionado

@@ -535,7 +535,7 @@
       }
     } else {
       // Endurecimiento defensivo (no sustituye una validación real en
-      // servidor, ver informe): aunque apuestaActual y caballoApostado.cuota
+      // servidor, ver informe): aunque apuestaActual y caballoApostado.multiplicadorPago
       // ya deberían estar dentro de rango por construcción, se vuelven a
       // acotar aquí a los límites configurados justo antes de calcular el
       // pago, para no propagar un valor fuera de rango si algo en memoria
@@ -546,15 +546,15 @@
         cfgApuesta.APUESTA_MAX,
         Math.max(cfgApuesta.APUESTA_MIN, window.ApuestasCarreras.getApuestaActual())
       );
-      const cuotaSegura = Math.min(
+      const multiplicadorPagoSeguro = Math.min(
         cfgApuesta.CUOTAS.MAX,
-        Math.max(cfgApuesta.CUOTAS.MIN, caballoApostado.cuota)
+        Math.max(cfgApuesta.CUOTAS.MIN, caballoApostado.multiplicadorPago)
       );
       if (gano) {
-        // Ganancia neta según la cuota del caballo apostado, igual que
+        // Ganancia neta según el multiplicador de pago del caballo, igual que
         // los demás juegos aplicando después el bono de ítems si corresponde
         // (mismo helper global window.calcularGananciaConItems).
-        let gananciaNeta = Math.round(apuestaActual * (cuotaSegura - 1));
+        let gananciaNeta = Math.round(apuestaActual * (multiplicadorPagoSeguro - 1));
         if (typeof window.calcularGananciaConItems === 'function') {
           gananciaNeta = window.calcularGananciaConItems(gananciaNeta, apuestaActual);
         }

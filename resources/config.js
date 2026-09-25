@@ -816,7 +816,7 @@ const TRADUCCIONES = {
   carreras_terreno: { es: "Terreno:", en: "Terrain:", ru: "Покрытие:", ja: "馬場:", zh: "赛道类型：", de: "Untergrund:" },
   carreras_clima: { es: "Clima:", en: "Weather:", ru: "Погода:", ja: "天候:", zh: "天气：", de: "Wetter:" },
   carreras_condicion: { es: "Condición:", en: "Condition:", ru: "Состояние:", ja: "馬場状態:", zh: "场地状况：", de: "Zustand:" },
-  carreras_cuota_estimada: { es: "Cuota estimada:", en: "Estimated odds:", ru: "Примерный коэффициент:", ja: "推定オッズ:", zh: "预计赔率：", de: "Geschätzte Quote:" },
+  carreras_cuota_estimada: { es: "Probabilidad estimada:", en: "Estimated win probability:", ru: "Расчётная вероятность победы:", ja: "推定勝率：", zh: "预计获胜概率：", de: "Geschätzte Gewinnwahrscheinlichkeit:" },
   carreras_personalidad: { es: "Personalidad", en: "Personality", ru: "Личность", ja: "性格", zh: "个性", de: "Persönlichkeit" },
   carreras_historial: { es: "Historial", en: "History", ru: "История", ja: "履歴", zh: "历史记录", de: "Verlauf" },
   // Ordinal de puesto ("1.º" / "1st" / "1着"…). Antes estaba escrito a mano

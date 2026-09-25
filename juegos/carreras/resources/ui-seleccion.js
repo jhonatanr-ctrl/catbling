@@ -139,7 +139,7 @@
       item.appendChild(nombre);
       const cuota = document.createElement('span');
       cuota.className = 'item-caballo-cuota';
-      cuota.textContent = caballo.cuota + 'x';
+      cuota.textContent = caballo.cuota + '%';
       item.appendChild(cuota);
 
       item.addEventListener('click', function () { abrirPerfil(caballo); });
@@ -155,7 +155,7 @@
   // ya abierto, sin re-disparar el resto de la lógica de apertura).
   function actualizarTextosPerfil(caballo) {
     DOM.perfilNombre.textContent = caballo.nombre; // Nombre propio: NUNCA se traduce
-    DOM.perfilCuota.textContent = __("carreras_cuota_estimada") + ' ' + caballo.cuota + 'x';
+    DOM.perfilCuota.textContent = __("carreras_cuota_estimada") + ' ' + caballo.cuota + '%';
     DOM.perfilPersonalidad.textContent = typeof window.obtenerCaballoPersonalidadTraducida === 'function' ? window.obtenerCaballoPersonalidadTraducida(caballo) : caballo.personalidad;
 
     const r = caballo.historial.resumen;
