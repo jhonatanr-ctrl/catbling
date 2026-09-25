@@ -28,6 +28,7 @@
 
   const RUTA_BASE = 'resources/assets/horses/';
   const CONJUNTOS = ['a', 'b', 'e', 'i', 'm', 'o', 'p', 'u'];
+  const FRAMES_PRECARGADOS = Object.create(null);
 
   // Cada conjunto normal tiene 4 frames de carrera (1..4). El conjunto
   // "o" es la única excepción: sólo existen oBeyo1/2/3 (no hay
@@ -62,6 +63,15 @@
     return RUTA_BASE + nombreArchivo;
   }
 
+  function precargarFrames(conjunto) {
+    framesDeCarrera(conjunto).forEach(function (nombreArchivo) {
+      if (FRAMES_PRECARGADOS[nombreArchivo]) return;
+      const img = new Image();
+      FRAMES_PRECARGADOS[nombreArchivo] = img;
+      img.src = rutaFrame(nombreArchivo);
+    });
+  }
+
   /**
    * Crea el elemento visual de un caballo. `pose` sólo distingue el
    * estado inicial ('idle' = reposo); el ciclo de carrera lo controla
@@ -76,6 +86,7 @@
     wrapper.dataset.pose = pose;
     wrapper.dataset.conjunto = conjunto;
     wrapper.dataset.frameIndex = '0';
+    precargarFrames(conjunto);
 
     const img = document.createElement('img');
     img.className = 'caballo-sprite-img';
@@ -137,12 +148,14 @@
     const frames = framesDeCarrera(conjunto);
     const idxActual = parseInt(elementoSprite.dataset.frameIndex || '0', 10);
     const idxSiguiente = (idxActual + 1) % frames.length;
+    const siguiente = FRAMES_PRECARGADOS[frames[idxSiguiente]];
+    if (!siguiente || !siguiente.complete || !siguiente.naturalWidth) return;
 
     elementoSprite.dataset.frameIndex = String(idxSiguiente);
     elementoSprite.dataset.ultimoCambioMs = String(nowMs);
 
     const img = elementoSprite.querySelector('.caballo-sprite-img');
-    if (img) img.src = rutaFrame(frames[idxSiguiente]);
+    if (img) img.src = siguiente.src;
   }
 
   window.SpritesCaballo = {
