@@ -51,10 +51,7 @@
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
-  // Misma noción de "fuerza" que usa participantes.js para calcular las
-  // cuotas (window.RatingCaballoCarreras), así el caballo pre-elegido
-  // como ganador sigue correlacionado con su perfil real, sin ser un
-  // sorteo ciego uniforme entre los 16.
+  // Rating de respaldo si participantes.js no expone los pesos ajustados.
   function fuerzaCaballo(caballo) {
     return (typeof window.RatingCaballoCarreras === 'function')
       ? window.RatingCaballoCarreras(caballo)
@@ -62,7 +59,9 @@
   }
 
   function elegirGanadorPreliminar(participantes, rng) {
-    const fuerzas = participantes.map(fuerzaCaballo);
+    const fuerzas = (typeof window.PesosVictoriaCarreras === 'function')
+      ? window.PesosVictoriaCarreras(participantes)
+      : participantes.map(fuerzaCaballo);
     const total = fuerzas.reduce(function (a, b) { return a + b; }, 0);
     let r = rng() * total;
     for (let i = 0; i < participantes.length; i++) {

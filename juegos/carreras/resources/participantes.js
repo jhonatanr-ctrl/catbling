@@ -36,12 +36,40 @@
     return ratingStats * (0.72 + ratingHistorial * 0.56);
   }
 
+  function calcularPesosVictoria(participantes) {
+    const ratings = participantes.map(ratingCaballo);
+    const totalRating = ratings.reduce((a, b) => a + b, 0);
+    const probabilidadesBase = ratings.map(rating => rating / totalRating);
+    const promedios = participantes.map(function (c) {
+      return c.historial && c.historial.resumen
+        ? c.historial.resumen.puestoPromedio
+        : Infinity;
+    });
+    const mejorPromedio = Math.min.apply(null, promedios);
+    const favoritos = promedios.map(promedio => promedio === mejorPromedio);
+    const probabilidadFavoritos = probabilidadesBase.reduce(function (total, probabilidad, i) {
+      return total + (favoritos[i] ? probabilidad : 0);
+    }, 0);
+
+    if (!Number.isFinite(mejorPromedio) || probabilidadFavoritos <= 0 || probabilidadFavoritos >= 1) {
+      return probabilidadesBase;
+    }
+
+    const factorConfigurado = window.CARRERA_CONFIG.GANADOR.BONIFICACION_MEJOR_PROMEDIO;
+    const factorFavoritos = Math.min(factorConfigurado, (1 - Number.EPSILON) / probabilidadFavoritos);
+    const probabilidadFavoritosAjustada = probabilidadFavoritos * factorFavoritos;
+    const factorResto = (1 - probabilidadFavoritosAjustada) / (1 - probabilidadFavoritos);
+
+    return probabilidadesBase.map(function (probabilidad, i) {
+      return probabilidad * (favoritos[i] ? factorFavoritos : factorResto);
+    });
+  }
+
   function calcularCuotas(participantes) {
     const cfg = window.CARRERA_CONFIG.CUOTAS;
-    const ratings = participantes.map(ratingCaballo);
-    const total = ratings.reduce((a, b) => a + b, 0);
+    const probabilidades = calcularPesosVictoria(participantes);
     return participantes.map((c, i) => {
-      const probabilidad = ratings[i] / total;
+      const probabilidad = probabilidades[i];
       let multiplicadorPago = (1 / probabilidad) * (1 - cfg.MARGEN_CASA);
       multiplicadorPago = Math.max(cfg.MIN, Math.min(cfg.MAX, multiplicadorPago));
       return {
@@ -100,4 +128,5 @@
   // ciego uniforme — así el caballo pre-elegido sigue correlacionado
   // con su perfil, igual que ya lo está su cuota.
   window.RatingCaballoCarreras = ratingCaballo;
+  window.PesosVictoriaCarreras = calcularPesosVictoria;
 })();

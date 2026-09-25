@@ -107,6 +107,7 @@ window.CARRERA_CONFIG = {
   //      pantalla, solo hace más probable que sus propios eventos de
   //      velocidad independientes le favorezcan. ----
   GANADOR: {
+    BONIFICACION_MEJOR_PROMEDIO: 1.5, // +50% de probabilidad relativa para el mejor promedio de la carrera
     SESGO_POSITIVO_EXTRA: 0.85,        // se suma a su probabilidad de que un evento sea de ganancia (no de pérdida)
     REDUCCION_MAGNITUD_PERDIDA: 0.35,  // sus pérdidas de velocidad se multiplican por esto (más bajo = pierde menos)
     BONIFICACION_FINAL_MAX: 0.25,      // tope de bonificación extra de velocidad durante su closing kick
