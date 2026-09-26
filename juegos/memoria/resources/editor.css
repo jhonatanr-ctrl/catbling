@@ -1,0 +1,103 @@
+/* ─── MODO EDICIÓN (?edit=1) ─── */
+
+.editor-editable {
+  outline: 1px dashed rgba(255, 215, 0, 0.45);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.editor-editable:active {
+  cursor: grabbing;
+}
+
+.editor-editable.editor-selected {
+  outline: 2px solid #ffd700;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.editor-label {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #ffd700;
+  color: #1a1a1a;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+.editor-resize-handle {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  background: #ffd700;
+  border: 2px solid #1a1a1a;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  z-index: 6;
+  touch-action: none;
+}
+
+#editor-toolbar {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 15, 15, 0.92);
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #ffd700;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+#editor-toolbar button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 9px;
+  background: #ffd700;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+#editor-toolbar button:hover {
+  transform: scale(1.05);
+}
+
+#editor-toolbar button#editor-exit {
+  background: #ff4444;
+  color: white;
+}
+
+#editor-hint {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  background: rgba(15, 15, 15, 0.92);
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 13px;
+  color: #fff;
+  text-align: center;
+  max-width: 90vw;
+}

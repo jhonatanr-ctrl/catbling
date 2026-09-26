@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juego de Memoria</title>
   <link rel="stylesheet" href="./resources/style.css">
+  <link rel="stylesheet" href="./resources/editor.css">
   <link rel="stylesheet" href="../../resources/stylesheetglobal.css">
   <link rel="stylesheet" href="../../resources/help.css">
   <link rel="stylesheet" href="../../resources/tutorial.css">
@@ -22,13 +23,13 @@
     <source src="./resources/assets/16-Bit Music  - Coffee at Night.mp3" type="audio/mp3">
   </audio>
 
-  <div class="menu-buttons-container">
+  <div class="menu-buttons-container" data-edit-id="boton-salida">
     <a href="../juegosprincipalpage.html" class="menu-button">
       <img id="menu-img" src="../../juegos/assets/salida1.png">
     </a>
   </div>
 
-  <div class="monedas-ui">
+  <div class="monedas-ui" data-edit-id="monedas">
     <img id="icono-monedasm"
          src="../../resources/assets/yukonocoins.png"
          data-src-vacio="../../resources/assets/yukonocoins.png"
@@ -36,7 +37,7 @@
     <p id="cantidad-monedasm">0</p>
   </div>
 
-  <img src="../../resources/assets/settings.png" id="btn-opciones">
+  <img src="../../resources/assets/settings.png" id="btn-opciones" data-edit-id="boton-opciones">
   <div id="overlay-menu"></div>
 
   <div id="bag-overlay">
@@ -118,12 +119,12 @@
       </div>
     </div>
 
-    <header class="titulo-principal fade-el item1">
+    <header class="titulo-principal fade-el item1" data-edit-id="titulo">
       <h1 class="h1" data-i18n="memoria_tit">¡MEMORIA Y PARES!</h1>
       <p class="instruccion" id="instruccion-text">¡Encuentra todos los pares!</p>
     </header>
 
-    <div class="top-bar fade-el item1">
+    <div class="top-bar fade-el item1" data-edit-id="barra-superior">
       <div id="infomovimientos">
         <span data-i18n="movimientos"></span> <span id="moves">0</span>
       </div>
@@ -132,7 +133,7 @@
       </button>
     </div>
 
-    <div class="apuesta-container">
+    <div class="apuesta-container" data-edit-id="apuesta">
       <p class="apuesta-text"><span data-i18n="apuesta">Apuesta:</span> <span id="apuesta-actual">20</span> <span data-i18n="monedas">monedas</span></p>
       <div class="apuesta-slider-wrapper">
         <span class="apuesta-min">7</span>
@@ -141,12 +142,12 @@
       </div>
     </div>
 
-    <div class="niveles-panel">
+    <div class="niveles-panel" data-edit-id="niveles">
       <h3 class="niveles-titulo" data-i18n="niveles">NIVELES</h3>
       <div class="niveles-lista" id="niveles-lista"></div>
     </div>
 
-    <div id="game-board" class="game-board fade-el item1"></div>
+    <div id="game-board" class="game-board fade-el item1" data-edit-id="tablero"></div>
   </div>
 
   <div id="tutorial-overlay" class="tutorial-overlay">
@@ -180,6 +181,7 @@
   <script src="../../resources/tutorial.js"></script>
 <script src="./resources/script.js"></script>
   <script src="../../resources/config.js?v=2"></script>
+  <script src="./resources/editor.js"></script>
 
     <!-- ⚠️ CONFIRMACIÓN CERRAR SESIÓN -->
     <div id="confirmacion-cerrar-sesion">
