@@ -1,4 +1,3 @@
-
 * {
   box-sizing: border-box;
 }
@@ -54,48 +53,48 @@ body {
 }
 
 .menu-box {
-    width: min(90vw, 616px);
-    max-width: min(95vw, 613px);
-    padding: clamp(16px, 4vw, 32px);
-    padding-bottom: clamp(60px, 15vw, 127px);
-    margin-top: clamp(16px, 4vh, 42px);
-    max-height: 91vh;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    background: url('../../resources/assets/optionsmenu.png') center/cover;
-    color: white;
+  width: min(90vw, 616px);
+  max-width: min(95vw, 613px);
+  padding: clamp(16px, 4vw, 32px);
+  padding-bottom: clamp(60px, 15vw, 127px);
+  margin-top: clamp(16px, 4vh, 42px);
+  max-height: 91vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background: url('../../resources/assets/optionsmenu.png') center/cover;
+  color: white;
 }
 
 .menu-scroll {
-    margin: 41% 8% 0 8.3%;
-    margin-bottom: clamp(40px, 10vh, 105px);
-    padding: clamp(12px, 4vh, 41px) clamp(8px, 2vw, 16px);
-    padding-top: clamp(12px, 4vh, 42px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #ffd700 rgba(0, 0, 0, 0.3);
+  margin: 41% 8% 0 8.3%;
+  margin-bottom: clamp(40px, 10vh, 105px);
+  padding: clamp(12px, 4vh, 41px) clamp(8px, 2vw, 16px);
+  padding-top: clamp(12px, 4vh, 42px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ffd700 rgba(0, 0, 0, 0.3);
 }
 
 #cerrar-menu {
-    display: block;
-    align-self: center;
-    margin-top: 56px;
-    margin-bottom: -31px;
-    padding-left: 0;
-    flex-shrink: 0;
+  display: block;
+  align-self: center;
+  margin-top: 56px;
+  margin-bottom: -31px;
+  padding-left: 0;
+  flex-shrink: 0;
 }
 
 #mainContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px clamp(10px, 5vw, 180px) 120px clamp(10px, 5vw, 220px);
-    min-height: 100vh;
-    min-width: 0;
-    background: transparent;
-    position: relative;
-    z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px clamp(10px, 5vw, 180px) 120px clamp(10px, 5vw, 220px);
+  min-height: 100vh;
+  min-width: 0;
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .hidden {
@@ -135,7 +134,7 @@ body {
   font-size: 2.9rem;
   text-transform: uppercase;
   color: #ffdd1c;
-  text-shadow: 
+  text-shadow:
     0 0 5px #ffdd1c,
     0 0 10px #ffdd1c,
     0 0 20px #ffdd1c,
@@ -186,20 +185,22 @@ body {
 }
 
 #restart-button {
-    background: url("./assets/botonnegro.png") center / contain no-repeat;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-    width: 209px;
-    height: 121px;
-    margin-bottom: -37px;
-    margin-top: -34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}op-bar fade-el item1 show {
-    margin-top: -6px;
+  background: url("./assets/botonnegro.png") center / contain no-repeat;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  width: 209px;
+  height: 121px;
+  margin-bottom: -37px;
+  margin-top: -34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+op-bar fade-el item1 show {
+  margin-top: -6px;
 }
 
 #restart-button:hover {
@@ -216,11 +217,11 @@ body {
 }
 
 #game-board {
-    display: grid;
-    justify-content: center;
-    align-content: center;
-    margin: auto;
-    max-width: 100%;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+  max-width: 100%;
 }
 
 .card {
@@ -304,10 +305,10 @@ body {
 }
 
 @keyframes pulse-red {
-  0%, 100% { 
+  0%, 100% {
     text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
   }
-  50% { 
+  50% {
     text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 30px rgba(255, 68, 68, 0.6);
   }
 }
@@ -326,8 +327,6 @@ body {
   color: #888;
   flex-shrink: 0;
 }
-
-
 
 .slider-track {
   position: absolute;
@@ -364,7 +363,7 @@ body {
   cursor: grabbing;
 }
 
-/* Monedas UI - igual que pÃ¡gina principal */
+/* Monedas UI - igual que página principal */
 .monedas-ui {
   position: fixed;
   top: 20px;
@@ -674,97 +673,104 @@ body {
   margin-top: 3px;
 }
 
-/* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    #mainContent {
-        padding: 10px 20px 80px 20px;
-    }
+  #mainContent {
+    padding: 10px 20px 80px 20px;
+  }
 
-    #game-board {
-        gap: 6px;
-    }
+  #game-board {
+    gap: 6px;
+  }
 
-    .card {
-        width: clamp(60px, 14vw, 90px);
-        height: clamp(87px, 20vw, 130px);
-    }
+  .card {
+    width: clamp(60px, 14vw, 90px);
+    height: clamp(87px, 20vw, 130px);
+  }
 
-    .niveles-panel {
-        position: fixed;
-        left: 10px;
-        min-width: 120px;
-        padding: 10px;
-    }
+  .niveles-panel {
+    position: fixed;
+    left: 10px;
+    min-width: 120px;
+    padding: 10px;
+  }
 
-    .nivel-item {
-        font-size: 12px;
-        padding: 6px 10px;
-    }
+  .nivel-item {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
 
-    .titulo {
-        font-size: clamp(18px, 4vw, 28px);
-    }
+  .titulo {
+    font-size: clamp(18px, 4vw, 28px);
+  }
 }
 
 @media (max-width: 480px) {
-    #mainContent {
-        padding: 10px 8px 60px 8px;
-    }
+  #mainContent {
+    padding: 10px 8px 60px 8px;
+  }
 
-    #game-board {
-        gap: 4px;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-    }
+  #game-board {
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 
-    .card {
-        width: clamp(44px, 14vw, 66px);
-        height: clamp(70px, 20vw, 96px);
-    }
+  .card {
+    width: clamp(44px, 14vw, 66px);
+    height: clamp(70px, 20vw, 96px);
+  }
 
-    .niveles-panel {
-        display: none;
-    }
+  .niveles-panel {
+    display: none;
+  }
 
-    .titulo {
-        font-size: 16px;
-    }
+  .titulo {
+    font-size: 16px;
+  }
 
-    
+  .apuesta-container {
+    bottom: 10px;
+  }
 
-    .apuesta-container {
-        bottom: 10px;
-    }
-
-    .win-text,
-    .lose-text {
-        font-size: clamp(18px, 8vw, 30px);
-    }
+  .win-text,
+  .lose-text {
+    font-size: clamp(18px, 8vw, 30px);
+  }
 }
 
 .bet-input {
-    width: min(45vw,120px);
-    height:30px;
-    font-size:11px;
-    background-color: #ffcc00;
-    border: 3px solid #D99A00;
-    color:#1a1a1a;
-    text-align:center;
-    outline:none;
+  width: min(45vw, 120px);
+  height: 30px;
+  font-size: 11px;
+  background-color: #ffcc00;
+  border: 3px solid #D99A00;
+  color: #1a1a1a;
+  text-align: center;
+  outline: none;
 }
+
 .bet-input::-webkit-outer-spin-button,
 .bet-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  margin:0;
+  margin: 0;
 }
+
 .bet-input {
   -moz-appearance: textfield;
 }
-.bet-input:hover { background-color:#ffd633; }
-.bet-input:focus { border-color:#ff8c00; box-shadow:0 0 8px rgba(217,154,0,.7); }
 
-/* Layout "mobile" generado por el modo edición — pégalo en style.css */
+.bet-input:hover {
+  background-color: #ffd633;
+}
+
+.bet-input:focus {
+  border-color: #ff8c00;
+  box-shadow: 0 0 8px rgba(217, 154, 0, .7);
+}
+
+/* Layout "mobile" generado por el modo edición */
 @media (max-width: 480px) {
   [data-edit-id="tablero"] {
     position: fixed;
@@ -773,6 +779,7 @@ body {
     width: 307px;
     height: 160px;
   }
+
   [data-edit-id="barra-superior"] {
     position: fixed;
     left: -2px;
@@ -780,10 +787,12 @@ body {
     width: 321px;
     height: 70px;
   }
-    [data-edit-id="card"] {
-        width: 307px;
-        height: 160px;
-    }
+
+  [data-edit-id="card"] {
+    width: 307px;
+    height: 160px;
+  }
+
   [data-edit-id="titulo"] {
     position: fixed;
     left: 14px;
@@ -791,6 +800,7 @@ body {
     width: 242px;
     height: 124px;
   }
+
   [data-edit-id="monedas"] {
     position: fixed;
     left: 254px;
@@ -798,6 +808,7 @@ body {
     width: 74px;
     height: 92px;
   }
+
   [data-edit-id="boton-salida"] {
     position: fixed;
     left: 34px;
@@ -805,7 +816,8 @@ body {
     z-index: 1;
   }
 }
-/* Layout "mobile" generado por el modo edición — pégalo en style.css */
+
+/* Layout "mobile" generado por el modo edición */
 @media (max-width: 480px) {
   [data-edit-id="titulo"] {
     position: fixed;
@@ -814,6 +826,7 @@ body {
     width: 182px;
     height: 118px;
   }
+
   [data-edit-id="monedas"] {
     position: fixed;
     left: 242px;
@@ -821,6 +834,7 @@ body {
     width: 74px;
     height: 92px;
   }
+
   [data-edit-id="boton-opciones"] {
     position: fixed;
     left: -17px;
@@ -828,6 +842,7 @@ body {
     width: 100px;
     height: 100px;
   }
+
   [data-edit-id="barra-superior"] {
     position: fixed;
     left: -4px;
@@ -835,6 +850,7 @@ body {
     width: 321px;
     height: 70px;
   }
+
   [data-edit-id="tablero"] {
     position: fixed;
     left: 6px;
@@ -842,16 +858,70 @@ body {
     width: 307px;
     height: 160px;
   }
+
   #mainContent > header:nth-of-type(1) > h1:nth-of-type(1) {
     font-size: 18px;
   }
+
   #cantidad-monedasm {
     font-size: 20px;
   }
+
   #instruccion-text {
     font-size: 10px;
   }
+
   #infomovimientos > span:nth-of-type(1) {
     font-size: 16px;
+  }
+}
+
+/* NUEVO LAYOUT MOBILE */
+@media (max-width: 480px) {
+  [data-edit-id="tablero"] {
+    position: fixed;
+    left: 41px;
+    top: 299px;
+    width: 307px;
+    height: 160px;
+  }
+
+  [data-edit-id="barra-superior"] {
+    position: fixed;
+    left: 14px;
+    top: 192px;
+    width: 321px;
+    height: 70px;
+  }
+
+  [data-edit-id="titulo"] {
+    position: fixed;
+    left: 53px;
+    top: 48px;
+    width: 242px;
+    height: 124px;
+  }
+
+  [data-edit-id="monedas"] {
+    position: fixed;
+    left: 285px;
+    top: 9px;
+    width: 74px;
+    height: 92px;
+  }
+
+  [data-edit-id="boton-salida"] {
+    position: fixed;
+    left: 34px;
+    top: 377px;
+    z-index: 1;
+  }
+
+  [data-edit-id="boton-opciones"] {
+    position: fixed;
+    left: -18px;
+    top: -12px;
+    width: 109px;
+    height: 109px;
   }
 }
