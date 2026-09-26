@@ -195,6 +195,15 @@
                     <span class="toggle-password" data-target="register-confirm">👁️</span>
                 </div>
                 <div class="auth-error" id="register-error"></div>
+                <div class="auth-error auth-error-terms" id="terms-error"></div>
+                <label class="auth-checkbox-row" for="register-terms">
+                    <input type="checkbox" id="register-terms" class="auth-checkbox">
+                    <span class="auth-checkbox-text">
+                        <span data-i18n="acepto_los">Acepto los</span>
+                        <a href="#" id="terms-link" class="terms-link" data-i18n="terminos_condiciones">Términos y Condiciones</a>
+                        <span data-i18n="de_lets_go_catbling">de Let's Go Catbling.</span>
+                    </span>
+                </label>
                 <button type="submit" data-i18n="registrarse">REGISTRARSE</button>
             </form>
 
@@ -237,6 +246,68 @@
             </div>
 
             </div>
+    </div>
+
+    <!-- 📜 TÉRMINOS Y CONDICIONES -->
+    <div id="terms-overlay">
+        <div id="terms-modal" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
+            <button type="button" id="terms-modal-close" aria-label="Cerrar">&times;</button>
+            <h2 id="terms-modal-title">Términos y Condiciones de Let's Go Catbling</h2>
+            <div id="terms-modal-content">
+
+                <p>Estos Términos y Condiciones ("Términos") regulan el acceso y el uso de Let's Go Catbling (la "Plataforma"), una plataforma web educativa y gamificada que combina preguntas académicas de distintas áreas de conocimiento con actividades lúdicas de estilo casino y un sistema de recompensas basado en una economía virtual. Al crear una cuenta y utilizar la Plataforma, el usuario declara haber leído, comprendido y aceptado el contenido de este documento.</p>
+
+                <h3>1. Identificación y propósito de la plataforma</h3>
+                <p>Let's Go Catbling es una plataforma educativa gamificada, ambientada visualmente en una estética retro de casino con temática felina, cuyo propósito es apoyar el repaso y el refuerzo de conocimientos académicos mediante mecánicas de juego. La Plataforma combina un módulo de preguntas organizado por niveles educativos, áreas de conocimiento y grados de dificultad, con un conjunto de minijuegos de azar y una tienda de objetos, todos conectados mediante un mismo sistema de monedas virtuales. La finalidad de estas actividades lúdicas es incentivar la práctica constante y hacer más entretenido el proceso de aprendizaje; en ningún caso sustituyen la formación académica ni constituyen una plataforma de apuestas con dinero real.</p>
+
+                <h3>2. Cuenta de usuario</h3>
+                <p>Para acceder a las funcionalidades completas de la Plataforma es necesario crear una cuenta mediante correo electrónico y contraseña, o mediante una cuenta de Google. El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que se realicen desde su cuenta. El usuario se compromete a proporcionar información veraz y actualizada al momento del registro y a notificar cualquier uso no autorizado de su cuenta tan pronto tenga conocimiento de este. El acceso a la cuenta se mantiene mediante un sistema de autenticación que conserva la sesión activa entre visitas, y puede finalizarse en cualquier momento desde el menú de configuración. Let's Go Catbling podrá restringir, suspender o cerrar el acceso a una cuenta en los casos previstos en la sección 10 de este documento.</p>
+
+                <h3>3. Funcionamiento de la plataforma</h3>
+                <p>Desde la pantalla principal, el usuario accede a tres módulos que comparten un mismo saldo de monedas:</p>
+                <ul>
+                    <li><strong>Preguntas:</strong> el usuario selecciona un nivel educativo, un área de conocimiento y una dificultad, y responde preguntas de opción múltiple dentro de un tiempo límite. Cada ronda tiene un costo de inicio en monedas y, según el desempeño y la dificultad elegida, el usuario gana monedas y recibe una explicación de la respuesta correcta.</li>
+                    <li><strong>Casino:</strong> conjunto de actividades lúdicas de azar en las que el usuario utiliza monedas para participar y puede obtener ganancias o pérdidas según el resultado de cada juego.</li>
+                    <li><strong>Tienda:</strong> catálogo de objetos y potenciadores que pueden adquirirse con monedas y que se almacenan en un inventario de capacidad limitada.</li>
+                </ul>
+                <p>La Plataforma incluye además un menú de configuración (volumen de música y efectos, animaciones, idioma), un sistema de tutorial y ayuda contextual, y opciones de idioma que pueden alternarse en cualquier momento.</p>
+
+                <h3>4. Sistema de monedas y recompensas</h3>
+                <p>Let's Go Catbling utiliza una moneda virtual interna ("monedas") que forma parte exclusivamente de la economía dentro de la Plataforma. Las monedas se obtienen principalmente respondiendo preguntas de forma correcta y participando en las actividades del casino, y se emplean para iniciar rondas de preguntas, realizar apuestas en los juegos y adquirir objetos en la tienda. Las monedas son de naturaleza puramente virtual: no representan dinero real, no tienen valor monetario fuera de la Plataforma, no son canjeables por dinero ni por bienes o servicios externos, y su acumulación no genera ningún derecho patrimonial a favor del usuario.</p>
+
+                <h3>5. Juegos y actividades</h3>
+                <p>El casino de Let's Go Catbling reúne distintas actividades basadas en el azar y la estrategia, cada una con sus propias reglas de apuesta y de premio, mostradas al usuario antes de participar. Todas estas actividades utilizan exclusivamente monedas virtuales y están concebidas como un complemento recreativo de la experiencia educativa, y no como una invitación al juego de azar con dinero real. Se recomienda al usuario participar con moderación y administrar sus monedas de forma responsable, entendiendo que estas actividades incluyen un componente de aleatoriedad y que el resultado puede implicar ganancias o pérdidas dentro del saldo virtual.</p>
+
+                <h3>6. Tienda e inventario</h3>
+                <p>La tienda ofrece objetos y potenciadores agrupados en distintas categorías, cada uno con un costo en monedas y una función específica de apoyo dentro de las preguntas o el casino. Antes de concretar una compra, la Plataforma verifica el saldo disponible del usuario y el espacio disponible en su inventario, que tiene una capacidad limitada. Una vez adquirido, un objeto queda disponible en el inventario hasta que el usuario decide utilizarlo, momento en el cual se aplica su efecto y se retira del inventario. El usuario es responsable de administrar sus objetos de forma estratégica dentro de las reglas de cada módulo.</p>
+
+                <h3>7. Conducta del usuario</h3>
+                <p>Al utilizar Let's Go Catbling, el usuario se compromete a:</p>
+                <ul>
+                    <li>No intentar alterar, interferir o manipular deliberadamente el funcionamiento técnico de la Plataforma.</li>
+                    <li>No manipular, falsificar o intentar modificar de forma indebida los resultados de los juegos, el saldo de monedas, las recompensas o cualquier otro dato de su cuenta o de terceros.</li>
+                    <li>No explotar errores, vulnerabilidades o fallos del sistema para obtener ventajas indebidas.</li>
+                    <li>No realizar ninguna actividad que pueda perjudicar, afectar el funcionamiento de la Plataforma o menoscabar la experiencia de otros usuarios.</li>
+                    <li>Utilizar la Plataforma de manera acorde con su finalidad educativa y recreativa.</li>
+                </ul>
+
+                <h3>8. Propiedad intelectual</h3>
+                <p>El código fuente, el diseño, la identidad visual, las ilustraciones, los elementos de pixel art, los textos, la música, los efectos de sonido y demás recursos que componen Let's Go Catbling son propiedad del equipo desarrollador del proyecto. El usuario recibe únicamente un derecho de uso personal y no exclusivo sobre la Plataforma para fines de estudio y entretenimiento, y no está autorizado a reproducir, distribuir, modificar o explotar comercialmente estos elementos sin autorización previa.</p>
+
+                <h3>9. Privacidad y datos</h3>
+                <p>Para el funcionamiento de la cuenta, Let's Go Catbling trata los siguientes datos: nombre de usuario, correo electrónico y contraseña (esta última almacenada de forma cifrada), o bien la información básica de la cuenta de Google cuando el usuario elige ese método de acceso. Adicionalmente, la Plataforma almacena el saldo de monedas, el inventario de objetos, las preferencias de configuración (idioma, volumen, animaciones) y un historial de las rondas de preguntas y de las sesiones de casino, con el fin de dar continuidad a la experiencia del usuario entre sesiones. Esta información se utiliza exclusivamente para el funcionamiento de la Plataforma y no se comparte con terceros con fines distintos a los aquí descritos.</p>
+
+                <h3>10. Disponibilidad y modificaciones</h3>
+                <p>Let's Go Catbling podrá modificar, actualizar o retirar funcionalidades de la Plataforma en cualquier momento, con el propósito de corregir errores, mejorar la experiencia o mantener su correcto funcionamiento. Asimismo, podrán presentarse interrupciones temporales del servicio por labores de mantenimiento o por causas ajenas a la Plataforma. Estos Términos podrán actualizarse cuando sea necesario, y el uso continuado de la Plataforma después de una actualización implica la aceptación de los cambios.</p>
+
+                <h3>11. Incumplimiento</h3>
+                <p>El incumplimiento de estos Términos, en particular de las conductas descritas en la sección 7, podrá dar lugar a la restricción de determinadas funciones, la suspensión temporal o el cierre definitivo de la cuenta del usuario, según la gravedad de la conducta y las circunstancias del caso.</p>
+
+                <h3>12. Aceptación</h3>
+                <p>La creación de una cuenta y el uso de las funcionalidades de Let's Go Catbling que requieren autenticación están condicionados a la aceptación expresa de estos Términos y Condiciones. Si el usuario no está de acuerdo con alguno de los puntos aquí descritos, debe abstenerse de crear una cuenta o de utilizar dichas funcionalidades.</p>
+
+            </div>
+        </div>
     </div>
 
     <!-- ðŸŽ’ BAG OVERLAY -->

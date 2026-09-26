@@ -223,8 +223,10 @@ function reiniciarFormulariosAuth() {
   if (registerForm) { registerForm.reset(); registerForm.style.display = "none"; }
   const errL = document.getElementById("login-error");
   const errR = document.getElementById("register-error");
+  const errT = document.getElementById("terms-error");
   if (errL) errL.textContent = "";
   if (errR) errR.textContent = "";
+  if (errT) { errT.textContent = ""; errT.classList.remove("visible"); }
   document.querySelectorAll(".auth-tab").forEach(function(t) { t.classList.remove("active"); });
   var loginTab = document.querySelector('.auth-tab[data-tab="login"]');
   if (loginTab) loginTab.classList.add("active");
@@ -436,6 +438,50 @@ document.addEventListener("DOMContentLoaded", function() {
 });
   }
  
+  // 📜 MODAL DE TÉRMINOS Y CONDICIONES
+  var termsOverlay = document.getElementById("terms-overlay");
+  var termsLink = document.getElementById("terms-link");
+  var termsCloseBtn = document.getElementById("terms-modal-close");
+  var termsCheckboxEl = document.getElementById("register-terms");
+
+  function abrirTerminos() {
+    if (termsOverlay) termsOverlay.classList.add("active");
+  }
+  function cerrarTerminos() {
+    if (termsOverlay) termsOverlay.classList.remove("active");
+    // Cerrar el modal NO afecta la casilla de aceptación ni el formulario.
+  }
+  if (termsLink) {
+    termsLink.addEventListener("click", function(e) {
+      e.preventDefault();
+      abrirTerminos();
+    });
+  }
+  if (termsCloseBtn) {
+    termsCloseBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      cerrarTerminos();
+    });
+  }
+  if (termsOverlay) {
+    termsOverlay.addEventListener("click", function(e) {
+      if (e.target === termsOverlay) cerrarTerminos();
+    });
+  }
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && termsOverlay && termsOverlay.classList.contains("active")) {
+      cerrarTerminos();
+    }
+  });
+  if (termsCheckboxEl) {
+    termsCheckboxEl.addEventListener("change", function() {
+      if (termsCheckboxEl.checked) {
+        var termsErrorEl = document.getElementById("terms-error");
+        if (termsErrorEl) { termsErrorEl.textContent = ""; termsErrorEl.classList.remove("visible"); }
+      }
+    });
+  }
+
   var registerForm = document.getElementById("register-form");
   if (registerForm) {
     registerForm.addEventListener("submit", async function(e) {
@@ -445,6 +491,16 @@ document.addEventListener("DOMContentLoaded", function() {
       var password = document.getElementById("register-password").value;
       var confirm = document.getElementById("register-confirm").value;
       var errorEl = document.getElementById("register-error");
+      var termsCheckbox = document.getElementById("register-terms");
+      var termsErrorEl = document.getElementById("terms-error");
+      if (termsErrorEl) { termsErrorEl.textContent = ""; termsErrorEl.classList.remove("visible"); }
+      if (termsCheckbox && !termsCheckbox.checked) {
+        if (termsErrorEl) {
+          termsErrorEl.textContent = __("error_debe_aceptar_terminos");
+          termsErrorEl.classList.add("visible");
+        }
+        return;
+      }
       if (!username || !email || !password || !confirm) {
         errorEl.textContent = __("campos_incompletos");
         return;
@@ -643,6 +699,10 @@ const TRADUCCIONES = {
   reset_success:  { es: "Contraseña restablecida correctamente. Ya puedes iniciar sesión.", en: "Password reset successfully. You can now log in.", ru: "Пароль успешно сброшен. Теперь вы можете войти.", ja: "パスワードが正常にリセットされました。ログインできます。", zh: "密码已成功重置，现在可以登录了。", de: "Passwort erfolgreich zurückgesetzt. Du kannst dich jetzt anmelden." },
   campos_incompletos: { es: "Completa todos los campos", en: "Fill in all the fields", ru: "Заполните все поля", ja: "すべての項目を入力してください", zh: "请填写所有字段", de: "Bitte fülle alle Felder aus" },
   contrasenas_no_coinciden: { es: "Las contraseñas no coinciden", en: "Passwords don't match", ru: "Пароли не совпадают", ja: "パスワードが一致しません", zh: "两次密码不一致", de: "Die Passwörter stimmen nicht überein" },
+  acepto_los: { es: "Acepto los", en: "I accept the", ru: "Я принимаю", ja: "同意します：", zh: "我接受", de: "Ich akzeptiere die" },
+  terminos_condiciones: { es: "Términos y Condiciones", en: "Terms and Conditions", ru: "Условия использования", ja: "利用規約", zh: "条款和条件", de: "Nutzungsbedingungen" },
+  de_lets_go_catbling: { es: "de Let's Go Catbling.", en: "of Let's Go Catbling.", ru: "Let's Go Catbling.", ja: "（Let's Go Catbling）に同意します。", zh: "（Let's Go Catbling）。", de: "von Let's Go Catbling." },
+  error_debe_aceptar_terminos: { es: "Debes aceptar los Términos y Condiciones para crear tu cuenta.", en: "You must accept the Terms and Conditions to create your account.", ru: "Вы должны принять Условия использования, чтобы создать учётную запись.", ja: "アカウントを作成するには利用規約に同意する必要があります。", zh: "你必须接受条款和条件才能创建账户。", de: "Du musst die Nutzungsbedingungen akzeptieren, um dein Konto zu erstellen." },
   contrasena_min: { es: "La contraseña debe tener al menos 6 caracteres", en: "The password must be at least 6 characters long", ru: "Пароль должен содержать не менее 6 символов", ja: "パスワードは6文字以上で入力してください", zh: "密码至少需要6个字符", de: "Das Passwort muss mindestens 6 Zeichen lang sein" },
   contrasena_politica: { es: "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo (por ejemplo: Catbling2026!).", en: "The password must have at least 8 characters, an uppercase letter, a number and a symbol (for example: Catbling2026!).", ru: "Пароль должен содержать не менее 8 символов, заглавную букву, цифру и специальный символ (например: Catbling2026!).", ja: "パスワードは8文字以上で、大文字・数字・記号を1つ以上含めてください（例：Catbling2026!）。", zh: "密码至少需要8个字符，并包含一个大写字母、一个数字和一个符号（例如：Catbling2026!）。", de: "Das Passwort muss mindestens 8 Zeichen lang sein und einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten (z. B. Catbling2026!)." },
   error_misma_contrasena: { es: "La nueva contraseña debe ser distinta de la anterior.", en: "The new password must be different from the old one.", ru: "Новый пароль должен отличаться от прежнего.", ja: "新しいパスワードは以前のものと異なる必要があります。", zh: "新密码必须与旧密码不同。", de: "Das neue Passwort muss sich vom alten unterscheiden." },

@@ -560,6 +560,165 @@ img {
     border-top: 1px solid rgba(255, 0, 0, 0.3);
 }
 
+/* ════════════════════════════════════════════════════════════════════════════ */
+/*  CHECKBOX DE ACEPTACIÓN DE TÉRMINOS Y CONDICIONES (registro) */
+/* ════════════════════════════════════════════════════════════════════════════ */
+.auth-checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    cursor: pointer;
+    margin-top: -4px;
+}
+
+.auth-checkbox {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    accent-color: #00ff00;
+    cursor: pointer;
+}
+
+.auth-checkbox-text {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 15px;
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+.terms-link {
+    color: #ffd700;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.terms-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+/* Mensaje de validación: casilla de términos sin marcar */
+.auth-error-terms {
+    display: none;
+    text-align: left;
+    font-size: 14px;
+    color: #ff5c5c;
+    text-shadow: none;
+    background: #050b2b;
+    border: 2px solid #7a0000;
+    padding: 10px 12px;
+    min-height: unset;
+    margin: 2px 0 -6px 0;
+}
+
+.auth-error-terms.visible {
+    display: block;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/*  MODAL DE TÉRMINOS Y CONDICIONES */
+/* ════════════════════════════════════════════════════════════════════════════ */
+#terms-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10050;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#terms-overlay.active {
+    display: flex;
+}
+
+#terms-modal {
+    position: relative;
+    background: #ffffff;
+    border: 3px solid #6b6b6b;
+    border-radius: 0;
+    width: min(700px, 100%);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(20px, 4vw, 36px);
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+#terms-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    line-height: 1;
+    color: #333333;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    padding: 4px 8px;
+}
+
+#terms-modal-close:hover {
+    color: #9e0000;
+}
+
+#terms-modal-title {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: clamp(18px, 3vw, 24px);
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+    padding-right: 30px;
+}
+
+#terms-modal-content {
+    overflow-y: auto;
+    color: #222222;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    text-align: left;
+}
+
+#terms-modal-content h3 {
+    font-size: 16px;
+    color: #111111;
+    margin: 18px 0 6px 0;
+}
+
+#terms-modal-content h3:first-child {
+    margin-top: 0;
+}
+
+#terms-modal-content p {
+    margin: 0 0 10px 0;
+}
+
+#terms-modal-content ul {
+    margin: 0 0 10px 0;
+    padding-left: 22px;
+}
+
+#terms-modal-content li {
+    margin-bottom: 6px;
+}
+
+@media (max-width: 600px) {
+    #terms-modal {
+        max-height: 90vh;
+        padding: 18px 14px;
+    }
+    #terms-modal-content {
+        font-size: 14px;
+    }
+}
+
 #google-login-btn {
     background: #fff;
     border: none;
