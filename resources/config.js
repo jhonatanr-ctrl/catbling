@@ -1,5 +1,23 @@
 // 🌍 CONFIG GLOBAL COMPARTIDA
 
+// 🔊 DESBLOQUEO GLOBAL DE AUDIO (misma corrección para todas las páginas)
+// Los navegadores bloquean el autoplay de audio con sonido si no hubo antes
+// una interacción del usuario. El <audio id="bgMusic"> se deja "muted" en
+// el HTML para no chocar con esa política, y aquí lo desbloqueamos y
+// arrancamos en el primer clic/touch de la página, respetando el volumen
+// guardado en config.musica (si está en 0, se deja pausado).
+document.addEventListener("click", function desbloquearAudioGlobal() {
+  const musica = document.getElementById("bgMusic");
+  if (musica) {
+    musica.muted = false;
+    if (typeof config !== "undefined" && config && config.musica === 0) {
+      musica.pause();
+    } else {
+      musica.play().catch(() => {});
+    }
+  }
+}, { once: true });
+
 const DEFAULT_CONFIG = {
   musica: 5,
   efectos: 5,

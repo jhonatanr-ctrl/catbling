@@ -7,10 +7,6 @@ logs/
 *.avi
 *.webm
 
-# Ignorar todos los audios
-*.mp3
-*.wav
-*.ogg
 supabase/.temp/
 api/tokens.json
 api/reset_tokens.json
