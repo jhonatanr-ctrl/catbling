@@ -247,7 +247,6 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -295,7 +294,7 @@ body {
   font-family: 'Press Start 2P', cursive;
   font-size: 16px;
   color: #ffd700;
-  margin: 0 0 10px 0;
+  margin: 0 0 17px 0;
 }
 
 #apuesta-actual {
@@ -338,7 +337,6 @@ body {
   height: 12px;
   background: #333;
   border: 2px solid #ffd700;
-  border-radius: 8px;
 }
 
 .slider-progress {
@@ -347,7 +345,6 @@ body {
   transform: translateY(-50%);
   height: 12px;
   background: linear-gradient(to right, #ffd700, #ffaa00);
-  border-radius: 8px;
   pointer-events: none;
 }
 
@@ -359,7 +356,6 @@ body {
   width: 35px;
   height: 35px;
   background: #ffd700;
-  border-radius: 50%;
   cursor: grab;
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
 }
@@ -599,7 +595,6 @@ body {
   transform: translateY(-50%);
   background: rgba(0, 0, 0, 0.85);
   border: 2px solid #ffd700;
-  border-radius: 12px;
   padding: 15px;
   z-index: 100;
   min-width: 160px;
@@ -626,7 +621,6 @@ body {
   color: #ccc;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid #555;
-  border-radius: 8px;
   padding: 8px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -719,11 +713,14 @@ body {
 
     #game-board {
         gap: 4px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
     }
 
     .card {
         width: clamp(44px, 14vw, 66px);
-        height: clamp(64px, 20vw, 96px);
+        height: clamp(70px, 20vw, 96px);
     }
 
     .niveles-panel {
@@ -752,7 +749,6 @@ body {
     font-size:11px;
     background-color: #ffcc00;
     border: 3px solid #D99A00;
-    border-radius: 0;
     color:#1a1a1a;
     text-align:center;
     outline:none;
@@ -767,3 +763,95 @@ body {
 }
 .bet-input:hover { background-color:#ffd633; }
 .bet-input:focus { border-color:#ff8c00; box-shadow:0 0 8px rgba(217,154,0,.7); }
+
+/* Layout "mobile" generado por el modo edición — pégalo en style.css */
+@media (max-width: 480px) {
+  [data-edit-id="tablero"] {
+    position: fixed;
+    left: 6px;
+    top: 309px;
+    width: 307px;
+    height: 160px;
+  }
+  [data-edit-id="barra-superior"] {
+    position: fixed;
+    left: -2px;
+    top: 204px;
+    width: 321px;
+    height: 70px;
+  }
+    [data-edit-id="card"] {
+        width: 307px;
+        height: 160px;
+    }
+  [data-edit-id="titulo"] {
+    position: fixed;
+    left: 14px;
+    top: 43px;
+    width: 242px;
+    height: 124px;
+  }
+  [data-edit-id="monedas"] {
+    position: fixed;
+    left: 254px;
+    top: 8px;
+    width: 74px;
+    height: 92px;
+  }
+  [data-edit-id="boton-salida"] {
+    position: fixed;
+    left: 34px;
+    top: 377px;
+    z-index: 1;
+  }
+}
+/* Layout "mobile" generado por el modo edición — pégalo en style.css */
+@media (max-width: 480px) {
+  [data-edit-id="titulo"] {
+    position: fixed;
+    left: 62px;
+    top: 23px;
+    width: 182px;
+    height: 118px;
+  }
+  [data-edit-id="monedas"] {
+    position: fixed;
+    left: 242px;
+    top: 17px;
+    width: 74px;
+    height: 92px;
+  }
+  [data-edit-id="boton-opciones"] {
+    position: fixed;
+    left: -17px;
+    top: -13px;
+    width: 100px;
+    height: 100px;
+  }
+  [data-edit-id="barra-superior"] {
+    position: fixed;
+    left: -4px;
+    top: 148px;
+    width: 321px;
+    height: 70px;
+  }
+  [data-edit-id="tablero"] {
+    position: fixed;
+    left: 6px;
+    top: 313px;
+    width: 307px;
+    height: 160px;
+  }
+  #mainContent > header:nth-of-type(1) > h1:nth-of-type(1) {
+    font-size: 18px;
+  }
+  #cantidad-monedasm {
+    font-size: 20px;
+  }
+  #instruccion-text {
+    font-size: 10px;
+  }
+  #infomovimientos > span:nth-of-type(1) {
+    font-size: 16px;
+  }
+}

@@ -85,6 +85,113 @@
   color: white;
 }
 
+.editor-fx-target {
+  outline: 1px dotted rgba(0, 220, 255, 0.55);
+  cursor: pointer;
+}
+
+.editor-fx-target:hover {
+  outline: 2px dotted #00dcff;
+  background: rgba(0, 220, 255, 0.08);
+}
+
+.editor-fx-target.editor-fx-selected {
+  outline: 2px solid #00dcff;
+  box-shadow: 0 0 10px rgba(0, 220, 255, 0.7);
+}
+
+#editor-fx-panel {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  z-index: 999999;
+  background: rgba(15, 15, 15, 0.95);
+  border: 2px solid #00dcff;
+  border-radius: 10px;
+  padding: 14px;
+  width: 220px;
+  font-family: 'Pixelify Sans', sans-serif;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.editor-fx-title {
+  font-size: 12px;
+  color: #00dcff;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+#editor-fx-panel label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+#editor-fx-panel input[type="number"] {
+  width: 100%;
+  margin-top: 4px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+}
+
+#editor-fx-panel input[type="range"] {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.editor-fx-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-fx-checkbox input {
+  width: auto !important;
+}
+
+.editor-fx-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.editor-fx-buttons button {
+  flex: 1;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 11px;
+  background: #00dcff;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+#editor-fx-panel #fx-close {
+  background: #555;
+  color: #fff;
+}
+
+.editor-toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 215, 0, 0.4);
+}
+
+.editor-card-size {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+}
+
+.editor-card-size input {
+  width: 50px;
+  font-size: 10px;
+  padding: 4px;
+}
+
 #editor-hint {
   position: fixed;
   top: 12px;
