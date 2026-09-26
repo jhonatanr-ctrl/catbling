@@ -23,7 +23,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 5vh;
+    padding-top: 12vh;
     min-height: 100vh;
     position: relative;
     z-index: 100;
@@ -285,6 +285,7 @@ body {
     .hand-explanation-box {
         top: 6px;
         padding: 6px 12px;
+        width: 222px;
     }
     .hand-explanation-title {
         font-size: 9px;
