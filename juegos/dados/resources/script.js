@@ -23,8 +23,8 @@ window.addEventListener("cambioEfectos", (e) => {
     volumenEfectosActual = e.detail;
 });
 
-function mostrarNoMonedas() {
-    if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(apuesta);
+function mostrarNoMonedas(monedasNecesarias) {
+    if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(monedasNecesarias);
 }
 
 function tirarDadoJugador() {
@@ -136,7 +136,7 @@ function lanzarDados() {
         if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(apuesta)) {
             // Crédito Temporal cubre la diferencia
         } else {
-            mostrarNoMonedas();
+            mostrarNoMonedas(apuesta - monedas);
             return;
         }
     }

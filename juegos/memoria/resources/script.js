@@ -345,8 +345,8 @@ function endGame() {
   }
 }
 
-function mostrarOverlayNoMonedas() {
-  if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(apuestaActual);
+function mostrarOverlayNoMonedas(monedasNecesarias) {
+  if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(monedasNecesarias);
 }
 
 function handleRestartClick() {
@@ -361,11 +361,18 @@ function handleRestartClick() {
   if (!juegoIniciado) {
     if (typeof getMonedas === 'function') {
       const monedas = getMonedas();
-      if (monedas < MIN_APUESTA) {
+      // La apuesta debe validarse contra el saldo REAL disponible, no contra
+      // MIN_APUESTA (que solo define el mínimo permitido en el input de apuesta).
+      // Antes se comparaba `monedas < MIN_APUESTA`, así que cualquier apuesta
+      // superior a MIN_APUESTA pasaba esta comprobación aunque excediera el
+      // saldo del jugador; la ronda se jugaba igual y el rechazo por saldo
+      // insuficiente solo se manifestaba al finalizar (vía RPC registrar_sesion_casino
+      // para autenticados, o de forma silenciosa —sin cobrar la apuesta— para invitados).
+      if (monedas < apuestaActual) {
         if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(apuestaActual)) {
           // Crédito Temporal cubre la diferencia
         } else {
-          mostrarOverlayNoMonedas();
+          mostrarOverlayNoMonedas(apuestaActual - monedas);
           return;
         }
       }

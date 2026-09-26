@@ -399,7 +399,7 @@ function spinRoulette() {
         if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(apuesta)) {
             // Crédito Temporal cubre la diferencia
         } else {
-            mostrarNoMonedasOverlay(apuesta);
+            mostrarNoMonedasOverlay(apuesta - currentCoins);
             return;
         }
     }

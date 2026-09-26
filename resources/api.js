@@ -563,7 +563,7 @@ async function rpcRegistrarSesionCasino(juego, apuesta, resultadoMonedas, gano) 
   return resp;
 }
 
-async function _manejarRechazoEconomia(cantidadNecesaria) {
+async function _manejarRechazoEconomia(apuestaRequerida) {
   try {
     let saldo = null;
     if (window.coinsAPI && typeof window.coinsAPI.fetch === 'function') {
@@ -575,13 +575,16 @@ async function _manejarRechazoEconomia(cantidadNecesaria) {
       var el = document.getElementById(id);
       if (el) el.classList.remove('active', 'visible', 'show');
     });
-    if (typeof saldo === 'number' && saldo < cantidadNecesaria &&
+    if (typeof saldo === 'number' && saldo < apuestaRequerida &&
         typeof mostrarOverlayGlobal === 'function') {
-      mostrarOverlayGlobal(cantidadNecesaria);
+      // mostrarOverlayGlobal espera cuánto le FALTA al jugador, no el monto
+      // total de la apuesta (antes se le pasaba apuestaRequerida directamente,
+      // mostrando p. ej. la apuesta completa en vez de la diferencia real).
+      mostrarOverlayGlobal(apuestaRequerida - saldo);
     } else if (typeof window.mostrarPartidaNoRegistrada === 'function') {
       window.mostrarPartidaNoRegistrada();
     } else {
-      console.warn('[CATBLING][ECONOMIA] Operación rechazada por el servidor (saldo real:', saldo, ', requerido:', cantidadNecesaria, ')');
+      console.warn('[CATBLING][ECONOMIA] Operación rechazada por el servidor (saldo real:', saldo, ', requerido:', apuestaRequerida, ')');
     }
   } catch (e) {
     console.warn('[CATBLING][ECONOMIA] No se pudo resincronizar tras un rechazo:', e);

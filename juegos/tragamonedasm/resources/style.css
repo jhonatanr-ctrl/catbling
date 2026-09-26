@@ -1,6 +1,20 @@
 
 :root {
     --slot-y-position: 80px;
+    --slot-machine-width: min(78vw, 1500px);
+    --slot-machine-ratio: 3 / 2;
+    --slot-frame-top: 28px;
+    --slot-frame-height: 79%;
+    --slot-image-height: 86%;
+    --slot-reel-width: clamp(44px, 8vw, 73px);
+    --slot-reel-height: clamp(50px, 10vw, 88px);
+    --slot-symbol-size: clamp(40px, 4vw, 96px);
+    --slot-spin-width: clamp(80px, 19vw, 420px);
+    --slot-spin-height: clamp(80px, 18vw, 102px);
+    --slot-spin-bottom: 28.4%;
+    --slot-bet-bottom: 20%;
+    --slot-bet-input-width: min(45vw, 120px);
+    --slot-bet-input-height: 30px;
 }
 
 body {
@@ -60,31 +74,32 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: var(--slot-y-position);
+    box-sizing: border-box;
     z-index: 1;
     isolation: isolate;
 }
 
 .machine-wrapper {
     position: relative;
-    width: min(78vw, 1500px);
-    aspect-ratio: 3 / 2;
+    width: var(--slot-machine-width);
+    aspect-ratio: var(--slot-machine-ratio);
     margin-top: 10px;
 }
 
 .slot-machine-bg {
     position: absolute;
-    top: 28px;
+    top: var(--slot-frame-top);
     left: 49%;
     transform: translateX(calc(-50% + 2%));
     width: 100%;
-    height: 79%;
+    height: var(--slot-frame-height);
     z-index: 1;
     pointer-events: none;
 }
 
 .slot-machine-img {
     width: 100%;
-    height: 86%;
+    height: var(--slot-image-height);
     object-fit: contain;
     display: block;
 }
@@ -163,8 +178,8 @@ body {
 }
 
 .reel {
-    width: clamp(44px, 8vw, 73px);
-    height: clamp(50px, 10vw, 88px);
+    width: var(--slot-reel-width);
+    height: var(--slot-reel-height);
     background: #0a0a0a;
     border: 1px solid #333;
     overflow: hidden;
@@ -188,16 +203,16 @@ body {
 }
 
 .icons img {
-    width: clamp(40px, 7vw, 70px);
-    height: clamp(40px, 7vw, 70px);
+    width: var(--slot-symbol-size);
+    height: var(--slot-symbol-size);
     object-fit: contain;
     display: block;
     flex-shrink: 0;
 }
 
 .icons img {
-    width: clamp(40px, 4vw, 96px);
-    height: clamp(40px, 7vw, 106px);
+    width: var(--slot-symbol-size);
+    height: var(--slot-symbol-size);
     object-fit: contain;
     display: block;
     flex-shrink: 0;
@@ -205,7 +220,7 @@ body {
 
 .spin-button-wrapper {
     position: absolute;
-    bottom: 28.4%;
+    bottom: var(--slot-spin-bottom);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -216,8 +231,8 @@ body {
 }
 
 .spin-button {
-    width: clamp(80px, 19vw, 420px);
-    height: clamp(80px, 18vw, 102px);
+    width: var(--slot-spin-width);
+    height: var(--slot-spin-height);
     cursor: pointer;
     transition: transform 0.2s ease, filter 0.2s ease;
     position: relative;
@@ -312,7 +327,7 @@ body {
 
 .apuesta-wrapper {
     position: absolute;
-    bottom: 20%;
+    bottom: var(--slot-bet-bottom);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -358,8 +373,9 @@ body {
 }
 
 .bet-input {
-    width: min(45vw, 120px);
-    height: 30px;
+    width: var(--slot-bet-input-width);
+    height: var(--slot-bet-input-height);
+    box-sizing: border-box;
     font-size: 11px;
     background-color: #ffcc00;
     border: 3px solid #D99A00;
@@ -672,65 +688,288 @@ body {
     }
 }
 
-/* ─── RESPONSIVE ─── */
-@media (max-width: 768px) {
-    .slots-area {
-        padding: 6px 8px;
+/* ─── RESPONSIVE CONTROLS ───
+   Ajusta estas variables por breakpoint para personalizar el juego sin
+   perseguir valores repetidos entre selectores. */
+@media (max-width: 1024px) {
+    :root {
+        --slot-y-position: clamp(58px, 9vh, 76px);
+        --slot-machine-width: min(88vw, 1100px);
+        --slot-reel-width: clamp(40px, 7vw, 68px);
+        --slot-reel-height: clamp(44px, 8vw, 76px);
+        --slot-symbol-size: clamp(40px, 6vw, 72px);
+        --slot-spin-width: clamp(76px, 17vw, 180px);
+        --slot-spin-height: 78px;
+        --slot-spin-bottom: 22%;
+        --slot-bet-bottom: 12%;
+        --slot-bet-input-width: min(28vw, 180px);
+        --slot-bet-input-height: 34px;
     }
 
-    .slots-window {
-        gap: 2px;
+    .titulo { font-size: 30px; }
+    .subtitulo { font-size: 20px; }
+    .spin-text { font-size: 13px; }
+    .apuesta-text { font-size: 13px; }
+
+    .animacion-izquierda,
+    .animacion-derecha {
+        max-width: 24vw;
+        max-height: 48vh;
+        pointer-events: none;
     }
 
-    .spin-text {
-        font-size: 10px;
+    #btn-opciones {
+        width: 76px;
+        top: 8px;
+        left: 8px;
     }
 
-    .apuesta-text {
-        font-size: 12px;
-    }
-
-    .bet-input {
-        width: min(45vw, 120px);
-        height: 30px;
-        font-size: 11px;
-    }
+    .monedas-ui { top: 10px; right: 12px; }
+    .monedas-ui img { width: 64px; }
+    .monedas-ui p,
+    #cantidad-monedasm { font-size: 20px; letter-spacing: 1px; }
 
     .win-text,
-    .lose-text {
-        font-size: clamp(24px, 8vw, 40px);
+    .lose-text { font-size: 36px; line-height: 1.35; padding: 0 16px; }
+    .win-amount { font-size: 26px; }
+    .no-coins-content { width: min(90vw, 480px); box-sizing: border-box; padding: 24px; }
+    .no-coins-content h2 { font-size: 22px; line-height: 1.5; }
+    .no-coins-content p { font-size: 18px; line-height: 1.45; }
+    .no-coins-content .monedas-necesarias { font-size: 16px; }
+}
+
+/* Teléfonos y ventanas apaisadas de poca altura: controles en flujo para
+   evitar solapamientos y permitir desplazamiento vertical. */
+@media (max-width: 768px), (max-height: 520px) and (max-width: 1024px) {
+    :root {
+        --slot-y-position: 88px;
+        --slot-machine-width: min(94vw, 500px);
+        --slot-reel-width: clamp(40px, 12vw, 58px);
+        --slot-reel-height: clamp(44px, 13vw, 62px);
+        --slot-symbol-size: clamp(38px, 11vw, 58px);
+        --slot-spin-width: 96px;
+        --slot-spin-height: 66px;
+        --slot-bet-input-width: min(36vw, 160px);
+        --slot-bet-input-height: 36px;
     }
 
-    .win-amount {
-        font-size: clamp(18px, 6vw, 28px);
+    html { min-height: 100%; }
+    body {
+        min-height: 100vh;
+        min-height: 100svh;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
+
+    .slot-machine-container {
+        position: relative;
+        inset: auto;
+        min-height: 100vh;
+        min-height: 100svh;
+        height: auto;
+        padding: var(--slot-y-position) 12px 32px;
+        overflow: visible;
+    }
+
+    .machine-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: var(--slot-machine-width);
+        max-width: 100%;
+        aspect-ratio: auto;
+        margin: 0 auto;
+        padding: 18px 12px 20px;
+        box-sizing: border-box;
+    }
+
+    .slot-machine-bg {
+        top: 54px;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        z-index: 0;
+    }
+
+    .slot-machine-img { height: 100%; object-fit: contain; }
+
+    .titulo,
+    .subtitulo {
+        position: relative;
+        inset: auto;
+        transform: none;
+        width: 100%;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    .titulo { font-size: 21px; }
+    .subtitulo { font-size: 17px; }
+
+    .slots-area {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        max-width: 100%;
+        margin: 12px 0 4px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+    }
+
+    .slots-window { gap: 4px; }
+    .reel { flex: 0 1 var(--slot-reel-width); min-width: 0; }
+
+    .spin-button-wrapper {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        margin: 0 auto;
+    }
+
+    .spin-button { width: var(--slot-spin-width); height: var(--slot-spin-height); }
+    .spin-text { font-size: 11px; }
+
+    .apuesta-wrapper {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        margin-top: 2px;
+        padding: 10px 8px 12px;
+        box-sizing: border-box;
+        background: rgba(0, 0, 0, 0.56);
+        border: 1px solid rgba(255, 215, 0, 0.65);
+    }
+
+    .apuesta-text { font-size: 13px; line-height: 1.5; text-align: center; }
+    .apuesta-slider-wrapper { justify-content: center; gap: 10px; width: 100%; }
+    .apuesta-min,
+    .apuesta-max { font-size: 9px; }
+    .bet-input { max-width: 180px; font-size: 14px; }
+
+    .animacion-izquierda,
+    .animacion-derecha { display: none; }
+
+    .menu-buttons-container,
+    .menu-button { left: 8px; bottom: 8px; }
+    .menu-button { width: 58px; }
+
+    #btn-opciones { width: 58px; top: 8px; left: 8px; }
+    .monedas-ui { top: 8px; right: 8px; }
+    .monedas-ui img { width: 48px; }
+    .monedas-ui p,
+    #cantidad-monedasm { margin: 4px 0 0; font-size: 15px; letter-spacing: 0; }
+
+    .win-text,
+    .lose-text { font-size: 30px; line-height: 1.4; }
+    .win-amount { margin-top: 18px; font-size: 23px; }
+    .no-coins-content { width: min(92vw, 440px); padding: 20px; }
+    .no-coins-content h2 { margin-bottom: 12px; font-size: 19px; }
+    .no-coins-content p { margin: 8px 0; font-size: 16px; }
+    .no-coins-content .monedas-necesarias { margin-top: 14px; font-size: 14px; }
+    .no-coins-content .monedas-necesarias span { font-size: 15px; }
+    #overlay-timer-text { font-size: 10px; line-height: 1.5; }
+
+    #menu-opciones {
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        padding: 12px;
+        box-sizing: border-box;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .menu-box {
+        width: min(94vw, 520px);
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
+        margin: 0 auto;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .menu-box h2 { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
+    .menu-scroll { max-height: none; margin: 0; padding: 8px 10px; }
+    .opcion-item {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        width: 100%;
+        margin: 8px 0;
+        font-size: 19px;
+        line-height: 1.3;
+    }
+    .grupo-botones { width: auto; }
+    .grupo-botones button { min-width: 36px; min-height: 36px; padding: 6px; }
+    #opcion-cerrar-sesion { display: grid; }
+    #opcion-cerrar-sesion span { font-size: 17px; }
+    #opcion-cerrar-sesion button { min-width: 0; margin: 4px; padding: 8px; }
+    #cerrar-menu { width: 76px; margin: 8px auto 0; }
+
+    #confirmacion-cerrar-sesion { padding: 16px; box-sizing: border-box; }
+    .confirmacion-contenido { width: min(92vw, 480px); padding: 20px; box-sizing: border-box; }
+    .confirmacion-titulo { margin-bottom: 16px; font-size: 18px; line-height: 1.5; }
+    .confirmacion-texto { margin: 8px 0 22px; font-size: 20px; line-height: 1.4; }
+    .confirmacion-botones { gap: 14px; }
+    .confirmacion-btn { padding: 12px 18px; font-size: 13px; }
+
+    .tutorial-container { width: min(94vw, 560px); }
+    .tutorial-speech { max-width: 100%; box-sizing: border-box; }
 }
 
 @media (max-width: 480px) {
-    .machine-wrapper {
-        width: min(98vw, 1500px);
-        margin-top: 5px;
+    :root {
+        --slot-y-position: 82px;
+        --slot-machine-width: min(96vw, 420px);
+        --slot-reel-width: clamp(38px, 12vw, 52px);
+        --slot-reel-height: clamp(42px, 13vw, 56px);
+        --slot-symbol-size: clamp(36px, 11vw, 48px);
+        --slot-spin-width: 82px;
+        --slot-spin-height: 58px;
+        --slot-bet-input-width: min(45vw, 150px);
+        --slot-bet-input-height: 34px;
     }
 
-    .titulo {
-        font-size: clamp(14px, 4vw, 20px);
-        top: -6%;
-    }
+    .slot-machine-container { padding-right: 8px; padding-left: 8px; }
+    .machine-wrapper { gap: 10px; padding: 14px 8px 16px; }
+    .slot-machine-bg { top: 48px; }
+    .titulo { font-size: 17px; }
+    .subtitulo { font-size: 14px; }
+    .slots-area { margin-top: 8px; padding: 6px 8px; }
+    .slots-window { gap: 3px; }
+    .spin-text { font-size: 10px; }
+    .apuesta-wrapper { padding: 9px 6px 10px; }
+    .apuesta-text { font-size: 11px; }
+    .apuesta-slider-wrapper { gap: 7px; }
+    .apuesta-min,
+    .apuesta-max { font-size: 8px; }
 
-    .subtitulo {
-        font-size: clamp(11px, 3vw, 16px);
-        top: 4%;
-    }
+    .win-text,
+    .lose-text { font-size: 23px; }
+    .win-amount { font-size: 19px; }
+    .no-coins-content { padding: 16px; }
+    .no-coins-content h2 { font-size: 16px; }
+    .no-coins-content p { font-size: 14px; }
+    .no-coins-content .monedas-necesarias { font-size: 13px; }
+    .no-coins-content .monedas-necesarias span { font-size: 13px; }
 
-    .slots-area {
-        padding: 4px 6px;
-    }
-
-    .spin-button-wrapper {
-        bottom: 20%;
-    }
-
-    .apuesta-wrapper {
-        bottom: 5%;
-    }
+    .menu-box { padding: 12px; }
+    .menu-scroll { padding: 6px; }
+    .opcion-item { font-size: 17px; }
+    #opcion-cerrar-sesion span { font-size: 15px; }
+    .grupo-botones { gap: 4px; }
+    .grupo-botones button { min-width: 32px; min-height: 32px; }
+    .confirmacion-contenido { padding: 14px; }
+    .confirmacion-titulo { font-size: 15px; }
+    .confirmacion-texto { font-size: 17px; }
+    .confirmacion-btn { padding: 10px 12px; font-size: 11px; }
+    .tutorial-speech { padding: 12px; }
 }

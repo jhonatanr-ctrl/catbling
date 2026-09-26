@@ -70,7 +70,7 @@
       if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(costo)) {
         return { ok: true, costo: costo };
       }
-      if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(costo);
+      if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(costo - monedas);
       return { ok: false, motivo: 'sin_saldo' };
     }
     return { ok: true, costo: costo };
@@ -250,7 +250,7 @@
       if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(apuestaActual)) {
         return { ok: true };
       }
-      if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(apuestaActual);
+      if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(apuestaActual - monedas);
       return { ok: false, motivo: 'sin_saldo' };
     }
     return { ok: true };

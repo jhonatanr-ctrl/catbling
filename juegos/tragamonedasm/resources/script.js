@@ -32,8 +32,8 @@ function getSimboloAleatorio() {
     return Math.floor(Math.random() * SIMBOLOS.length);
 }
 
-function mostrarNoMonedas() {
-    if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(apuestaActual);
+function mostrarNoMonedas(monedasNecesarias) {
+    if (typeof mostrarOverlayGlobal === 'function') mostrarOverlayGlobal(monedasNecesarias);
 }
 
 // direccion: 'down' = la tira baja (el contenedor se mueve hacia abajo),
@@ -105,7 +105,7 @@ function spin() {
         if (typeof window.verificarCreditoTemporal === 'function' && window.verificarCreditoTemporal(apuestaActual)) {
             // Crédito Temporal cubre la diferencia
         } else {
-            mostrarNoMonedas();
+            mostrarNoMonedas(apuestaActual - monedas);
             return;
         }
     }
