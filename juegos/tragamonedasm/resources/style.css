@@ -2,19 +2,60 @@
 :root {
     --slot-y-position: 80px;
     --slot-machine-width: min(78vw, 1500px);
+    --slot-machine-shift-x: 0px;
     --slot-machine-ratio: 3 / 2;
     --slot-frame-top: 28px;
+    --slot-frame-x: 49%;
+    --slot-frame-offset-x: calc(-50% + 2%);
+    --slot-frame-width: 100%;
     --slot-frame-height: 79%;
     --slot-image-height: 86%;
+    --slot-title-font-size: clamp(20px, 4.5vw, 41px);
+    --slot-title-top: -8%;
+    --slot-title-x: 50%;
+    --slot-title-offset-x: -50%;
+    --slot-subtitle-font-size: clamp(16px, 3.5vw, 28px);
+    --slot-subtitle-top: -1%;
+    --slot-subtitle-x: 50%;
+    --slot-subtitle-offset-x: -50%;
     --slot-reel-width: clamp(44px, 8vw, 73px);
     --slot-reel-height: clamp(50px, 10vw, 88px);
     --slot-symbol-size: clamp(40px, 4vw, 96px);
     --slot-spin-width: clamp(80px, 19vw, 420px);
     --slot-spin-height: clamp(80px, 18vw, 102px);
     --slot-spin-bottom: 28.4%;
+    --slot-spin-text-size: 16px;
+    --slot-spin-text-x: 50%;
+    --slot-spin-text-y: 50%;
+    --slot-spin-text-offset-x: -50%;
+    --slot-spin-text-offset-y: -50%;
     --slot-bet-bottom: 20%;
     --slot-bet-input-width: min(45vw, 120px);
+    --slot-bet-input-max-width: none;
     --slot-bet-input-height: 30px;
+    --slot-bet-input-font-size: 11px;
+    --slot-bet-label-font-size: 16px;
+    --slot-bet-number-font-size: 16px;
+    --slot-bet-range-font-size: 10px;
+    --slot-exit-left: 21px;
+    --slot-exit-bottom: -7px;
+    --slot-exit-width: 75px;
+    --slot-exit-image-width: 80%;
+    --slot-exit-container-left: 10px;
+    --slot-exit-container-bottom: -5px;
+    --slot-exit-container-width: auto;
+    --slot-bag-top: clamp(80px, 34vh, 236px);
+    --slot-bag-right: clamp(8px, 4vw, 59px);
+    --slot-bag-width: clamp(50px, 10vw, 84px);
+    --slot-bag-close-width: clamp(60px, 15vw, 108px);
+    --slot-settings-top: 0px;
+    --slot-settings-left: 0px;
+    --slot-settings-width: clamp(60px, 12vw, 127px);
+    --slot-coins-icon-width: clamp(70px, 15vw, 130px);
+    --slot-coins-number-size: 30px;
+    --slot-coins-ui-top: clamp(8px, 2vh, 20px);
+    --slot-coins-ui-right: clamp(8px, 3vw, 35px);
+    --slot-coins-letter-spacing: 3px;
 }
 
 body {
@@ -36,9 +77,9 @@ body {
 
 .menu-button {
     position: fixed;
-    bottom: -7px;
-    left: 21px;
-    width: 75px;
+    bottom: var(--slot-exit-bottom);
+    left: var(--slot-exit-left);
+    width: var(--slot-exit-width);
     z-index: 600;
     cursor: pointer;
     display: block;
@@ -54,15 +95,16 @@ body {
 
 .menu-button img,
 #menu-img {
-    width: 80%;
+    width: var(--slot-exit-image-width);
     height: auto;
     display: block;
 }
 
 .menu-buttons-container {
     position: fixed;
-    bottom: -5px;
-    left: 10px;
+    bottom: var(--slot-exit-container-bottom);
+    left: var(--slot-exit-container-left);
+    width: var(--slot-exit-container-width);
     z-index: 600;
     gap: 10px;
 }
@@ -84,14 +126,15 @@ body {
     width: var(--slot-machine-width);
     aspect-ratio: var(--slot-machine-ratio);
     margin-top: 10px;
+    transform: translateX(var(--slot-machine-shift-x));
 }
 
 .slot-machine-bg {
     position: absolute;
     top: var(--slot-frame-top);
-    left: 49%;
-    transform: translateX(calc(-50% + 2%));
-    width: 100%;
+    left: var(--slot-frame-x);
+    transform: translateX(var(--slot-frame-offset-x));
+    width: var(--slot-frame-width);
     height: var(--slot-frame-height);
     z-index: 1;
     pointer-events: none;
@@ -106,13 +149,13 @@ body {
 
 .titulo {
     font-family: 'Press Start 2P', cursive;
-    font-size: clamp(20px, 4.5vw, 41px);
+    font-size: var(--slot-title-font-size);
     color: #ffd700;
     margin: 0;
     position: absolute;
-    top: -8%;
-    left: 50%;
-    transform: translateX(-50%);
+    top: var(--slot-title-top);
+    left: var(--slot-title-x);
+    transform: translateX(var(--slot-title-offset-x));
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4);
     letter-spacing: clamp(1px, 0.3vw, 3px);
     animation: titulo-glow 2s ease-in-out infinite alternate;
@@ -131,13 +174,13 @@ body {
 
 .subtitulo {
     font-family: 'Pixelify Sans', sans-serif;
-    font-size: clamp(16px, 3.5vw, 28px);
+    font-size: var(--slot-subtitle-font-size);
     color: #00ffff;
     margin: 0;
     position: absolute;
-    top: -1%;
-    left: 31%;
-    transform: translateX(-50%);
+    top: var(--slot-subtitle-top);
+    left: var(--slot-subtitle-x);
+    transform: translateX(var(--slot-subtitle-offset-x));
     text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
     animation: subtitle-pulse 1.5s ease-in-out infinite;
     z-index: 30;
@@ -147,11 +190,11 @@ body {
 @keyframes subtitle-pulse {
     0%, 100% {
         opacity: 1;
-        transform: scale(1);
+        transform: translateX(var(--slot-subtitle-offset-x)) scale(1);
     }
     50% {
         opacity: 0.8;
-        transform: scale(1.02);
+        transform: translateX(var(--slot-subtitle-offset-x)) scale(1.02);
     }
 }
 
@@ -258,14 +301,14 @@ body {
 .spin-text {
     position: absolute;
     font-family: 'Press Start 2P', cursive;
-    font-size: 16px;
+    font-size: var(--slot-spin-text-size);
     color: white;
     text-shadow: 0 0 10px white, 0 0 20px white;
     z-index: 151;
     pointer-events: none;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: var(--slot-spin-text-y);
+    left: var(--slot-spin-text-x);
+    transform: translate(var(--slot-spin-text-offset-x), var(--slot-spin-text-offset-y));
 }
 
 .spin-button:disabled {
@@ -338,12 +381,13 @@ body {
 
 .apuesta-text {
     font-family: 'Press Start 2P', cursive;
-    font-size: 16px;
+    font-size: var(--slot-bet-label-font-size);
     color: #ffd700;
     margin: 0 0 3px 0;
 }
 
 #apuesta-actual {
+    font-size: var(--slot-bet-number-font-size);
     color: #ff4444;
     text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
     animation: pulse-red 1s ease-in-out infinite;
@@ -367,7 +411,7 @@ body {
 .apuesta-min,
 .apuesta-max {
     font-family: 'Press Start 2P', cursive;
-    font-size: 10px;
+    font-size: var(--slot-bet-range-font-size);
     color: #888;
     flex-shrink: 0;
 }
@@ -376,7 +420,7 @@ body {
     width: var(--slot-bet-input-width);
     height: var(--slot-bet-input-height);
     box-sizing: border-box;
-    font-size: 11px;
+    font-size: var(--slot-bet-input-font-size);
     background-color: #ffcc00;
     border: 3px solid #D99A00;
     border-radius: 0;
@@ -394,6 +438,29 @@ body {
 }
 .bet-input:hover { background-color: #ffd633; }
 .bet-input:focus { border-color: #ff8c00; box-shadow: 0 0 8px rgba(217,154,0,.7); }
+
+/* Selectores locales para iconos y números inyectados por los módulos globales. */
+#btn-opciones {
+    top: var(--slot-settings-top);
+    left: var(--slot-settings-left);
+    width: var(--slot-settings-width);
+}
+
+.monedas-ui img { width: var(--slot-coins-icon-width); }
+#cantidad-monedasm { font-size: var(--slot-coins-number-size); }
+.monedas-ui {
+    top: var(--slot-coins-ui-top);
+    right: var(--slot-coins-ui-right);
+}
+#cantidad-monedasm { letter-spacing: var(--slot-coins-letter-spacing); }
+
+#btn-bag {
+    top: var(--slot-bag-top);
+    right: var(--slot-bag-right);
+    width: var(--slot-bag-width);
+}
+
+#bag-close-btn { width: var(--slot-bag-close-width); }
 
 /* WIN OVERLAY */
 .win-overlay {
@@ -693,41 +760,83 @@ body {
    perseguir valores repetidos entre selectores. */
 @media (max-width: 1024px) {
     :root {
-        --slot-y-position: clamp(58px, 9vh, 76px);
-        --slot-machine-width: min(88vw, 1100px);
-        --slot-reel-width: clamp(40px, 7vw, 68px);
-        --slot-reel-height: clamp(44px, 8vw, 76px);
-        --slot-symbol-size: clamp(40px, 6vw, 72px);
-        --slot-spin-width: clamp(76px, 17vw, 180px);
-        --slot-spin-height: 78px;
-        --slot-spin-bottom: 22%;
+        --slot-y-position: clamp(58px, 40vh, 403px);
+        --slot-machine-width: min(234vw, 2122px);
+        --slot-machine-shift-x: 0px;
+        --slot-frame-top: 58px;
+        --slot-frame-x: 51%;
+        --slot-frame-offset-x: -50%;
+        --slot-frame-width: 100%;
+        --slot-frame-height: 79%;
+        --slot-image-height: 86%;
+        --slot-title-font-size: clamp(24px, 24.3vw, 69px);
+        --slot-title-top: -6%;
+        --slot-title-x: 50%;
+        --slot-title-offset-x: -50%;
+        --slot-subtitle-font-size: clamp(48px, 5.1vw, 22px);
+        --slot-subtitle-top: 0%;
+        --slot-subtitle-x: 50%;
+        --slot-subtitle-offset-x: -50%;
+        --slot-reel-width: clamp(57px, 35vw, 169px);
+        --slot-reel-height: clamp(44px, 51vw, 209px);
+        --slot-symbol-size: clamp(40px, 38vw, 169px);
+        --slot-spin-width: clamp(76px, 64vw, 529px);
+        --slot-spin-height: 187px;
+        --slot-spin-bottom: 29.1%;
+        --slot-spin-text-size: clamp(11px, 3.4vw, 67px);
+        --slot-spin-text-x: 50%;
+        --slot-spin-text-y: 46%;
+        --slot-spin-text-offset-x: -50%;
+        --slot-spin-text-offset-y: -50%;
         --slot-bet-bottom: 12%;
+        --slot-bet-bottom: 8%;
         --slot-bet-input-width: min(28vw, 180px);
-        --slot-bet-input-height: 34px;
+        --slot-bet-input-height: 76px;
+        --slot-bet-input-font-size: 50px;
+        --slot-bet-label-font-size: 42px;
+        --slot-bet-number-font-size: 43px;
+        --slot-bet-range-font-size: 38px;
+        --slot-exit-left: 8px;
+        --slot-exit-bottom: -1px;
+        --slot-exit-width: 183px;
+        --slot-exit-image-width: 79%;
+        --slot-exit-container-left: 8px;
+        --slot-exit-container-bottom: 8px;
+        --slot-exit-container-width: auto;
+        --slot-bag-top: clamp(58px, 14vh, 0px);
+        --slot-bag-right: 40%;
+        --slot-bag-width: 146px;
+        --slot-bag-close-width: 64px;
+        --slot-settings-top: -25px;
+        --slot-settings-left: -58px;
+        --slot-settings-width: 304px;
+        --slot-coins-icon-width: 157px;
+        --slot-coins-number-size: 52px;
+        --slot-coins-ui-top: 0px;
+        --slot-coins-ui-right: 12px;
+        --slot-coins-letter-spacing: 11px;
+        --slot-left-decor-width: 24vw;
+        --slot-left-decor-height: 48vh;
+        --slot-right-decor-x: 12px;
+        --slot-right-decor-y: 26%;
+        --slot-right-decor-width: 25vw;
+        --slot-right-decor-height: 71vh;
     }
-
-    .titulo { font-size: 30px; }
-    .subtitulo { font-size: 20px; }
-    .spin-text { font-size: 13px; }
-    .apuesta-text { font-size: 13px; }
 
     .animacion-izquierda,
     .animacion-derecha {
-        max-width: 24vw;
-        max-height: 48vh;
+        max-width: var(--slot-left-decor-width);
+        max-height: var(--slot-left-decor-height);
         pointer-events: none;
     }
 
-    #btn-opciones {
-        width: 76px;
-        top: 8px;
-        left: 8px;
+    .animacion-derecha {
+        right: var(--slot-right-decor-x);
+        max-width: var(--slot-right-decor-width);
+        max-height: var(--slot-right-decor-height);
     }
 
-    .monedas-ui { top: 10px; right: 12px; }
-    .monedas-ui img { width: 64px; }
-    .monedas-ui p,
-    #cantidad-monedasm { font-size: 20px; letter-spacing: 1px; }
+    .monedas-ui p { letter-spacing: var(--slot-coins-letter-spacing); }
 
     .win-text,
     .lose-text { font-size: 36px; line-height: 1.35; padding: 0 16px; }
@@ -744,13 +853,58 @@ body {
     :root {
         --slot-y-position: 88px;
         --slot-machine-width: min(94vw, 500px);
+        --slot-machine-shift-x: 0px;
+        --slot-frame-top: 54px;
+        --slot-frame-x: 0%;
+        --slot-frame-offset-x: 0px;
+        --slot-frame-width: 100%;
+        --slot-frame-height: auto;
+        --slot-image-height: 100%;
+        --slot-title-font-size: 21px;
+        --slot-title-top: 0px;
+        --slot-title-x: 50%;
+        --slot-title-offset-x: -50%;
+        --slot-subtitle-font-size: 17px;
+        --slot-subtitle-top: 0px;
+        --slot-subtitle-x: 50%;
+        --slot-subtitle-offset-x: -50%;
         --slot-reel-width: clamp(40px, 12vw, 58px);
         --slot-reel-height: clamp(44px, 13vw, 62px);
         --slot-symbol-size: clamp(38px, 11vw, 58px);
         --slot-spin-width: 96px;
         --slot-spin-height: 66px;
+        --slot-spin-text-size: 11px;
+        --slot-spin-text-x: 50%;
+        --slot-spin-text-y: 50%;
+        --slot-spin-text-offset-x: -50%;
+        --slot-spin-text-offset-y: -50%;
         --slot-bet-input-width: min(36vw, 160px);
+        --slot-bet-input-max-width: 180px;
         --slot-bet-input-height: 36px;
+        --slot-bet-input-font-size: 14px;
+        --slot-bet-label-font-size: 13px;
+        --slot-bet-number-font-size: 16px;
+        --slot-bet-range-font-size: 9px;
+        --slot-exit-left: 8px;
+        --slot-exit-bottom: 8px;
+        --slot-exit-width: 58px;
+        --slot-exit-image-width: 80%;
+        --slot-exit-container-left: 8px;
+        --slot-exit-container-bottom: 8px;
+        --slot-exit-container-width: auto;
+        --slot-bag-top: clamp(60px, 15vh, 128px);
+        --slot-bag-right: 8px;
+        --slot-bag-width: 52px;
+        --slot-bag-close-width: 64px;
+        --slot-settings-top: 8px;
+        --slot-settings-left: 8px;
+        --slot-settings-width: 58px;
+        --slot-coins-icon-width: 48px;
+        --slot-coins-number-size: 15px;
+        --slot-coins-ui-top: 8px;
+        --slot-coins-ui-right: 8px;
+        --slot-coins-letter-spacing: 0px;
+        --slot-right-decor-x: 8px;
     }
 
     html { min-height: 100%; }
@@ -785,11 +939,11 @@ body {
     }
 
     .slot-machine-bg {
-        top: 54px;
-        left: 0;
-        transform: none;
-        width: 100%;
-        height: auto;
+        top: var(--slot-frame-top);
+        left: var(--slot-frame-x);
+        transform: translateX(var(--slot-frame-offset-x));
+        width: var(--slot-frame-width);
+        height: var(--slot-frame-height);
         aspect-ratio: 3 / 2;
         z-index: 0;
     }
@@ -799,16 +953,22 @@ body {
     .titulo,
     .subtitulo {
         position: relative;
-        inset: auto;
-        transform: none;
         width: 100%;
         white-space: normal;
         text-align: center;
         line-height: 1.4;
     }
 
-    .titulo { font-size: 21px; }
-    .subtitulo { font-size: 17px; }
+    .titulo {
+        top: var(--slot-title-top);
+        left: var(--slot-title-x);
+        transform: translateX(var(--slot-title-offset-x));
+    }
+    .subtitulo {
+        top: var(--slot-subtitle-top);
+        left: var(--slot-subtitle-x);
+        transform: translateX(var(--slot-subtitle-offset-x));
+    }
 
     .slots-area {
         position: relative;
@@ -833,7 +993,6 @@ body {
     }
 
     .spin-button { width: var(--slot-spin-width); height: var(--slot-spin-height); }
-    .spin-text { font-size: 11px; }
 
     .apuesta-wrapper {
         position: relative;
@@ -848,24 +1007,18 @@ body {
         border: 1px solid rgba(255, 215, 0, 0.65);
     }
 
-    .apuesta-text { font-size: 13px; line-height: 1.5; text-align: center; }
+    .apuesta-text { line-height: 1.5; text-align: center; }
     .apuesta-slider-wrapper { justify-content: center; gap: 10px; width: 100%; }
-    .apuesta-min,
-    .apuesta-max { font-size: 9px; }
-    .bet-input { max-width: 180px; font-size: 14px; }
+    .bet-input { max-width: var(--slot-bet-input-max-width); }
 
     .animacion-izquierda,
     .animacion-derecha { display: none; }
 
-    .menu-buttons-container,
-    .menu-button { left: 8px; bottom: 8px; }
-    .menu-button { width: 58px; }
+    .menu-buttons-container { left: var(--slot-exit-container-left); bottom: var(--slot-exit-container-bottom); }
+    .menu-button { left: var(--slot-exit-left); bottom: var(--slot-exit-bottom); width: var(--slot-exit-width); }
 
-    #btn-opciones { width: 58px; top: 8px; left: 8px; }
-    .monedas-ui { top: 8px; right: 8px; }
-    .monedas-ui img { width: 48px; }
     .monedas-ui p,
-    #cantidad-monedasm { margin: 4px 0 0; font-size: 15px; letter-spacing: 0; }
+    #cantidad-monedasm { margin: 4px 0 0; }
 
     .win-text,
     .lose-text { font-size: 30px; line-height: 1.4; }
@@ -876,6 +1029,38 @@ body {
     .no-coins-content .monedas-necesarias { margin-top: 14px; font-size: 14px; }
     .no-coins-content .monedas-necesarias span { font-size: 15px; }
     #overlay-timer-text { font-size: 10px; line-height: 1.5; }
+
+    #bag-content {
+        width: min(94vw, 680px);
+        max-height: calc(100vh - 32px);
+        max-height: calc(100dvh - 32px);
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    #bag-items-container {
+        width: 100%;
+        max-height: calc(100vh - 150px);
+        max-height: calc(100dvh - 150px);
+        overflow-y: auto;
+        align-content: flex-start;
+        box-sizing: border-box;
+    }
+    .bag-item { min-width: 0; width: 100%; max-width: none; }
+    .bag-item-img-wrap img { width: 60px; height: 60px; }
+    #bag-close-btn { width: 64px; }
+
+    #item-use-content {
+        width: min(92vw, 480px);
+        padding: 16px;
+        box-sizing: border-box;
+    }
+    #item-use-content h2 { margin-bottom: 20px; font-size: 18px; line-height: 1.5; }
+    .item-use-buttons { gap: 12px; }
+    .item-use-btn {
+        width: min(38vw, 127px);
+        height: 60px;
+        font-size: 13px;
+    }
 
     #menu-opciones {
         width: 100%;
@@ -929,28 +1114,64 @@ body {
     :root {
         --slot-y-position: 82px;
         --slot-machine-width: min(96vw, 420px);
+        --slot-frame-top: 48px;
+        --slot-frame-x: 0%;
+        --slot-frame-offset-x: 0px;
+        --slot-frame-width: 100%;
+        --slot-title-font-size: 17px;
+        --slot-title-top: 0px;
+        --slot-title-x: 50%;
+        --slot-title-offset-x: -50%;
+        --slot-subtitle-font-size: 14px;
+        --slot-subtitle-top: 0px;
+        --slot-subtitle-x: 50%;
+        --slot-subtitle-offset-x: -50%;
         --slot-reel-width: clamp(38px, 12vw, 52px);
         --slot-reel-height: clamp(42px, 13vw, 56px);
         --slot-symbol-size: clamp(36px, 11vw, 48px);
         --slot-spin-width: 82px;
         --slot-spin-height: 58px;
+        --slot-spin-text-size: 10px;
         --slot-bet-input-width: min(45vw, 150px);
+        --slot-bet-input-max-width: 150px;
         --slot-bet-input-height: 34px;
+        --slot-bet-input-font-size: 13px;
+        --slot-bet-label-font-size: 11px;
+        --slot-bet-number-font-size: 14px;
+        --slot-bet-range-font-size: 8px;
+        --slot-exit-left: 8px;
+        --slot-exit-bottom: 8px;
+        --slot-exit-width: 52px;
+        --slot-exit-image-width: 80%;
+        --slot-exit-container-left: 8px;
+        --slot-exit-container-bottom: 8px;
+        --slot-exit-container-width: auto;
+        --slot-bag-top: clamp(56px, 13vh, 104px);
+        --slot-bag-right: 6px;
+        --slot-bag-width: 46px;
+        --slot-bag-close-width: 52px;
+        --slot-settings-top: 6px;
+        --slot-settings-left: 6px;
+        --slot-settings-width: 50px;
+        --slot-coins-icon-width: 44px;
+        --slot-coins-number-size: 14px;
+        --slot-coins-ui-top: 6px;
+        --slot-coins-ui-right: 6px;
+        --slot-coins-letter-spacing: 0px;
+    }
+
+    .menu-buttons-container {
+        width: var(--slot-exit-container-width);
+        left: var(--slot-exit-container-left);
+        bottom: var(--slot-exit-container-bottom);
     }
 
     .slot-machine-container { padding-right: 8px; padding-left: 8px; }
     .machine-wrapper { gap: 10px; padding: 14px 8px 16px; }
-    .slot-machine-bg { top: 48px; }
-    .titulo { font-size: 17px; }
-    .subtitulo { font-size: 14px; }
     .slots-area { margin-top: 8px; padding: 6px 8px; }
     .slots-window { gap: 3px; }
-    .spin-text { font-size: 10px; }
     .apuesta-wrapper { padding: 9px 6px 10px; }
-    .apuesta-text { font-size: 11px; }
     .apuesta-slider-wrapper { gap: 7px; }
-    .apuesta-min,
-    .apuesta-max { font-size: 8px; }
 
     .win-text,
     .lose-text { font-size: 23px; }
@@ -960,6 +1181,13 @@ body {
     .no-coins-content p { font-size: 14px; }
     .no-coins-content .monedas-necesarias { font-size: 13px; }
     .no-coins-content .monedas-necesarias span { font-size: 13px; }
+
+    .bag-item { gap: 8px; padding: 8px; }
+    .bag-item-nombre { font-size: 16px; }
+    .bag-item-descripcion { font-size: 13px; line-height: 1.35; }
+    .bag-item-img-wrap img { width: 48px; height: 48px; }
+    #item-use-content h2 { font-size: 15px; }
+    .item-use-btn { height: 54px; font-size: 11px; }
 
     .menu-box { padding: 12px; }
     .menu-scroll { padding: 6px; }
