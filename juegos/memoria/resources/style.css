@@ -976,3 +976,187 @@ op-bar fade-el item1 show {
 }
 
 }
+
+/* ─────────────────────────────────────────────────────────
+   SELECTOR DE NIVELES — VERSIÓN MÓVIL (≤480px)
+   Bloque nuevo y autocontenido. No modifica ninguna regla
+   existente: al ir después en la hoja, sus reglas ganan la
+   cascada sobre ".niveles-panel { display: none; }" de más
+   arriba (misma especificidad, orden posterior).
+
+   Puedes ajustar todo lo de aquí abajo libremente desde el
+   inspector del navegador: colores, tamaños, duraciones de
+   la animación, alturas máximas, etc. Las variables al inicio
+   del bloque (--nm-*) controlan los aspectos más comunes.
+───────────────────────────────────────────────────────────── */
+
+/* Oculto por defecto (desktop/tablet): solo se muestra dentro del
+   media query móvil de abajo. Evita que el <button> nuevo aparezca
+   en el panel lateral de escritorio con su estilo por defecto. */
+.niveles-movil-header {
+  display: none;
+}
+
+@media (max-width: 480px) {
+
+  /* La barra de apuesta ya estaba fija en la base de la pantalla (bottom:
+     10px, definido más arriba). El header del selector de niveles móvil
+     también ancla ahí, así que se sube la barra de apuesta lo justo para
+     que no se superpongan, y se amplía el hueco reservado abajo en
+     #mainContent para que las cartas tampoco queden tapadas. */
+  .apuesta-container {
+    bottom: 60px;
+  }
+
+  #mainContent {
+    padding-bottom: 130px;
+  }
+
+  .niveles-panel {
+    /* Variables ajustables del selector móvil */
+    --nm-anim-duration: 0.38s;
+    --nm-anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --nm-max-abierto: 62vh;
+    --nm-header-bg: rgba(0, 0, 0, 0.9);
+    --nm-border-color: #ffd700;
+
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    box-sizing: border-box;
+    z-index: 150; /* por encima del tablero/apuesta, por debajo de overlays de victoria/derrota y menú */
+    pointer-events: none; /* se reactiva en los hijos que sí deben ser interactivos */
+  }
+
+  /* El título de escritorio no se usa en móvil: el header colapsado ya
+     comunica el nivel actual. Se reutiliza dentro de la lista al abrir. */
+  .niveles-panel > .niveles-titulo {
+    display: none;
+  }
+
+  /* Header compacto: nivel actual + info + flecha. Siempre visible,
+     ocupa poco espacio, ancla el componente a la parte inferior. */
+  .niveles-movil-header {
+    order: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 16px;
+    box-sizing: border-box;
+    background: var(--nm-header-bg);
+    border: none;
+    border-top: 2px solid var(--nm-border-color);
+    -webkit-appearance: none;
+    appearance: none;
+    color: #ffd700;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .niveles-movil-header:focus-visible {
+    outline: 2px solid var(--nm-border-color);
+    outline-offset: -2px;
+  }
+
+  .niveles-movil-header .niveles-movil-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Reaprovecha los spans .nivel-num / .nivel-info / .nivel-premio que
+     ya genera initNiveles(): al clonarse dentro del header quedan en
+     línea en vez de apilados, sin necesitar estilos nuevos por span. */
+  .niveles-movil-info .nivel-num,
+  .niveles-movil-info .nivel-info,
+  .niveles-movil-info .nivel-premio {
+    margin: 0;
+    white-space: nowrap;
+  }
+  .niveles-movil-info .nivel-info {
+    color: #ccc;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .niveles-movil-arrow {
+    flex-shrink: 0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    line-height: 1;
+    color: #ffd700;
+    transition: transform var(--nm-anim-duration) var(--nm-anim-ease);
+  }
+
+  .niveles-panel.abierto .niveles-movil-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Lista expandible: colapsada por defecto (altura 0), se despliega
+     hacia arriba porque el panel está anclado abajo (justify-content:
+     flex-end) y el header queda fijo en order:2 al final. */
+  .niveles-lista {
+    order: 1;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transform: translateY(10px) scaleY(0.92);
+    transform-origin: bottom center;
+    transition:
+      max-height var(--nm-anim-duration) var(--nm-anim-ease),
+      opacity calc(var(--nm-anim-duration) * 0.75) ease,
+      transform var(--nm-anim-duration) var(--nm-anim-ease);
+    background: rgba(0, 0, 0, 0.92);
+    border-left: 2px solid var(--nm-border-color);
+    border-right: 2px solid var(--nm-border-color);
+    padding: 0 8px;
+    pointer-events: none;
+  }
+
+  .niveles-panel.abierto .niveles-lista {
+    max-height: var(--nm-max-abierto);
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    pointer-events: auto;
+    padding: 10px 8px;
+  }
+
+  /* Área táctil cómoda para cada nivel dentro de la lista móvil */
+  .niveles-lista .nivel-item {
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .niveles-lista .nivel-item .nivel-info {
+    display: block;
+  }
+}
