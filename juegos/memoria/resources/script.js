@@ -115,8 +115,13 @@ function updateBoardLayout() {
   const cards = board.querySelectorAll(".card");
   if (cards.length === 0) return;
   const nivel = NIVELES[nivelActual];
+  const esMovil = window.innerWidth <= 480;
 
-  if (nivelActual === 2) {
+  // El caso especial de DIFÍCIL con tamaño fijo en px es solo para
+  // escritorio (asume 220/180px libres de paneles laterales). En móvil
+  // no aplica: cae al cálculo general de más abajo, igual que el resto
+  // de niveles, para que el tamaño se adapte a la pantalla real.
+  if (nivelActual === 2 && !esMovil) {
     board.style.gridTemplateColumns = 'repeat(8, 80px)';
     board.style.gridTemplateRows = 'repeat(2, 120px)';
     board.style.gap = '8px';
@@ -129,28 +134,60 @@ function updateBoardLayout() {
 
   const cols = nivel.cols;
   const rows = nivel.rows;
-  const nivelesW = 220;
-  const coinUIW = 180;
-  const betBarH = 120;
-  const headerH = 260;
-  const pad = 20;
-  const availW = window.innerWidth - nivelesW - coinUIW - pad * 2;
-  const availH = window.innerHeight - headerH - betBarH - pad * 2;
-  if (availW <= 0 || availH <= 0) return;
   const ASPECT = 2 / 3;
-  const gap = 8;
+  const gap = esMovil ? 4 : 8;
+
+  let availW, availH;
+  if (esMovil) {
+    // En móvil ya no hay panel lateral de niveles (ahora es el selector
+    // inferior) ni columna de monedas aparte, así que en vez de restar
+    // anchos fijos de escritorio, se mide el espacio real disponible:
+    // ancho de la pantalla, y alto entre la parte superior del tablero
+    // y donde empieza la barra de apuesta (que ya reserva su propio
+    // espacio para el header del selector de niveles móvil).
+    const padLateral = 10;
+    const margenInferior = 10;
+    const boardTop = board.getBoundingClientRect().top;
+    const apuesta = document.querySelector('.apuesta-container');
+    const limiteInferior = apuesta
+      ? apuesta.getBoundingClientRect().top
+      : window.innerHeight;
+    availW = window.innerWidth - padLateral * 2;
+    availH = limiteInferior - boardTop - margenInferior;
+  } else {
+    const nivelesW = 220;
+    const coinUIW = 180;
+    const betBarH = 120;
+    const headerH = 260;
+    const pad = 20;
+    availW = window.innerWidth - nivelesW - coinUIW - pad * 2;
+    availH = window.innerHeight - headerH - betBarH - pad * 2;
+  }
+  if (availW <= 0 || availH <= 0) return;
+
   const maxWByWidth = (availW - (cols - 1) * gap) / cols;
   const maxHByHeight = (availH - (rows - 1) * gap) / rows;
   const maxWByHeight = maxHByHeight * ASPECT;
   let cardW = Math.min(maxWByWidth, maxWByHeight);
-  const limits = [
+
+  const limitsDesktop = [
     { min: 85,  max: 160 },
     { min: 75,  max: 140 },
     { min: 50,  max: 120 },
     { min: 80,  max: 100 },
     { min: 55,  max: 130 }
   ];
-  const lim = limits[nivelActual] || { min: 45, max: 130 };
+  // Topes más pequeños para móvil (evitan cartas gigantes en pantallas
+  // angostas), reutilizando la misma fórmula de ajuste por espacio.
+  const limitsMovil = [
+    { min: 40, max: 80 },
+    { min: 34, max: 64 },
+    { min: 34, max: 60 },
+    { min: 24, max: 44 },
+    { min: 26, max: 50 }
+  ];
+  const limits = esMovil ? limitsMovil : limitsDesktop;
+  const lim = limits[nivelActual] || (esMovil ? { min: 22, max: 60 } : { min: 45, max: 130 });
   cardW = Math.max(lim.min, Math.min(lim.max, cardW));
   const cardH = cardW / ASPECT;
   board.style.gridTemplateColumns = `repeat(${cols}, ${cardW}px)`;

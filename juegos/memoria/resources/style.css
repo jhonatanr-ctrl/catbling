@@ -30,7 +30,7 @@ body {
 .menu-button {
   position: fixed;
   bottom: -7px;
-  left: 21px;
+  left: 3px;
   width: 75px;
   z-index: 600;
   cursor: pointer;
@@ -712,9 +712,7 @@ op-bar fade-el item1 show {
 
   #game-board {
     gap: 4px;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+    display: grid;
   }
 
   .card {
@@ -956,7 +954,7 @@ op-bar fade-el item1 show {
   }
   [data-edit-id="boton-salida"] {
     position: fixed;
-    left: 34px;
+    left: 24px;
     top: 377px;
     z-index: 99;
   }
@@ -1085,6 +1083,7 @@ op-bar fade-el item1 show {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
+    justify-content: flex-end;
   }
 
   /* Reaprovecha los spans .nivel-num / .nivel-info / .nivel-premio que
