@@ -64,6 +64,9 @@ async function fetchMonedas() {
     if (r.success && r.data?.monedas !== undefined) {
       _setCache(r.data.monedas);
       actualizarUI();
+      if (r.data.monedas < 5) {
+        verificarTimerCoins();
+      }
       return r.data.monedas;
     }
     return _getCache();
@@ -86,6 +89,9 @@ async function _aplicarDelta(cantidad, positivo) {
     actualizarUI();
     if (typeof mostrarAnimacionMonedas === 'function') {
       mostrarAnimacionMonedas(cantidad, positivo);
+    }
+    if (_getCache() < 5) {
+      verificarTimerCoins();
     }
     return { ok: true, nuevo_saldo: _getCache() };
   }
@@ -139,21 +145,21 @@ async function verificarTimerCoins() {
   const monedas = _getCache();
   const timerEnd = getTimerEnd();
 
-  if (monedas === 0 && timerEnd === 0) {
+  if (monedas < 5 && timerEnd === 0) {
     const endTime = Date.now() + TIMER_DURATION;
     localStorage.setItem(TIMER_KEY, endTime);
     if (!timerInterval) {
       timerInterval = setInterval(actualizarTimerUI, 1000);
     }
     actualizarTimerUI();
-  } else if (monedas === 0 && timerEnd > 0) {
+  } else if (monedas < 5 && timerEnd > 0) {
     const restante = timerEnd - Date.now();
     if (restante <= 0) {
       // Timer expirado: llamar RPC reclamarRecargaGratis (server valida 2h)
       if (await _isAuthenticated() && window.apiRpc) {
         try {
           const r = await window.apiRpc.reclamarRecargaGratis();
-          if (r.success && r.data?.nuevo_saldo !== undefined) {
+          if (r.success && r.data?.ok && r.data?.nuevo_saldo !== undefined) {
             _setCache(r.data.nuevo_saldo);
             actualizarUI();
           }
@@ -436,7 +442,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const timerEnd = getTimerEnd();
   const monedas = _getCache();
 
-  if (monedas === 0 && timerEnd > 0) {
+  if (monedas < 5 && monedas !== null && timerEnd > 0) {
     const restante = timerEnd - Date.now();
     if (restante <= 0) {
       await verificarTimerCoins(); // async, llama RPC si hay apiRpc
@@ -446,7 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       actualizarTimerUI();
     }
-  } else if ((monedas === null || monedas === 0) && timerEnd === 0) {
+  } else if ((monedas === null || monedas < 5) && timerEnd === 0) {
     // No asumir 200. Para autenticado, se cargará via fetchMonedas().
     // Para invitado, se mantiene comportamiento legacy (200 inicial).
     if (!await _isAuthenticated()) {
@@ -458,7 +464,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       timerInterval = setInterval(actualizarTimerUI, 1000);
     }
     actualizarTimerUI();
-  } else if (monedas > 0) {
+  } else if (monedas >= 5) {
     localStorage.setItem(TIMER_KEY, 0);
   }
 
