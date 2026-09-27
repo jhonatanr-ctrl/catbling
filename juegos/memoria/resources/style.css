@@ -1130,11 +1130,10 @@ op-bar fade-el item1 show {
   
   [data-edit-id="tablero"] {
     position: fixed;
-    left: 3px;
-    top: 392px;
+    left: 26px;
+    top: 374px;
     width: 307px;
     height: 160px;
   }
-
   
 }
