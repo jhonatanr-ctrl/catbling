@@ -770,13 +770,6 @@ op-bar fade-el item1 show {
 
 /* Layout "mobile" generado por el modo edición */
 @media (max-width: 480px) {
-  [data-edit-id="tablero"] {
-    position: fixed;
-    left: 6px;
-    top: 309px;
-    width: 307px;
-    height: 160px;
-  }
 
   [data-edit-id="barra-superior"] {
     position: fixed;
@@ -849,14 +842,6 @@ op-bar fade-el item1 show {
     height: 70px;
   }
 
-  [data-edit-id="tablero"] {
-    position: fixed;
-    left: 6px;
-    top: 313px;
-    width: 307px;
-    height: 160px;
-  }
-
   #mainContent > header:nth-of-type(1) > h1:nth-of-type(1) {
     font-size: 18px;
   }
@@ -876,13 +861,7 @@ op-bar fade-el item1 show {
 
 /* NUEVO LAYOUT MOBILE */
 @media (max-width: 480px) {
-  [data-edit-id="tablero"] {
-    position: fixed;
-    left: 41px;
-    top: 299px;
-    width: 307px;
-    height: 160px;
-  }
+
 
   [data-edit-id="barra-superior"] {
     position: fixed;
@@ -923,14 +902,6 @@ op-bar fade-el item1 show {
     height: 109px;
   }
   /* Layout "mobile" generado por el modo edición — pégalo en style.css */
-@media (max-width: 480px) {
-  [data-edit-id="tablero"] {
-    position: fixed;
-    left: 33px;
-    top: 298px;
-    width: 307px;
-    height: 160px;
-  }
   [data-edit-id="barra-superior"] {
     position: fixed;
     left: 25px;
@@ -971,8 +942,6 @@ op-bar fade-el item1 show {
   #instruccion-text {
     font-size: 20px;
   }
-}
-
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -1159,5 +1128,13 @@ op-bar fade-el item1 show {
     display: block;
   }
   
-}
+  [data-edit-id="tablero"] {
+    position: fixed;
+    left: 3px;
+    top: 392px;
+    width: 307px;
+    height: 160px;
+  }
 
+  
+}
