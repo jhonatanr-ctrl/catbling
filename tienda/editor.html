@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editor de diseño · Tienda Catbling</title>
+  <link rel="stylesheet" href="./resources/design/editor.css">
+</head>
+<body>
+  <!-- Editor visual de la tienda. Página independiente: NO se enlaza desde la tienda
+       y no carga ningún script de compras. La tienda se muestra en un iframe. -->
+  <header id="cbe-top">
+    <div class="cbe-brand">🐱 Editor de diseño <small>Tienda</small></div>
+
+    <div class="cbe-group" id="cbe-devices" role="group" aria-label="Dispositivo">
+      <button data-device="desktop" title="Escritorio (≥ 769 px)">🖥 Escritorio</button>
+      <button data-device="tablet" title="Tablet (481–768 px)">▭ Tablet</button>
+      <button data-device="mobile" title="Móvil (≤ 480 px)">▯ Móvil</button>
+    </div>
+
+    <div class="cbe-group">
+      <label>Vista
+        <select id="cbe-view">
+          <option value="tienda">Tienda</option>
+          <option value="categorias">Categorías</option>
+        </select>
+      </label>
+      <label id="cbe-cat-wrap">Categoría
+        <select id="cbe-cat"><option value="boosts">Casino</option><option value="mejoras">Preguntas</option></select>
+      </label>
+      <label id="cbe-item-wrap">Artículo
+        <select id="cbe-item"><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option><option value="4">5</option></select>
+      </label>
+      <label>Zoom
+        <select id="cbe-zoom"><option value="fit">Ajustar</option><option value="1">100%</option><option value="0.75">75%</option><option value="0.5">50%</option></select>
+      </label>
+    </div>
+
+    <div class="cbe-group">
+      <button id="cbe-undo" title="Deshacer (Ctrl+Z)">↶</button>
+      <button id="cbe-redo" title="Rehacer (Ctrl+Y)">↷</button>
+    </div>
+
+    <div class="cbe-spacer"></div>
+    <span id="cbe-status" class="cbe-status">Guardado</span>
+    <button id="cbe-audit" title="Comprueba desbordamientos y superposiciones en los 3 dispositivos">Revisar</button>
+    <details class="cbe-menu">
+      <summary>Más ⋯</summary>
+      <div class="cbe-menu-list">
+        <button id="cbe-export">Exportar diseño (.json)</button>
+        <button id="cbe-import">Importar diseño (.json)</button>
+        <button id="cbe-publish">Copiar para publicar</button>
+        <hr>
+        <button id="cbe-reset-device">Restablecer este dispositivo</button>
+        <button id="cbe-reset-all" class="cbe-danger">Restablecer diseño completo</button>
+        <hr>
+        <button id="cbe-hidepreview">Ocultar paneles simulados</button>
+        <a href="./tienda.html" target="_blank" rel="noopener">Abrir tienda normal ↗</a>
+      </div>
+    </details>
+    <button id="cbe-discard">Descartar</button>
+    <button id="cbe-save" class="cbe-primary">Guardar</button>
+    <input type="file" id="cbe-file" accept="application/json,.json" hidden>
+  </header>
+
+  <div id="cbe-main">
+    <aside id="cbe-tree" aria-label="Elementos"></aside>
+    <main id="cbe-stage">
+      <div id="cbe-frame-wrap">
+        <iframe id="cbe-frame" title="Vista previa de la tienda"></iframe>
+        <div id="cbe-overlay"></div>
+      </div>
+    </main>
+    <aside id="cbe-panel" aria-label="Propiedades"></aside>
+  </div>
+  <div id="cbe-toast" role="status"></div>
+
+  <script src="./resources/design/registry.js"></script>
+  <script src="./resources/design/published.js"></script>
+  <script src="./resources/design/engine.js"></script>
+  <script src="./resources/design/editor.js"></script>
+</body>
+</html>
