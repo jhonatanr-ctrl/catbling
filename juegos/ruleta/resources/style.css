@@ -678,4 +678,10 @@ body {
         font-size: 7px;
     }
 
+    #btn-bag {
+        width: clamp(40px, 14vw, 60px);
+        top: clamp(60px, 15vh, 150px);
+        right: clamp(4px, 4vw, 20px);
+    }
+
 }
