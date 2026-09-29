@@ -818,6 +818,7 @@ body {
     .apuesta-slider-wrapper {
         width: min(82vw, 320px);
         margin-left: 0;
+        justify-content: center;
     }
 
     .score-panel {
@@ -826,8 +827,9 @@ body {
 }
 
 @media (max-width: 600px) {
+    /* margen superior: el HUD fijo (monedas + bolsa) ocupa ~110px arriba a la derecha y pisaba título/subtítulo */
     body {
-        padding: 20px 0 34px;
+        padding: 96px 0 34px;
     }
 
     .menu-button {
@@ -957,14 +959,14 @@ body {
 
     .bet-input {
         width: min(100%, 130px);
-        height: 32px;
+        height: 40px;
         font-size: 12px;
     }
 
     #roll-btn {
         width: min(84vw, 230px);
         font-size: clamp(10px, 3vw, 14px);
-        padding: 12px 18px;
+        padding: 14px 18px;
         letter-spacing: 1px;
     }
 

@@ -584,7 +584,14 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* En móvil el contenido se apila y es más alto que la pantalla: hay que permitir scroll */
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
     .main-layout {
+        flex: none;
         flex-wrap: wrap;
         gap: 10px;
     }
@@ -596,6 +603,7 @@ body {
         order: 2;
         width: 100%;
         justify-content: center;
+        flex-wrap: wrap;
     }
 
     .column-buttons,
@@ -630,7 +638,10 @@ body {
     }
 
     .game-container {
-        padding: 5px 10px;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        padding: 5px 10px 96px;
     }
 
     .titulo {
@@ -639,8 +650,11 @@ body {
     }
 
     .roulette-table-rotated {
-        transform: scale(0.8);
-        transform-origin: top center;
+        margin-top: 12px;
+    }
+
+    .bet-input {
+        height: 40px;
     }
 }
 
@@ -664,10 +678,4 @@ body {
         font-size: 7px;
     }
 
-    
-
-    .roulette-table-rotated {
-        transform: scale(0.6);
-        transform-origin: top center;
-    }
 }
