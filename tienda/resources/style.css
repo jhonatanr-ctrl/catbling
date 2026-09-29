@@ -193,6 +193,13 @@ body.categorias-mode {
     content: "⚠️ ";
 }
 
+/* Posición del botón salir mientras se muestra el overlay de categorías.
+   Al entrar a una categoría se quita body.categorias-mode y vuelve a sus valores originales. */
+body.categorias-mode .btn-volver-tienda {
+    bottom: -5px;
+    left: 10px;
+}
+
 .btn-volver-tienda:hover {
     transform: scale(1.1);
 }
