@@ -1,7 +1,8 @@
 // Casino Royale - Jackpot de Dados
 
 let isRolling = false;
-let apuesta = 10;
+const APUESTA_MINIMA = 6; // apuesta mínima del juego
+let apuesta = APUESTA_MINIMA;
 let currentRes1 = 1;
 let currentRes2 = 2;
 
@@ -30,7 +31,7 @@ function initApuestaInput() {
     var input = document.getElementById('bet-input');
     var maxLabel = document.querySelector('.apuesta-max');
     if (!input) return;
-    var minVal = 10;
+    var minVal = APUESTA_MINIMA;
     function getMaxVal() {
         return Math.max(minVal, Math.min(500, getMonedas()));
     }
@@ -61,21 +62,21 @@ function configurarChequeoCredito() {
 
 // Generador sesgado para reducir probabilidad de ganar
 function getBiasedRoll(dieIndex) {
-    // Dado 1: favorece fuertemente números bajos (1,3)
-    // Dado 2: favorece fuertemente números altos (5,6)
+    // dieIndex 0 (dado 1): favorece fuertemente números bajos (1,3)
+    // dieIndex 1 (dado 2): favorece fuertemente números altos (5,6)
     // Así casi nunca salen iguales, secuencia, o ambos pares
     var weights;
     if (dieIndex === 1) {
-        weights = [1, 1, 1, 1, 7, 7]; // Dado 2: casi siempre 5 o 6
+        weights = [1, 1, 1, 1, 7, 7]; // dado 2: casi siempre 5 o 6
     } else {
-        weights = [7, 1, 7, 1, 1, 1]; // Dado 1: casi siempre 1 o 3
+        weights = [7, 1, 7, 1, 1, 1]; // dado 1: casi siempre 1 o 3
     }
     // Ajuste Fino: mejora ligeramente las probabilidades
     if (typeof window.tieneAjusteFinoActivo === 'function' && window.tieneAjusteFinoActivo()) {
         if (dieIndex === 1) {
-            weights = [3, 2, 3, 2, 4, 4];
+            weights = [3, 2, 3, 2, 4, 4]; // dado 2
         } else {
-            weights = [4, 2, 4, 2, 3, 3];
+            weights = [4, 2, 4, 2, 3, 3]; // dado 1
         }
         window.consumirAjusteFino();
     }
@@ -108,29 +109,34 @@ function evaluateResult() {
     var isEqual = res1 === res2;
     var isSequence = Math.abs(res1 - res2) === 1;
     
-    var multiplicador = 1;
-    var gano = false;
-    
-    if (isEqual) {
-        multiplicador = 4;
-        gano = true;
+    // Los premios son ACUMULATIVOS: cada condición que se cumple suma su
+    // multiplicador, y cada uno se aplica sobre la apuesta base.
+    // Ej.: 2-2 = iguales (x4) + ambos pares (x2) = x6.
+    // (Con dados de 6 caras, iguales+secuencia y secuencia+pares no pueden
+    // darse a la vez; el único cruce posible es 2-2, 4-4 y 6-6.)
+    var multiplicador = 0;
+    if (isEqual) multiplicador += 4;
+    if (isSequence) multiplicador += 3;
+    if (isBothEven) multiplicador += 2;
+    var gano = multiplicador > 0;
+
+    if (isEqual && isBothEven) {
+        statusMsg.innerText = '¡IGUALES + PARES! x' + multiplicador + ' (' + res1 + '-' + res2 + ')';
+        statusMsg.style.color = '#00ff00';
+    } else if (isEqual) {
         statusMsg.innerText = (typeof __f === 'function') ? __f('cr_dados_iguales', { r1: res1, r2: res2 }) : ('¡DADOS IGUALES! x4 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else if (isSequence) {
-        multiplicador = 3;
-        gano = true;
         statusMsg.innerText = (typeof __f === 'function') ? __f('cr_secuencia_msg', { r1: res1, r2: res2 }) : ('¡SECUENCIA! x3 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else if (isBothEven) {
-        multiplicador = 2;
-        gano = true;
         statusMsg.innerText = (typeof __f === 'function') ? __f('cr_ambos_pares_msg', { r1: res1, r2: res2 }) : ('¡AMBOS PARES! x2 (' + res1 + '-' + res2 + ')');
         statusMsg.style.color = '#00ff00';
     } else {
         statusMsg.innerText = (typeof __f === 'function') ? __f('cr_pierdes_msg', { r1: res1, r2: res2 }) : (res1 + ' - ' + res2 + '. ¡PIERDES!');
         statusMsg.style.color = '#ff4444';
     }
-    
+
     var gananciaNeta = 0;
     var resultadoMonedas = 0;
     
@@ -161,7 +167,7 @@ function evaluateResult() {
     
     setTimeout(function() {
         var maxLabel = document.querySelector('.apuesta-max');
-        if (maxLabel) maxLabel.textContent = Math.max(10, Math.min(500, getMonedas()));
+        if (maxLabel) maxLabel.textContent = Math.max(APUESTA_MINIMA, Math.min(500, getMonedas()));
     }, 500);
 
     // Registrar en Supabase via RPC (solo autenticados; window.apiRpc siempre existe,
