@@ -980,11 +980,15 @@ body {
     }
 
     #btn-opciones {
-        width: clamp(44px, 9vw, 72px);
+        width: clamp(92px, 9vw, 72px);
+        top: -12px;
+        left: -14px;
     }
 
     #btn-bag {
-        width: 30px;
+        width: 55px;
+        left: 7px;
+        top: 12px;
     }
 
     .win-content,
