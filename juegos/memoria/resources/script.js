@@ -51,6 +51,18 @@ let lockBoard = false;
 let pairsFound = 0;
 let totalPairs;
 
+// Fase inicial de visualización: al iniciar una partida, todas las cartas
+// muestran su icono durante VISTA_PREVIA_MS y el tablero queda bloqueado.
+const VISTA_PREVIA_MS = 1000;
+// Duración de la animación de volteo; debe coincidir con la transición de
+// `.card-inner` en style.css (0.6s). El tablero se desbloquea cuando las
+// cartas terminan de volver a ocultarse, para evitar clics a mitad de animación.
+// (Poner 0 para habilitar la interacción exactamente al llegar a 1s.)
+const FLIP_ANIM_MS = 600;
+let vistaPreviaTimers = [];
+let mismatchTimer = null;
+let endGameTimer = null;
+
 const movesSpan = document.getElementById("moves");
 const restartBtn = document.getElementById("restart-button");
 const restartText = restartBtn ? restartBtn.querySelector(".restart-text") : null;
@@ -264,8 +276,9 @@ function initNiveles() {
 function iniciarJuego() {
   const cards = document.querySelectorAll(".card");
   if (cards.length === 0) return;
+  cancelarTimersRonda();
   flippedCards = [];
-  lockBoard = false;
+  lockBoard = true; // bloqueado hasta que termine la vista previa
   moves = 0;
   pairsFound = 0;
   if (movesSpan) { movesSpan.textContent = moves; updateMovesColor(); }
@@ -278,6 +291,33 @@ function iniciarJuego() {
     if (iconImg) iconImg.src = icons[i];
     card.onclick = () => flipCard(card);
   });
+  mostrarVistaPrevia(cards);
+}
+
+// Cancela timers pendientes de la ronda anterior (vista previa, fallo de
+// pareja o cierre de partida) para que no interfieran con una partida recién iniciada.
+function cancelarTimersRonda() {
+  vistaPreviaTimers.forEach(clearTimeout);
+  vistaPreviaTimers = [];
+  clearTimeout(mismatchTimer);
+  mismatchTimer = null;
+  clearTimeout(endGameTimer);
+  endGameTimer = null;
+}
+
+// Voltea todas las cartas mostrando el icono durante VISTA_PREVIA_MS y luego
+// las oculta y habilita la interacción. No pasa por flipCard(), así que no
+// toca flippedCards, moves ni pairsFound.
+function mostrarVistaPrevia(cards) {
+  lockBoard = true;
+  void document.body.offsetWidth; // fuerza reflow: garantiza que se anime el volteo
+  cards.forEach(card => card.classList.add("flipped"));
+  vistaPreviaTimers.push(setTimeout(() => {
+    cards.forEach(card => card.classList.remove("flipped"));
+    vistaPreviaTimers.push(setTimeout(() => {
+      lockBoard = false;
+    }, FLIP_ANIM_MS));
+  }, VISTA_PREVIA_MS));
 }
 
 function flipCard(card) {
@@ -296,10 +336,10 @@ function checkMatch() {
   if (icon1 === icon2) {
     pairsFound++;
     flippedCards = [];
-    if (pairsFound === totalPairs) setTimeout(endGame, 800);
+    if (pairsFound === totalPairs) endGameTimer = setTimeout(endGame, 800);
   } else {
     lockBoard = true;
-    setTimeout(() => {
+    mismatchTimer = setTimeout(() => {
       card1.classList.remove("flipped");
       card2.classList.remove("flipped");
       flippedCards = [];
@@ -420,6 +460,8 @@ function handleRestartClick() {
     if (restartText) restartText.textContent = "REINICIAR";
     iniciarJuego();
   } else {
+    cancelarTimersRonda();
+    lockBoard = true; // el tablero se reconstruye; sin interacción hasta la nueva vista previa
     const cards = document.querySelectorAll(".card");
     cards.forEach(card => card.classList.remove("flipped"));
     moves = 0; pairsFound = 0;
