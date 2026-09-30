@@ -970,7 +970,7 @@ body {
 
     .spin-button-wrapper {
         position: relative;
-        bottom: -56px;
+        bottom: -75px;
         left: -0.5%;
         transform: none;
         margin: 0 auto;
@@ -1064,13 +1064,13 @@ body {
         --slot-subtitle-top: 0px;
         --slot-subtitle-x: 50%;
         --slot-subtitle-offset-x: -50%;
-        --slot-reel-width: clamp(27px, -22vw, 52px);
-        --slot-reel-height: clamp(36px, 11vw, 56px);
-        --slot-symbol-size: clamp(6px, 10vw, 48px);
-        --slot-spin-width: 110px;
+        --slot-reel-width: clamp(38px, -22vw, 52px);
+        --slot-reel-height: clamp(45px, 11vw, 56px);
+        --slot-symbol-size: clamp(6px, 13vw, 48px);
+        --slot-spin-width: 139px;
         --slot-spin-height: 58px;
         --slot-spin-text-size: 10px;
-        --slot-bet-input-width: min(45vw, 150px);
+        --slot-bet-input-width: min(55vw, 150px);
         --slot-bet-input-max-width: 150px;
         --slot-bet-input-height: 34px;
         --slot-bet-input-font-size: 13px;
@@ -1103,7 +1103,7 @@ body {
 
     .slot-machine-container { padding-right: 8px; padding-left: 8px; }
     .machine-wrapper { gap: 10px; padding: 14px 8px 16px; }
-    .slots-area {margin-top: 112px;margin-bottom: -41px;padding: 3px 11px;}
+    .slots-area {margin-top: 114px;margin-bottom: -41px;padding: 3px 3px;}
     .slots-window { gap: 3px; }
     .apuesta-wrapper { padding: 9px 6px 10px; }
     .apuesta-slider-wrapper { gap: 7px; }
