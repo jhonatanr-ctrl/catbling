@@ -1,4 +1,3 @@
-
 :root {
     --slot-y-position: 80px;
     --slot-machine-width: min(78vw, 1500px);
@@ -48,9 +47,6 @@
     --slot-bag-right: clamp(8px, 4vw, 59px);
     --slot-bag-width: clamp(50px, 10vw, 84px);
     --slot-bag-close-width: clamp(60px, 15vw, 108px);
-    --slot-settings-top: 0px;
-    --slot-settings-left: 0px;
-    --slot-settings-width: clamp(60px, 12vw, 127px);
     --slot-coins-icon-width: clamp(70px, 15vw, 130px);
     --slot-coins-number-size: 30px;
     --slot-coins-ui-top: clamp(8px, 2vh, 20px);
@@ -440,12 +436,6 @@ body {
 .bet-input:focus { border-color: #ff8c00; box-shadow: 0 0 8px rgba(217,154,0,.7); }
 
 /* Selectores locales para iconos y números inyectados por los módulos globales. */
-#btn-opciones {
-    top: var(--slot-settings-top);
-    left: var(--slot-settings-left);
-    width: var(--slot-settings-width);
-}
-
 .monedas-ui img { width: var(--slot-coins-icon-width); }
 #cantidad-monedasm { font-size: var(--slot-coins-number-size); }
 .monedas-ui {
@@ -807,9 +797,6 @@ body {
         --slot-bag-right: 40%;
         --slot-bag-width: 146px;
         --slot-bag-close-width: 64px;
-        --slot-settings-top: -25px;
-        --slot-settings-left: -58px;
-        --slot-settings-width: 304px;
         --slot-coins-icon-width: 157px;
         --slot-coins-number-size: 52px;
         --slot-coins-ui-top: 0px;
@@ -896,9 +883,6 @@ body {
         --slot-bag-right: 8px;
         --slot-bag-width: 52px;
         --slot-bag-close-width: 64px;
-        --slot-settings-top: 8px;
-        --slot-settings-left: 8px;
-        --slot-settings-width: 58px;
         --slot-coins-icon-width: 48px;
         --slot-coins-number-size: 15px;
         --slot-coins-ui-top: 8px;
@@ -1062,50 +1046,6 @@ body {
         font-size: 13px;
     }
 
-    #menu-opciones {
-        width: 100%;
-        height: 100%;
-        height: 100dvh;
-        padding: 12px;
-        box-sizing: border-box;
-        align-items: center;
-        overflow-y: auto;
-    }
-
-    .menu-box {
-        width: min(94vw, 520px);
-        max-width: 100%;
-        max-height: calc(100vh - 24px);
-        max-height: calc(100dvh - 24px);
-        margin: 0 auto;
-        padding: 16px;
-        box-sizing: border-box;
-    }
-
-    .menu-box h2 { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
-    .menu-scroll { max-height: none; margin: 0; padding: 8px 10px; }
-    .opcion-item {
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
-        width: 100%;
-        margin: 8px 0;
-        font-size: 19px;
-        line-height: 1.3;
-    }
-    .grupo-botones { width: auto; }
-    .grupo-botones button { min-width: 36px; min-height: 36px; padding: 6px; }
-    #opcion-cerrar-sesion { display: grid; }
-    #opcion-cerrar-sesion span { font-size: 17px; }
-    #opcion-cerrar-sesion button { min-width: 0; margin: 4px; padding: 8px; }
-    #cerrar-menu { width: 76px; margin: 8px auto 0; }
-
-    #confirmacion-cerrar-sesion { padding: 16px; box-sizing: border-box; }
-    .confirmacion-contenido { width: min(92vw, 480px); padding: 20px; box-sizing: border-box; }
-    .confirmacion-titulo { margin-bottom: 16px; font-size: 18px; line-height: 1.5; }
-    .confirmacion-texto { margin: 8px 0 22px; font-size: 20px; line-height: 1.4; }
-    .confirmacion-botones { gap: 14px; }
-    .confirmacion-btn { padding: 12px 18px; font-size: 13px; }
-
     .tutorial-container { width: min(94vw, 560px); }
     .tutorial-speech { max-width: 100%; box-sizing: border-box; }
 }
@@ -1150,9 +1090,6 @@ body {
         --slot-bag-right: 6px;
         --slot-bag-width: 46px;
         --slot-bag-close-width: 52px;
-        --slot-settings-top: 6px;
-        --slot-settings-left: 6px;
-        --slot-settings-width: 50px;
         --slot-coins-icon-width: 44px;
         --slot-coins-number-size: 14px;
         --slot-coins-ui-top: 6px;
@@ -1189,15 +1126,5 @@ body {
     #item-use-content h2 { font-size: 15px; }
     .item-use-btn { height: 54px; font-size: 11px; }
 
-    .menu-box { padding: 12px; }
-    .menu-scroll { padding: 6px; }
-    .opcion-item { font-size: 17px; }
-    #opcion-cerrar-sesion span { font-size: 15px; }
-    .grupo-botones { gap: 4px; }
-    .grupo-botones button { min-width: 32px; min-height: 32px; }
-    .confirmacion-contenido { padding: 14px; }
-    .confirmacion-titulo { font-size: 15px; }
-    .confirmacion-texto { font-size: 17px; }
-    .confirmacion-btn { padding: 10px 12px; font-size: 11px; }
     .tutorial-speech { padding: 12px; }
 }
