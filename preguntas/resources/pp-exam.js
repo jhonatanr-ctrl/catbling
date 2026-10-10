@@ -8,11 +8,11 @@
 
   const $ = id => document.getElementById(id);
 
-  function barra() {
-    let b = $('pp-topbar');
-    if (!b) { b = pp.el('div', { id: 'pp-topbar', class: 'pp-topbar', 'aria-live': 'polite' }, [pp.el('span', { class: 'pp-prog' }), pp.el('span', { class: 'pp-difbadge' })]); document.body.appendChild(b); }
-    return b;
-  }
+  //function barra() {
+  //  let b = $('pp-topbar');
+  //  if (!b) { b = pp.el('div', { id: 'pp-topbar', class: 'pp-topbar', 'aria-live': 'polite' }, [pp.el('span', { class: 'pp-prog' }), pp.el('span', { class: 'pp-difbadge' })]); document.body.appendChild(b); }
+  //  return b;
+  //}
   function pintarBarra() {
     const b = barra(), d = C.DIFICULTADES.find(x => x.id === E.dif);
     b.querySelector('.pp-prog').textContent = pp.t('pp_progreso', { n: Math.min(E.idx + 1, C.PREGUNTAS), total: C.PREGUNTAS });
