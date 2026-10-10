@@ -10,3 +10,8 @@ logs/
 supabase/.temp/
 api/tokens.json
 api/reset_tokens.json
+
+node_modules/
+.env
+.env.*
+!.env.example

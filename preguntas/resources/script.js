@@ -227,8 +227,13 @@ nivelOverlay.querySelectorAll('.nivel-tarjeta').forEach(tarjeta => {
     });
 });
 
-document.getElementById('main-container').style.display = 'none';
-nivelOverlay.classList.add('visible');
+function mostrarOverlayNivel() {
+    document.getElementById('main-container').style.display = 'none';
+    nivelOverlay.classList.add('visible');
+}
+// Preguntas personalizadas (pp-main.js) muestra antes un selector de modo y llama a esto si se elige "generales".
+window.catblingMostrarSeleccionNivel = mostrarOverlayNivel;
+if (!window.PP_ACTIVO) mostrarOverlayNivel();
 
 const btnVolverConf = pantalla.querySelector("#btn-volver-conf");
 const btnAceptarConf = pantalla.querySelector("#btn-aceptar-conf");

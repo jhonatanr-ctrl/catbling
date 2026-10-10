@@ -3,3 +3,5 @@ supabase/
 logs/
 /letsgocatbling/
 *.md
+scripts/
+tests/

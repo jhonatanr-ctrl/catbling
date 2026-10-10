@@ -1,0 +1,18 @@
+{
+  "name": "letsgocatbling",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Let's go Catbling — sitio estático + funciones serverless (api/) para preguntas personalizadas con IA",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "test:api": "node --test tests/backend.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.8.0",
+    "unpdf": "^0.12.1"
+  }
+}
