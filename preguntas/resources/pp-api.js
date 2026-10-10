@@ -14,7 +14,14 @@
   // Normaliza: {success:false} (red) => {ok:false, codigo:'error_red'}
   async function llamar(nombre, args) {
     const r = await rpc(nombre, args);
-    if (!r.success) return { ok: false, codigo: 'error_red' };
+    if (!r.success) {
+      const m = String(r.error || '');
+      // Distingue red de fallo del servidor: antes TODO se mostraba como "error de red".
+      if (/could not find the function|schema cache|PGRST202|42883|does not exist/i.test(m)) return { ok: false, codigo: 'migracion_pendiente' };
+      if (/JWT|not authenticated|No autenticado|PGRST30/i.test(m)) return { ok: false, codigo: 'no_autenticado' };
+      if (/fetch|network|NetworkError|timeout|Load failed/i.test(m)) return { ok: false, codigo: 'error_red' };
+      return { ok: false, codigo: 'error_interno' };
+    }
     return r.data && typeof r.data === 'object' ? r.data : { ok: false, codigo: 'error_interno' };
   }
 
